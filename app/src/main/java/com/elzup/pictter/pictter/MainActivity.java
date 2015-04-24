@@ -8,15 +8,19 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
 
+import de.timroes.android.listview.EnhancedListView;
 import io.fabric.sdk.android.Fabric;
 import com.twitter.sdk.android.core.TwitterAuthConfig;
 import com.twitter.sdk.android.Twitter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 public class MainActivity extends ActionBarActivity {
 
+    private CustomAdapter mAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,13 +55,40 @@ public class MainActivity extends ActionBarActivity {
         objects.add(item1);
         objects.add(item2);
         objects.add(item3);
+        objects.add(item3);
+        objects.add(item3);
+        objects.add(item3);
+        objects.add(item3);
+        objects.add(item3);
+        objects.add(item3);
 
-        CustomAdapter customAdapater = new CustomAdapter(this, 0, objects);
 
-        ListView listView = (ListView)findViewById(R.id.listView);
-        listView.setAdapter(customAdapater);
+        mAdapter = new CustomAdapter(this, 0, objects);
+
+        EnhancedListView mListView = (EnhancedListView)findViewById(R.id.listView);
+        mListView.setAdapter(mAdapter);
+
+        mListView.setDismissCallback(new de.timroes.android.listview.EnhancedListView.OnDismissCallback() {
+            @Override
+            public EnhancedListView.Undoable onDismiss(EnhancedListView listView, final int position) {
+
+                final CustomData item = (CustomData) mAdapter.getItem(position);
+                /// 消す処理
+                mAdapter.remove(item);
+                mAdapter.notifyDataSetChanged();
+//                return new EnhancedListView.Undoable() {
+//                    @Override
+//                    public void undo() {
+                        // 元に戻す処理
+//                        mItemList.add(position, item);
+//                        mAdapter.notifyDataSetChanged();
+//                    }
+//                };
+                return null;
+            }
+        });
+        mListView.enableSwipeToDismiss();
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

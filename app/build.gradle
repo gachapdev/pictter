@@ -60,4 +60,5 @@ dependencies {
     compile('com.twitter.sdk.android:twitter:1.4.0@aar') {
         transitive = true;
     }
+    compile project(':EnhancedListView')
 }

@@ -10,18 +10,20 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_height="360dp"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/linearLayout"
         android:background="#ff00ffd0"
         android:layout_alignParentEnd="false"
-        android:layout_alignParentStart="false">
+        android:layout_alignParentStart="false"
+        android:id="@+id/linearLayout2">
 
-        <ListView
-            android:layout_width="match_parent"
+        <de.timroes.android.listview.EnhancedListView
+            android:layout_width = "match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/listView"
-            android:layout_gravity="center_horizontal" />
+            android:layout_gravity="center_horizontal">
+        </de.timroes.android.listview.EnhancedListView>
     </LinearLayout>
 
     <LinearLayout
@@ -43,6 +45,23 @@
             android:layout_height="wrap_content"
             android:text="検索"
             android:id="@+id/button" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@+id/linearLayout2"
+        android:layout_centerHorizontal="true"
+        android:background="#ffff8780">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="保存"
+            android:id="@+id/button2"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp" />
     </LinearLayout>
 
 

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/home/mike/AndroidStudioProjects/pictter/EnhancedListView/src/main/res/values-v19/colors.xml -->
+    <eat-comment/>
+    <color name="elv_btn_pressed">#33FFFFFF</color>
+</resources>
