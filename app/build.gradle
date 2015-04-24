@@ -30,11 +30,10 @@ repositories {
 android {
     compileSdkVersion 21
     buildToolsVersion "21.1.2"
-
     defaultConfig {
         applicationId "com.elzup.pictter.pictter"
-        minSdkVersion 14
-        targetSdkVersion 21
+        minSdkVersion 16
+        targetSdkVersion 16
         versionCode 1
         versionName "1.0"
     }
@@ -51,12 +50,15 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    productFlavors {
+    }
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:22.0.0'
     compile('com.twitter.sdk.android:twitter:1.4.0@aar') {
         transitive = true;
     }
+    compile 'com.android.support:appcompat-v7:22.1.0'
+    compile 'com.google.android.gms:play-services:7.0.0'
 }
