@@ -1,7 +1,9 @@
 package com.elzup.pictter.pictter;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -26,6 +28,11 @@ public class LoginActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // TODO:
+        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        startActivity(intent);
+
         TwitterAuthConfig authConfig = new TwitterAuthConfig(BuildConfig.CONSUMER_KEY, BuildConfig.CONSUMER_SECRET);
         Fabric.with(this, new Twitter(authConfig));
         setContentView(R.layout.activity_login);
@@ -34,12 +41,14 @@ public class LoginActivity extends ActionBarActivity {
             @Override
             public void success(Result<TwitterSession> result) {
 //                Twitter.getSessionManager().setSession(result.data);
-                System.out.println("twitter auth success!");
+                Log.v("e", "twitter auth success!");
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(intent);
             }
 
             @Override
             public void failure(TwitterException e) {
-                System.out.println("twitter auth failed!");
+                Log.e("e", "twitter auth failed!");
             }
         });
     }
