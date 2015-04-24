@@ -1,12 +1,19 @@
 package com.elzup.pictter.pictter;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListView;
+
 import io.fabric.sdk.android.Fabric;
 import com.twitter.sdk.android.core.TwitterAuthConfig;
 import com.twitter.sdk.android.Twitter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends ActionBarActivity {
 
@@ -21,6 +28,34 @@ public class MainActivity extends ActionBarActivity {
 
         // Example: multiple kits
         Fabric.with(this, new Twitter(authConfig));
+
+
+        // リソースに準備した画像ファイルからBitmapを作成しておく
+        Bitmap image;
+        image = BitmapFactory.decodeResource(getResources(), R.drawable.ingatya);
+
+        // データの作成
+        List<CustomData> objects = new ArrayList<CustomData>();
+        CustomData item1 = new CustomData();
+        item1.setImagaData(image);
+        item1.setTextData("１つ目〜");
+
+        CustomData item2 = new CustomData();
+        item2.setImagaData(image);
+        item2.setTextData("The second");
+
+        CustomData item3 = new CustomData();
+        item3.setImagaData(image);
+        item3.setTextData("Il terzo");
+
+        objects.add(item1);
+        objects.add(item2);
+        objects.add(item3);
+
+        CustomAdapter customAdapater = new CustomAdapter(this, 0, objects);
+
+        ListView listView = (ListView)findViewById(R.id.listView);
+        listView.setAdapter(customAdapater);
     }
 
 
