@@ -1,11 +1,12 @@
 package com.elzup.pictter.pictter;
 
+import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.GridView;
 import android.widget.ListView;
 
 import io.fabric.sdk.android.Fabric;
@@ -15,7 +16,7 @@ import com.twitter.sdk.android.Twitter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,10 +30,11 @@ public class MainActivity extends ActionBarActivity {
         // Example: multiple kits
         Fabric.with(this, new Twitter(authConfig));
 
-
+        //ここからはSample
         // リソースに準備した画像ファイルからBitmapを作成しておく
         Bitmap image;
         image = BitmapFactory.decodeResource(getResources(), R.drawable.ingatya);
+
 
         // データの作成
         List<CustomData> objects = new ArrayList<CustomData>();
@@ -56,6 +58,7 @@ public class MainActivity extends ActionBarActivity {
 
         ListView listView = (ListView)findViewById(R.id.listView);
         listView.setAdapter(customAdapater);
+
     }
 
 
