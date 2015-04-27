@@ -2,69 +2,42 @@ package com.elzup.pictter.pictter;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.GridView;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
-public class ShowGridItem extends Activity {
+public class AboutImage extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main4);
+        setContentView(R.layout.activity_main3);
 
 
-        //ボタンのインスタンス生成
-        Button button = (Button)findViewById(R.id.button1);
-
+        Button button;
+        button = (Button)findViewById(R.id.button1);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 Intent main4 = new Intent();
                 main4.setClassName("com.elzup.pictter.pictter","com.elzup.pictter.pictter.MainActivity");
                 main4.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(main4);
-
             }
         });
-
-
-        //ここからはSample
-        Bitmap image;
-        image = BitmapFactory.decodeResource(getResources(), R.drawable.ingatya);
-
-        List<GridData> objects = new ArrayList<GridData>();
-
-        int num = 3;
-        GridData [] item = new GridData[num];
-        for(int i = 1; i < num; i++) {
-            item[i] = new GridData();
-            item[i].setCheck(true);
-            item[i].setImagaData(image);
-
-            objects.add(item[i]);
-        }
-
-        GridAdapter gridAdapter = new GridAdapter(this,0,objects);
-
-        GridView gridView =(GridView)findViewById(R.id.gridView);
-        gridView.setAdapter(gridAdapter);
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_show_grid_item, menu);
+        getMenuInflater().inflate(R.menu.menu_about_image, menu);
         return true;
     }
 

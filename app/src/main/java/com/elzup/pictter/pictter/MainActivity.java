@@ -1,11 +1,24 @@
 package com.elzup.pictter.pictter;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
+import android.app.FragmentManager;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ListView;
 
@@ -16,7 +29,10 @@ import com.twitter.sdk.android.Twitter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends Activity {
+public class
+        MainActivity extends Activity {
+
+    private CustomAdapter customAdapater;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,8 +46,23 @@ public class MainActivity extends Activity {
         // Example: multiple kits
         Fabric.with(this, new Twitter(authConfig));
 
-        //ここからはSample
-        // リソースに準備した画像ファイルからBitmapを作成しておく
+        //EditTextのフォーカスをきる
+        EditText editText = (EditText) findViewById(R.id.editText);
+        editText.setFocusable(false);
+
+        //ボタンのでインスタンスを移動するまで
+        Button button = (Button) findViewById(R.id.button2);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent main4 = new Intent();
+                main4.setClassName("com.elzup.pictter.pictter", "com.elzup.pictter.pictter.ShowGridItem");
+                startActivity(main4);
+            }
+        });
+
+
+        //ここからはサンプル処理
         Bitmap image;
         image = BitmapFactory.decodeResource(getResources(), R.drawable.ingatya);
 
@@ -54,10 +85,11 @@ public class MainActivity extends Activity {
         objects.add(item2);
         objects.add(item3);
 
-        CustomAdapter customAdapater = new CustomAdapter(this, 0, objects);
+        customAdapater = new CustomAdapter(this, 0, objects);
 
-        ListView listView = (ListView)findViewById(R.id.listView);
+        ListView listView = (ListView) findViewById(R.id.listView);
         listView.setAdapter(customAdapater);
+
 
     }
 
@@ -84,3 +116,7 @@ public class MainActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 }
+
+
+
+

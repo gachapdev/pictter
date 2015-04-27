@@ -42,7 +42,7 @@
             android:layout_height="wrap_content"
             android:text="保存"
             android:id="@+id/button1"
-            android:textSize="30dp" />
+            android:textSize="30sp" />
     </LinearLayout>
 
 </RelativeLayout>

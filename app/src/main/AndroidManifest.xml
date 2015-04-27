@@ -27,6 +27,10 @@
             android:name=".ShowGridItem"
             android:label="@string/title_activity_show_grid_item" >
         </activity>
+        <activity
+            android:name=".AboutImage"
+            android:label="@string/title_activity_about_image" >
+        </activity>
     </application>
 
 </manifest>

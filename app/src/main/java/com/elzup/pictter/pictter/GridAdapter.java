@@ -36,7 +36,7 @@ public class GridAdapter extends ArrayAdapter<GridData> {
         check = (CheckBox) convertView.findViewById(R.id.checkbox);
         check.setChecked(item.getCheck());
 
-        // CustomDataのデータをViewの各Widgetにセットする
+        // GridDataのデータをViewの各Widgetにセットする
         ImageView imageView;
         imageView = (ImageView) convertView.findViewById(R.id.imageView2);
         imageView.setImageBitmap(item.getImageData());
