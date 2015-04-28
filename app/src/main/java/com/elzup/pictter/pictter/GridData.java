@@ -1,7 +1,5 @@
 package com.elzup.pictter.pictter;
 
-import android.widget.CheckBox;
-
 import android.graphics.Bitmap;
 
 /**
@@ -15,7 +13,9 @@ public class GridData {
         check = nowcheck;
     }
 
-    public boolean getCheck() { return check;}
+    public boolean getCheck() {
+        return check;
+    }
 
     public void setImagaData(Bitmap image) {
         imageData_ = image;

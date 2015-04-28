@@ -46,7 +46,6 @@ public class SwipeAction implements View.OnTouchListener {
     private boolean mPaused;
 
 
-
     /**
      * The callback interface used by {@link com.elzup.pictter.pictter.SwipeAction} to inform its client
      * about a successful dismissal of one or more list item positions.

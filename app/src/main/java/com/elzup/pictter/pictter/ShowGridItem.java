@@ -24,13 +24,13 @@ public class ShowGridItem extends Activity {
 
 
         //ボタンのインスタンス生成
-        Button button = (Button)findViewById(R.id.button1);
+        Button button = (Button) findViewById(R.id.button1);
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent main4 = new Intent();
-                main4.setClassName("com.elzup.pictter.pictter","com.elzup.pictter.pictter.MainActivity");
+                main4.setClassName("com.elzup.pictter.pictter", "com.elzup.pictter.pictter.MainActivity");
                 main4.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(main4);
 
@@ -45,8 +45,8 @@ public class ShowGridItem extends Activity {
         List<GridData> objects = new ArrayList<GridData>();
 
         int num = 3;
-        GridData [] item = new GridData[num];
-        for(int i = 1; i < num; i++) {
+        GridData[] item = new GridData[num];
+        for (int i = 1; i < num; i++) {
             item[i] = new GridData();
             item[i].setCheck(true);
             item[i].setImagaData(image);
@@ -54,9 +54,9 @@ public class ShowGridItem extends Activity {
             objects.add(item[i]);
         }
 
-        GridAdapter gridAdapter = new GridAdapter(this,0,objects);
+        GridAdapter gridAdapter = new GridAdapter(this, 0, objects);
 
-        GridView gridView =(GridView)findViewById(R.id.gridView);
+        GridView gridView = (GridView) findViewById(R.id.gridView);
         gridView.setAdapter(gridAdapter);
     }
 
