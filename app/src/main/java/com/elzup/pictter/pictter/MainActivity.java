@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.FragmentManager;
+import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -30,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class
-        MainActivity extends Activity {
+        MainActivity extends ListActivity {
 
     private CustomAdapter customAdapater;
 
@@ -85,10 +86,33 @@ public class
         objects.add(item2);
         objects.add(item3);
 
-        customAdapater = new CustomAdapter(this, 0, objects);
+        customAdapater = new CustomAdapter(this,
+                                            0,
+                                            objects);
+        setListAdapter(customAdapater);
+//        ListView listView = (ListView) findViewById(R.id.listView);
+        ListView listView =getListView();
+        SwipeAction touchListener =
+                new SwipeAction(
+                        listView,
+                        new SwipeAction.DismissCallbacks() {
+                            @Override
+                            public boolean canDismiss(int position) {
+                                return true;
+                            }
 
-        ListView listView = (ListView) findViewById(R.id.listView);
-        listView.setAdapter(customAdapater);
+                            @Override
+                            public void onDismiss(ListView listView, int[] reverseSortedPositions) {
+                                for (int position : reverseSortedPositions) {
+                                    customAdapater.remove(customAdapater.getItem(position));
+                                }
+                                customAdapater.notifyDataSetChanged();
+                            }
+                        });
+        listView.setOnTouchListener(touchListener);
+        // Setting this scroll listener is required to ensure that during ListView scrolling,
+        // we don't look for swipes.
+        listView.setOnScrollListener(touchListener.makeScrollListener());
 
 
     }
