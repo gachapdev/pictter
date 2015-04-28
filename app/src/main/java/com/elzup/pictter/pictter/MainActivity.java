@@ -1,18 +1,44 @@
 package com.elzup.pictter.pictter;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends ActionBarActivity {
+import com.twitter.sdk.android.core.Callback;
+import com.twitter.sdk.android.core.Result;
+import com.twitter.sdk.android.core.TwitterException;
+import com.twitter.sdk.android.core.models.Search;
+
+public class MainActivity extends Activity {
+
+    private TwitterManager twitterManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.twitterManager = new TwitterManager();
+        if (!this.loginCheck()) {
+            return;
+        }
         setContentView(R.layout.activity_main2);
-
+        this.twitterManager.setupClient();
+        String keyword = getString(R.string.debug_default_search_q);
+        this.twitterManager.searchTweets(keyword, new SearchTweetsCallback<Search>());
     }
+
+    private boolean loginCheck() {
+        if (twitterManager.loginCheck(this)) {
+            return true;
+        }
+        // 認証セッションが残っていなければログイン画面へ
+        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+        startActivity(intent);
+        finish();
+        return false;
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -35,4 +61,20 @@ public class MainActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    private class SearchTweetsCallback<Search> extends Callback<Search> {
+
+        @Override
+        public void success(Result<Search> searchResult) {
+            System.out.println(searchResult.response.getStatus());
+//            searchResult.data.tweets;
+        }
+
+        @Override
+        public void failure(TwitterException e) {
+
+        }
+    }
+
+
 }
