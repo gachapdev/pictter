@@ -6,34 +6,28 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import io.fabric.sdk.android.Fabric;
-
-import com.twitter.sdk.android.core.TwitterAuthConfig;
-import com.twitter.sdk.android.Twitter;
-import com.twitter.sdk.android.core.TwitterSession;
-
 public class MainActivity extends Activity {
 
-    private TwitterSession session;
+    private TwitterManager twitterManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        TwitterAuthConfig authConfig = new TwitterAuthConfig(BuildConfig.CONSUMER_KEY, BuildConfig.CONSUMER_SECRET);
-        Fabric.with(this, new Twitter(authConfig));
-        session = Twitter.getSessionManager().getActiveSession();
-        if (session == null) {
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivity(intent);
-            finish();
-        }
+        this.twitterManager = new TwitterManager();
+        this.loginCheck();
         setContentView(R.layout.activity_main2);
     }
 
-    private void clearSession() {
-        Twitter.getSessionManager().clearSession(session.getId());
-    }
 
+    private void loginCheck() {
+        if (twitterManager.loginCheck(this)) {
+            return;
+        }
+        // 認証セッションが残っていなければログイン画面へ
+        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+        startActivity(intent);
+        finish();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
