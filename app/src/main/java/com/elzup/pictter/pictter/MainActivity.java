@@ -12,30 +12,31 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
-import com.twitter.sdk.android.Twitter;
-import com.twitter.sdk.android.core.TwitterAuthConfig;
+import com.twitter.sdk.android.core.Callback;
+import com.twitter.sdk.android.core.Result;
+import com.twitter.sdk.android.core.TwitterException;
+import com.twitter.sdk.android.core.models.Search;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import io.fabric.sdk.android.Fabric;
 
-public class
-        MainActivity extends Activity {
+public class MainActivity extends Activity {
 
     private CustomAdapter customAdapater;
+    private TwitterManager twitterManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.twitterManager = new TwitterManager();
+        if (!this.loginCheck()) {
+            return;
+        }
         setContentView(R.layout.activity_main2);
-        // Example: single kit
-        TwitterAuthConfig authConfig = new TwitterAuthConfig("consumerKey", "consumerSecret");
-
-        Fabric.with(this, new Twitter(authConfig));
-
-        // Example: multiple kits
-        Fabric.with(this, new Twitter(authConfig));
+        this.twitterManager.setupClient();
+        String keyword = getString(R.string.debug_default_search_q);
+        this.twitterManager.searchTweets(keyword, new SearchTweetsCallback<Search>());
 
         //EditTextのフォーカスをきる
         EditText editText = (EditText) findViewById(R.id.editText);
@@ -103,7 +104,17 @@ public class
         // we don't look for swipes.
         listView.setOnScrollListener(touchListener.makeScrollListener());
 
+    }
 
+    private boolean loginCheck() {
+        if (twitterManager.loginCheck(this)) {
+            return true;
+        }
+        // 認証セッションが残っていなければログイン画面へ
+        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+        startActivity(intent);
+        finish();
+        return false;
     }
 
 
@@ -128,6 +139,22 @@ public class
 
         return super.onOptionsItemSelected(item);
     }
+
+    private class SearchTweetsCallback<Search> extends Callback<Search> {
+
+        @Override
+        public void success(Result<Search> searchResult) {
+            System.out.println(searchResult.response.getStatus());
+//            searchResult.data.tweets;
+        }
+
+        @Override
+        public void failure(TwitterException e) {
+
+        }
+    }
+
+
 }
 
 

@@ -8,7 +8,6 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.elzup.pictter.pictter.MainActivity">
 
-
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="fill_parent"

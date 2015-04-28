@@ -8,4 +8,6 @@
     <string name="title_activity_show_grid_item">ShowGridItem</string>
     <string name="title_activity_about_image">AboutImage</string>
 
+    <string name="debug_default_search_q">#艦これ版深夜の真剣お絵描き60分一本勝負</string>
+
 </resources>
