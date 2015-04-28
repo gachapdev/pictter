@@ -6,6 +6,11 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.twitter.sdk.android.core.Callback;
+import com.twitter.sdk.android.core.Result;
+import com.twitter.sdk.android.core.TwitterException;
+import com.twitter.sdk.android.core.models.Search;
+
 public class MainActivity extends Activity {
 
     private TwitterManager twitterManager;
@@ -14,19 +19,24 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.twitterManager = new TwitterManager();
-        this.loginCheck();
+        if (!this.loginCheck()) {
+            return;
+        }
         setContentView(R.layout.activity_main2);
+        this.twitterManager.setupClient();
+        String keyword = getString(R.string.debug_default_search_q);
+        this.twitterManager.searchTweets(keyword, new SearchTweetsCallback<Search>());
     }
 
-
-    private void loginCheck() {
+    private boolean loginCheck() {
         if (twitterManager.loginCheck(this)) {
-            return;
+            return true;
         }
         // 認証セッションが残っていなければログイン画面へ
         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
         startActivity(intent);
         finish();
+        return false;
     }
 
     @Override
@@ -50,4 +60,20 @@ public class MainActivity extends Activity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    private class SearchTweetsCallback<Search> extends Callback<Search> {
+
+        @Override
+        public void success(Result<Search> searchResult) {
+            System.out.println(searchResult.response.getStatus());
+//            searchResult.data.tweets;
+        }
+
+        @Override
+        public void failure(TwitterException e) {
+
+        }
+    }
+
+
 }
