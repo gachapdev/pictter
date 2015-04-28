@@ -21,10 +21,14 @@
      To retrieve OAuth 2.0 tokens or invalidate tokens to disconnect a user. This disconnect
      option is required to comply with the Google+ Sign-In developer policies
     -->
-    <uses-permission android:name="android.permission.USE_CREDENTIALS" /> <!-- To retrieve the account name (email) as part of sign-in: -->
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" /> <!-- To auto-complete the email text field in the login form with the user's emails -->
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+    <!-- To retrieve the account name (email) as part of sign-in: -->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -45,13 +49,19 @@
             android:value="7244bfde4c0b11528ae855b3d9c8e334dc03435e" />
 
         <activity
+            android:name=".ShowGridItem"
+            android:label="@string/title_activity_show_grid_item"></activity>
+        <activity
+            android:name=".AboutImage"
+            android:label="@string/title_activity_about_image"></activity>
+        <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login">
 
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
             </intent-filter>
-            </activity>
+        </activity>
     </application>
 
 </manifest>

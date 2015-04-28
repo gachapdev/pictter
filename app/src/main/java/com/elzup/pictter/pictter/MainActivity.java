@@ -2,17 +2,28 @@ package com.elzup.pictter.pictter;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
 
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
 import com.twitter.sdk.android.core.TwitterException;
 import com.twitter.sdk.android.core.models.Search;
 
+import java.util.ArrayList;
+import java.util.List;
+
+
 public class MainActivity extends Activity {
 
+    private CustomAdapter customAdapater;
     private TwitterManager twitterManager;
 
     @Override
@@ -26,6 +37,73 @@ public class MainActivity extends Activity {
         this.twitterManager.setupClient();
         String keyword = getString(R.string.debug_default_search_q);
         this.twitterManager.searchTweets(keyword, new SearchTweetsCallback<Search>());
+
+        //EditTextのフォーカスをきる
+        EditText editText = (EditText) findViewById(R.id.editText);
+        editText.setFocusable(false);
+
+        //ボタンのでインスタンスを移動するまで
+        Button button = (Button) findViewById(R.id.button2);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent main4 = new Intent();
+                main4.setClassName("com.elzup.pictter.pictter", "com.elzup.pictter.pictter.ShowGridItem");
+                startActivity(main4);
+            }
+        });
+
+
+        //ここからはサンプル処理
+        Bitmap image;
+        image = BitmapFactory.decodeResource(getResources(), R.drawable.ingatya);
+
+
+        // データの作成
+        List<CustomData> objects = new ArrayList<CustomData>();
+        CustomData item1 = new CustomData();
+        item1.setImagaData(image);
+        item1.setTextData("１つ目〜");
+
+        CustomData item2 = new CustomData();
+        item2.setImagaData(image);
+        item2.setTextData("The second");
+
+        CustomData item3 = new CustomData();
+        item3.setImagaData(image);
+        item3.setTextData("Il terzo");
+
+        objects.add(item1);
+        objects.add(item2);
+        objects.add(item3);
+
+        customAdapater = new CustomAdapter(this,
+                0,
+                objects);
+        ListView listView = (ListView) findViewById(R.id.list);
+        listView.setAdapter(customAdapater);
+        SwipeAction touchListener =
+                new SwipeAction(
+                        listView,
+                        new SwipeAction.DismissCallbacks() {
+                            @Override
+                            public boolean canDismiss(int position) {
+                                return true;
+                            }
+
+                            @Override
+                            public void onDismiss(ListView listView, int[] reverseSortedPositions) {
+                                for (int position : reverseSortedPositions) {
+                                    customAdapater.remove(customAdapater.getItem(position));
+                                }
+                                customAdapater.notifyDataSetChanged();
+                            }
+                        });
+        listView.setOnTouchListener(touchListener);
+        // Setting this scroll listener is required to ensure that during ListView scrolling,
+        // we don't look for swipes.
+        listView.setOnScrollListener(touchListener.makeScrollListener());
+
     }
 
     private boolean loginCheck() {
@@ -78,3 +156,7 @@ public class MainActivity extends Activity {
 
 
 }
+
+
+
+
