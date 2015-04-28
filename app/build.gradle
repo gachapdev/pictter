@@ -56,8 +56,9 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:22.0.0'
     compile('com.twitter.sdk.android:twitter:1.4.0@aar') {
         transitive = true;
     }
+    compile 'com.android.support:appcompat-v7:22.1.0'
+    compile 'com.google.android.gms:play-services:7.0.0'
 }
