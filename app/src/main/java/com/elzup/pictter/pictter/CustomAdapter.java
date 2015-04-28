@@ -3,6 +3,8 @@ package com.elzup.pictter.pictter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,22 +14,26 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.twitter.sdk.android.core.models.Tweet;
+
+import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 
 /**
  * Created by mike on 15/04/25.
  */
-public class CustomAdapter extends ArrayAdapter<CustomData> {
+public class CustomAdapter extends ArrayAdapter<Tweet> {
     private Activity activity;
-    List<CustomData> objects;
+    List<Tweet> tweets;
     private LayoutInflater layoutInflater_;
     private static final float BUTTON_WIDTH_DP = 70f;
     private int margin;
 
-    public CustomAdapter(Context context, int textViewResourceId, List<CustomData> objects) {
-        super(context, textViewResourceId, objects);
+    public CustomAdapter(Context context, int textViewResourceId, List<Tweet> tweets) {
+        super(context, textViewResourceId, tweets);
         layoutInflater_ = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        this.objects = objects;
+        this.tweets = tweets;
         this.activity = (Activity) this.getContext();
         //ページ2のRelativeLayoutの幅を計算してmarginへ格納する。
         float density = getContext().getResources().getDisplayMetrics().density;
@@ -46,12 +52,18 @@ public class CustomAdapter extends ArrayAdapter<CustomData> {
         if (null == convertView) {
             convertView = layoutInflater_.inflate(R.layout.item_layout, null);
         }
-
+        Tweet tweet = tweets.get(position);
 
         //イメージをタップして詳細表示
         ImageView imageView;
         imageView = (ImageView) convertView.findViewById(R.id.image);
-        imageView.setImageBitmap(objects.get(position).getImageData());
+        Bitmap image = null;
+        try {
+            image = BitmapFactory.decodeStream(new URL(tweet.entities.media.get(0).mediaUrl).openConnection().getInputStream());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        imageView.setImageBitmap(image);
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -66,17 +78,7 @@ public class CustomAdapter extends ArrayAdapter<CustomData> {
 
         TextView textView;
         textView = (TextView) convertView.findViewById(R.id.text);
-        textView.setText(objects.get(position).getTextData());
-        //margin分スクロールしてViewを貼りつける
-//        ViewPager viewPager = (ViewPager) convertView.findViewById(R.id.viewpager);
-//        viewPager.setPageMargin(-margin);
-//
-//
-//        adapter = new MyPagerAdapter(getContext(), getItem(position));
-//        adapter.setActivity(activity);
-//
-//        viewPager.setAdapter(adapter);
-
+        textView.setText(tweet.text);
 
         return convertView;
     }

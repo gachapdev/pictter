@@ -9,6 +9,9 @@ import com.twitter.sdk.android.core.TwitterAuthConfig;
 import com.twitter.sdk.android.core.TwitterCore;
 import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.core.models.Search;
+import com.twitter.sdk.android.core.models.Tweet;
+
+import java.util.Collection;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -61,6 +64,18 @@ public class TwitterManager {
         }
         debug_session_loaded = true;
         this.clearSession();
+    }
+
+    public static Collection<Tweet> filterImageTweet(Collection<Tweet> tweets) {
+        for (Tweet tweet : tweets) {
+            if (tweet.entities == null || tweet.entities.media == null) {
+                continue;
+            }
+            if (tweet.entities.media.size() == 0) {
+                tweets.remove(tweet);
+            }
+        }
+        return tweets;
     }
 
 }
