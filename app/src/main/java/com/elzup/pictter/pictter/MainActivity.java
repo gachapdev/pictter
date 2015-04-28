@@ -1,26 +1,37 @@
 package com.elzup.pictter.pictter;
 
-import android.support.v7.app.ActionBarActivity;
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+
 import io.fabric.sdk.android.Fabric;
+
 import com.twitter.sdk.android.core.TwitterAuthConfig;
 import com.twitter.sdk.android.Twitter;
+import com.twitter.sdk.android.core.TwitterSession;
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends Activity {
+
+    private TwitterSession session;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        TwitterAuthConfig authConfig = new TwitterAuthConfig(BuildConfig.CONSUMER_KEY, BuildConfig.CONSUMER_SECRET);
+        Fabric.with(this, new Twitter(authConfig));
+        session = Twitter.getSessionManager().getActiveSession();
+        if (session == null) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+        }
         setContentView(R.layout.activity_main2);
-        // Example: single kit
-        TwitterAuthConfig authConfig = new TwitterAuthConfig("consumerKey", "consumerSecret");
+    }
 
-        Fabric.with(this, new Twitter(authConfig));
-
-        // Example: multiple kits
-        Fabric.with(this, new Twitter(authConfig));
+    private void clearSession() {
+        Twitter.getSessionManager().clearSession(session.getId());
     }
 
 
