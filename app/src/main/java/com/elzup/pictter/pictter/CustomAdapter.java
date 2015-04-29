@@ -17,17 +17,17 @@ import java.util.List;
 /**
  * Created by mike on 15/04/25.
  */
-public class CustomAdapter extends ArrayAdapter<CustomData> {
+public class CustomAdapter extends ArrayAdapter<PictureStatus> {
     private Activity activity;
-    List<CustomData> objects;
+    List<PictureStatus> tweets;
     private LayoutInflater layoutInflater_;
     private static final float BUTTON_WIDTH_DP = 70f;
     private int margin;
 
-    public CustomAdapter(Context context, int textViewResourceId, List<CustomData> objects) {
-        super(context, textViewResourceId, objects);
+    public CustomAdapter(Context context, int textViewResourceId, List<PictureStatus> tweets) {
+        super(context, textViewResourceId, tweets);
         layoutInflater_ = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        this.objects = objects;
+        this.tweets = tweets;
         this.activity = (Activity) this.getContext();
         //ページ2のRelativeLayoutの幅を計算してmarginへ格納する。
         float density = getContext().getResources().getDisplayMetrics().density;
@@ -46,12 +46,14 @@ public class CustomAdapter extends ArrayAdapter<CustomData> {
         if (null == convertView) {
             convertView = layoutInflater_.inflate(R.layout.item_layout, null);
         }
-
+        PictureStatus tweet = tweets.get(position);
 
         //イメージをタップして詳細表示
         ImageView imageView;
         imageView = (ImageView) convertView.findViewById(R.id.image);
-        imageView.setImageBitmap(objects.get(position).getImageData());
+
+        imageView.setImageBitmap(tweet.getImage());
+
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -66,20 +68,9 @@ public class CustomAdapter extends ArrayAdapter<CustomData> {
 
         TextView textView;
         textView = (TextView) convertView.findViewById(R.id.text);
-        textView.setText(objects.get(position).getTextData());
-        //margin分スクロールしてViewを貼りつける
-//        ViewPager viewPager = (ViewPager) convertView.findViewById(R.id.viewpager);
-//        viewPager.setPageMargin(-margin);
-//
-//
-//        adapter = new MyPagerAdapter(getContext(), getItem(position));
-//        adapter.setActivity(activity);
-//
-//        viewPager.setAdapter(adapter);
-
+        textView.setText(tweet.getText());
 
         return convertView;
     }
-
 
 }

@@ -2,8 +2,6 @@ package com.elzup.pictter.pictter;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -12,13 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
-import com.twitter.sdk.android.core.Callback;
-import com.twitter.sdk.android.core.Result;
-import com.twitter.sdk.android.core.TwitterException;
-import com.twitter.sdk.android.core.models.Search;
-
 import java.util.ArrayList;
-import java.util.List;
 
 
 public class MainActivity extends Activity {
@@ -29,14 +21,12 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.twitterManager = new TwitterManager();
+        this.twitterManager = new TwitterManager(this);
         if (!this.loginCheck()) {
             return;
         }
         setContentView(R.layout.activity_main2);
-        this.twitterManager.setupClient();
         String keyword = getString(R.string.debug_default_search_q);
-        this.twitterManager.searchTweets(keyword, new SearchTweetsCallback<Search>());
 
         //EditTextのフォーカスをきる
         EditText editText = (EditText) findViewById(R.id.editText);
@@ -53,33 +43,7 @@ public class MainActivity extends Activity {
             }
         });
 
-
-        //ここからはサンプル処理
-        Bitmap image;
-        image = BitmapFactory.decodeResource(getResources(), R.drawable.ingatya);
-
-
-        // データの作成
-        List<CustomData> objects = new ArrayList<CustomData>();
-        CustomData item1 = new CustomData();
-        item1.setImagaData(image);
-        item1.setTextData("１つ目〜");
-
-        CustomData item2 = new CustomData();
-        item2.setImagaData(image);
-        item2.setTextData("The second");
-
-        CustomData item3 = new CustomData();
-        item3.setImagaData(image);
-        item3.setTextData("Il terzo");
-
-        objects.add(item1);
-        objects.add(item2);
-        objects.add(item3);
-
-        customAdapater = new CustomAdapter(this,
-                0,
-                objects);
+        customAdapater = new CustomAdapter(this, 0, new ArrayList<PictureStatus>());
         ListView listView = (ListView) findViewById(R.id.list);
         listView.setAdapter(customAdapater);
         SwipeAction touchListener =
@@ -104,10 +68,12 @@ public class MainActivity extends Activity {
         // we don't look for swipes.
         listView.setOnScrollListener(touchListener.makeScrollListener());
 
+        this.twitterManager.searchTweets(keyword, null, getResources().getInteger(R.integer.search_tweet_limit), customAdapater);
+
     }
 
     private boolean loginCheck() {
-        if (twitterManager.loginCheck(this)) {
+        if (twitterManager.isLogin()) {
             return true;
         }
         // 認証セッションが残っていなければログイン画面へ
@@ -125,6 +91,7 @@ public class MainActivity extends Activity {
         return true;
     }
 
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -140,23 +107,6 @@ public class MainActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    private class SearchTweetsCallback<Search> extends Callback<Search> {
-
-        @Override
-        public void success(Result<Search> searchResult) {
-            System.out.println(searchResult.response.getStatus());
-//            searchResult.data.tweets;
-        }
-
-        @Override
-        public void failure(TwitterException e) {
-
-        }
-    }
-
 
 }
-
-
-
 

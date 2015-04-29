@@ -30,6 +30,18 @@ repositories {
 android {
     compileSdkVersion 21
     buildToolsVersion "21.1.2"
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES.txt'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/dependencies.txt'
+        exclude 'META-INF/LGPL2.1'
+    }
     defaultConfig {
         applicationId "com.elzup.pictter.pictter"
         minSdkVersion 16
@@ -47,7 +59,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             buildConfigField "String", "CONSUMER_KEY", "\"${props.getProperty("twitterConsumerKey")}\""
             buildConfigField "String", "CONSUMER_SECRET", "\"${props.getProperty("twitterConsumerSecret")}\""
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
     productFlavors {
@@ -61,4 +72,9 @@ dependencies {
     }
     compile 'com.android.support:appcompat-v7:22.1.0'
     compile 'com.google.android.gms:play-services:7.0.0'
+    compile 'org.twitter4j:twitter4j-core:4.0.+'
+    compile 'org.twitter4j:twitter4j-async:4.0.+'
+    compile group: 'com.google.guava', name: 'guava', version: '12.0'
+
 }
+
