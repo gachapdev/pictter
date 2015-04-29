@@ -12,8 +12,6 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
-import twitter4j.Status;
-
 
 public class MainActivity extends Activity {
 
@@ -45,7 +43,7 @@ public class MainActivity extends Activity {
             }
         });
 
-        customAdapater = new CustomAdapter(this, 0, new ArrayList<Status>());
+        customAdapater = new CustomAdapter(this, 0, new ArrayList<PictureStatus>());
         ListView listView = (ListView) findViewById(R.id.list);
         listView.setAdapter(customAdapater);
         SwipeAction touchListener =

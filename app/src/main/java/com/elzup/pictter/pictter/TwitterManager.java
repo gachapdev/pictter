@@ -11,7 +11,6 @@ import com.twitter.sdk.android.core.TwitterAuthToken;
 import com.twitter.sdk.android.core.TwitterSession;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -19,7 +18,6 @@ import javax.annotation.Nullable;
 import io.fabric.sdk.android.Fabric;
 import twitter4j.Query;
 import twitter4j.QueryResult;
-import twitter4j.ResponseList;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -64,31 +62,17 @@ public class TwitterManager {
         this.session = com.twitter.sdk.android.Twitter.getSessionManager().getActiveSession();
     }
 
-    public void searchTweets(String q, Long maxId, Integer count, CustomAdapter customAdapter) {
-        class Param {
-            String q;
-            Long maxId;
-            Integer count;
-            CustomAdapter customAdapter;
-            Param(String q, Long maxId, Integer count, CustomAdapter customAdapter) {
-                this.q = q;
-                this.maxId = maxId;
-                this.count = count;
-                this.customAdapter = customAdapter;
-            }
-        }
-
-        final Param param = new Param(q, maxId, count, customAdapter);
+    public void searchTweets(final String q, final Long maxId, final Integer count, final CustomAdapter customAdapter) {
 
         AsyncTask<Void, Void, List<Status>> task = new AsyncTask<Void, Void, List<Status>>() {
             @Override
             protected List<twitter4j.Status> doInBackground(Void... voids) {
                 try {
-                    Query query = new Query(param.q);
-                    if (param.maxId != null) {
-                        query.maxId(param.maxId);
+                    Query query = new Query(q);
+                    if (maxId != null) {
+                        query.maxId(maxId);
                     }
-                    query.count(param.count);
+                    query.count(count);
 //                    query.resultType(Query.ResultType.popular);
                     QueryResult res = twitter.search(query);
                     return res.getTweets();
@@ -103,7 +87,11 @@ public class TwitterManager {
                 if (tweets == null) {
                     return;
                 }
-                param.customAdapter.addAll(TwitterManager.filterImageTweet(tweets));
+                List<PictureStatus> pictureStatusList = new ArrayList<>();
+                for (twitter4j.Status status : TwitterManager.filterImageTweet(tweets)) {
+                    PictureStatus pictureStatus = new PictureStatus(status);
+                    pictureStatus.asyncImage(customAdapter);
+                }
             }
         };
         task.execute();
