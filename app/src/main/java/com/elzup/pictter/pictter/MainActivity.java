@@ -2,8 +2,6 @@ package com.elzup.pictter.pictter;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -12,13 +10,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
-import com.twitter.sdk.android.core.Callback;
-import com.twitter.sdk.android.core.Result;
-import com.twitter.sdk.android.core.TwitterException;
-import com.twitter.sdk.android.core.models.Search;
-import com.twitter.sdk.android.core.models.Tweet;
-
 import java.util.ArrayList;
+
+import twitter4j.Status;
 
 
 public class MainActivity extends Activity {
@@ -29,25 +23,12 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.twitterManager = new TwitterManager();
+        this.twitterManager = new TwitterManager(this);
         if (!this.loginCheck()) {
             return;
         }
         setContentView(R.layout.activity_main2);
-        this.twitterManager.setupClient();
         String keyword = getString(R.string.debug_default_search_q);
-
-        this.twitterManager.searchTweets(keyword, new Callback<Search>() {
-            @Override
-            public void success(Result<Search> searchResult) {
-                customAdapater.addAll(TwitterManager.filterImageTweet(searchResult.data.tweets));
-            }
-
-            @Override
-            public void failure(TwitterException e) {
-
-            }
-        });
 
         //EditTextのフォーカスをきる
         EditText editText = (EditText) findViewById(R.id.editText);
@@ -64,7 +45,7 @@ public class MainActivity extends Activity {
             }
         });
 
-        customAdapater = new CustomAdapter(this, 0, new ArrayList<Tweet>());
+        customAdapater = new CustomAdapter(this, 0, new ArrayList<Status>());
         ListView listView = (ListView) findViewById(R.id.list);
         listView.setAdapter(customAdapater);
         SwipeAction touchListener =
@@ -89,10 +70,12 @@ public class MainActivity extends Activity {
         // we don't look for swipes.
         listView.setOnScrollListener(touchListener.makeScrollListener());
 
+        this.twitterManager.searchTweets(keyword, null, getResources().getInteger(R.integer.search_tweet_limit), customAdapater);
+
     }
 
     private boolean loginCheck() {
-        if (twitterManager.loginCheck(this)) {
+        if (twitterManager.isLogin()) {
             return true;
         }
         // 認証セッションが残っていなければログイン画面へ

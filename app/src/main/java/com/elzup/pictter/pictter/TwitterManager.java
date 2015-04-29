@@ -1,81 +1,132 @@
 package com.elzup.pictter.pictter;
 
 import android.content.Context;
+import android.os.AsyncTask;
 
-import com.twitter.sdk.android.Twitter;
-import com.twitter.sdk.android.core.Callback;
-import com.twitter.sdk.android.core.TwitterApiClient;
+import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import com.twitter.sdk.android.core.TwitterAuthConfig;
-import com.twitter.sdk.android.core.TwitterCore;
+import com.twitter.sdk.android.core.TwitterAuthToken;
 import com.twitter.sdk.android.core.TwitterSession;
-import com.twitter.sdk.android.core.models.Search;
-import com.twitter.sdk.android.core.models.Tweet;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+
+import javax.annotation.Nullable;
 
 import io.fabric.sdk.android.Fabric;
+import twitter4j.Query;
+import twitter4j.QueryResult;
+import twitter4j.ResponseList;
+import twitter4j.Status;
+import twitter4j.Twitter;
+import twitter4j.TwitterException;
+import twitter4j.TwitterFactory;
+import twitter4j.auth.AccessToken;
 
 public class TwitterManager {
 
     private TwitterSession session;
-    private static boolean debug_session_loaded = false;
-    private TwitterApiClient client;
+    private Twitter twitter;
 
-    public boolean loginCheck(Context context) {
-        TwitterAuthConfig authConfig = new TwitterAuthConfig(BuildConfig.CONSUMER_KEY, BuildConfig.CONSUMER_SECRET);
-        Fabric.with(context, new Twitter(authConfig));
-        session = Twitter.getSessionManager().getActiveSession();
-        if (BuildConfig.DEBUG) {
-            this.debug_login();
-        }
-        return this.isLogin();
-    }
-
-    public void setupClient() {
-        if (!this.isLogin() || this.client != null) {
-            return;
-        }
-        this.client = TwitterCore.getInstance().getApiClient(this.session);
-    }
-
-    public void searchTweets(String q, Long maxId, Callback<Search> callback) {
-        // TODO; order = {mixed, recent, popuer}
-        int count = 100;
-        client.getSearchService().tweets(q, null, "ja", null, "recent", count, null, null, maxId, false, callback);
-    }
-
-    public void searchTweets(String q, Callback<Search> callback) {
-        this.searchTweets(q, null, callback);
+    TwitterManager(Context context) {
+        setupClient(context);
     }
 
     public boolean isLogin() {
+        return this.twitter != null;
+    }
+
+    public void setupClient(Context context) {
+        this.setupSession(context);
+        this.twitter = null;
+        if (!this.hasSession()) {
+            return;
+        }
+        TwitterAuthToken token = this.session.getAuthToken();
+        this.setupTwitter(token.token, token.secret);
+    }
+
+    public void setupTwitter(String token, String tokenSecret) {
+        twitter = TwitterFactory.getSingleton();
+        twitter.setOAuthConsumer(BuildConfig.CONSUMER_KEY, BuildConfig.CONSUMER_SECRET);
+        twitter.setOAuthAccessToken(new AccessToken(token, tokenSecret));
+    }
+
+    private void setupSession(Context context) {
+        if (this.hasSession()) {
+            return;
+        }
+        TwitterAuthConfig authConfig = new TwitterAuthConfig(BuildConfig.CONSUMER_KEY, BuildConfig.CONSUMER_SECRET);
+        Fabric.with(context, new com.twitter.sdk.android.Twitter(authConfig));
+        this.session = com.twitter.sdk.android.Twitter.getSessionManager().getActiveSession();
+    }
+
+    public void searchTweets(String q, Long maxId, Integer count, CustomAdapter customAdapter) {
+        class Param {
+            String q;
+            Long maxId;
+            Integer count;
+            CustomAdapter customAdapter;
+            Param(String q, Long maxId, Integer count, CustomAdapter customAdapter) {
+                this.q = q;
+                this.maxId = maxId;
+                this.count = count;
+                this.customAdapter = customAdapter;
+            }
+        }
+
+        final Param param = new Param(q, maxId, count, customAdapter);
+
+        AsyncTask<Void, Void, List<Status>> task = new AsyncTask<Void, Void, List<Status>>() {
+            @Override
+            protected List<twitter4j.Status> doInBackground(Void... voids) {
+                try {
+                    Query query = new Query(param.q);
+                    if (param.maxId != null) {
+                        query.maxId(param.maxId);
+                    }
+                    query.count(param.count);
+//                    query.resultType(Query.ResultType.popular);
+                    QueryResult res = twitter.search(query);
+                    return res.getTweets();
+                } catch (TwitterException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(List<twitter4j.Status> tweets) {
+                if (tweets == null) {
+                    return;
+                }
+                param.customAdapter.addAll(TwitterManager.filterImageTweet(tweets));
+            }
+        };
+        task.execute();
+    }
+
+    public boolean hasSession() {
         return this.session != null;
     }
 
     public void clearSession() {
-        if (this.isLogin()) {
-            Twitter.getSessionManager().clearSession(session.getId());
-        }
-    }
-
-    private void debug_login() {
-        if (debug_session_loaded) {
+        if (!this.hasSession()) {
             return;
         }
-        debug_session_loaded = true;
-        this.clearSession();
+        com.twitter.sdk.android.Twitter.getSessionManager().clearSession(session.getId());
     }
 
-    public static Collection<Tweet> filterImageTweet(Collection<Tweet> tweets) {
-        for (Tweet tweet : tweets) {
-            if (tweet.entities == null || tweet.entities.media == null) {
-                continue;
+    public static List<Status> filterImageTweet(List<Status> tweets) {
+        return ImmutableList.copyOf(Iterables.filter(tweets, new Predicate<Status>() {
+            @Override
+            public boolean apply(@Nullable Status input) {
+                return input.getMediaEntities().length != 0;
             }
-            if (tweet.entities.media.size() == 0) {
-                tweets.remove(tweet);
-            }
-        }
-        return tweets;
+        }));
     }
 
 }
