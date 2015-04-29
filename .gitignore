@@ -6,3 +6,7 @@
 /build
 /app/fabric.properties
 *.log
+app/app.iml
+pictter.iml
+.idea/dictionaries/mike.xml
+
