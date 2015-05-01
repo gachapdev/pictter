@@ -5,7 +5,6 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.graphics.Rect;
 import android.os.SystemClock;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
@@ -121,13 +120,11 @@ public class SwipeAction implements View.OnTouchListener {
         if (mViewWidth < 2) {
             mViewWidth = mListView.getWidth();
         }
-        Log.d("ifAction", "sdfasdf");
         switch (motionEvent.getActionMasked()) {
             case MotionEvent.ACTION_DOWN: {
                 if (mPaused) {
                     return false;
                 }
-                Log.d("ActionDOWN", "sdfasdf");
                 // TODO: ensure this is a finger, and set a flag
 
                 // Find the child view that was touched (perform a hit test)
@@ -252,7 +249,6 @@ public class SwipeAction implements View.OnTouchListener {
                     mSwipingSlop = (deltaX > 0 ? mSlop : -mSlop);
                     mListView.requestDisallowInterceptTouchEvent(true);
 
-                    Log.d("ActionMOVE", "sdfasdf");
                     // Cancel ListView's touch (un-highlighting the item)
                     MotionEvent cancelEvent = MotionEvent.obtain(motionEvent);
                     cancelEvent.setAction(MotionEvent.ACTION_CANCEL |

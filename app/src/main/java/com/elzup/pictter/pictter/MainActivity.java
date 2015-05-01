@@ -18,6 +18,8 @@ public class MainActivity extends FragmentActivity {
     private CustomAdapter customAdapater;
     private TwitterManager twitterManager;
 
+    private EditText search_box;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,9 +32,7 @@ public class MainActivity extends FragmentActivity {
 
         String keyword = getString(R.string.debug_default_search_q);
 
-        //EditTextのフォーカスをきる
-        EditText editText = (EditText) findViewById(R.id.editText);
-        editText.setFocusable(false);
+        setupSearchForm();
 
         //ボタンのでインスタンスを移動するまで
         Button button = (Button) findViewById(R.id.button2);
@@ -108,6 +108,26 @@ public class MainActivity extends FragmentActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void setupSearchForm() {
+        this.search_box = (EditText) findViewById(R.id.searchBar);
+        search_box.setFocusable(true);
+        Button searchButton = (Button) findViewById(R.id.searchButton);
+        searchButton.setOnClickListener(new onClickSearchListener());
+    }
+
+    class onClickSearchListener implements View.OnClickListener {
+
+        @Override
+        public void onClick(View v) {
+            String keyword = search_box.getText().toString();
+            if ("".equals(keyword)) {
+                return;
+            }
+            customAdapater.clear();
+            twitterManager.searchTweets(keyword, null, getResources().getInteger(R.integer.search_tweet_limit), customAdapater);
+        }
     }
 
 }
