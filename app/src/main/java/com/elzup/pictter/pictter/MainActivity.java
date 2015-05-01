@@ -34,17 +34,6 @@ public class MainActivity extends FragmentActivity {
 
         setupSearchForm();
 
-        //ボタンのでインスタンスを移動するまで
-        Button button = (Button) findViewById(R.id.button2);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent main4 = new Intent();
-                main4.setClassName("com.elzup.pictter.pictter", "com.elzup.pictter.pictter.ShowGridItem");
-                startActivity(main4);
-            }
-        });
-
         customAdapater = new CustomAdapter(this, 0, new ArrayList<PictureStatus>());
         ListView listView = (ListView) findViewById(R.id.list);
         listView.setAdapter(customAdapater);
