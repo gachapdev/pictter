@@ -1,6 +1,5 @@
 package com.elzup.pictter.pictter;
 
-import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -19,8 +18,6 @@ public class MainActivity extends FragmentActivity {
     private CustomAdapter customAdapater;
     private TwitterManager twitterManager;
 
-    private FragmentManager fragmentManager;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,15 +26,6 @@ public class MainActivity extends FragmentActivity {
             return;
         }
 
-
-        this.fragmentManager = getFragmentManager();
-        this.fragmentManager.getFragment();
-        this.fragmentManager.putFragment(savedInstanceState, "home-key", this);
-
-        FragmentManager.BackStackEntry entry = this.fragmentManager.getBackStackEntryAt(0);
-        if (entry != null) {
-            fragmentManager.popBackStack(entry.getId(), 0);
-        }
         setContentView(R.layout.activity_main2);
 
         String keyword = getString(R.string.debug_default_search_q);
@@ -73,6 +61,8 @@ public class MainActivity extends FragmentActivity {
                             public void onDismiss(ListView listView, int[] reverseSortedPositions) {
                                 for (int position : reverseSortedPositions) {
                                     customAdapater.remove(customAdapater.getItem(position));
+                                    PictureStatus pictureStatus = customAdapater.getItem(position);
+                                    DeviceUtils.saveToFile(pictureStatus.getImage());
                                 }
                                 customAdapater.notifyDataSetChanged();
                             }
@@ -118,6 +108,13 @@ public class MainActivity extends FragmentActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onDestroy() {
+        if (BuildConfig.DEBUG) {
+            this.twitterManager.clearSession();
+        }
     }
 }
 
