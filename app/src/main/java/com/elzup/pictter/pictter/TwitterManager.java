@@ -68,7 +68,7 @@ public class TwitterManager {
             @Override
             protected List<twitter4j.Status> doInBackground(Void... voids) {
                 try {
-                    Query query = new Query(q);
+                    Query query = new Query(q + " -RT");
                     if (maxId != null) {
                         query.maxId(maxId);
                     }
