@@ -7,10 +7,10 @@ public class AppControl extends Application {
     @Override public void onCreate() {
         super.onCreate();
 
-        if (BuildConfig.DEBUG) {
-            TwitterManager twitterManager = new TwitterManager(this);
-            twitterManager.clearSession();
-        }
+//        if (BuildConfig.DEBUG) {
+//            TwitterManager twitterManager = new TwitterManager(this);
+//            twitterManager.clearSession();
+//        }
     }
 
     @Override public void onTerminate() {
