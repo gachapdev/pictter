@@ -6,7 +6,6 @@ public class AppControl extends Application {
 
     @Override public void onCreate() {
         super.onCreate();
-        // TODO: fix
 //        if (BuildConfig.DEBUG) {
 //            TwitterManager twitterManager = new TwitterManager(this);
 //            twitterManager.clearSession();
