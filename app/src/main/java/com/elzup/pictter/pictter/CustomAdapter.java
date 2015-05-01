@@ -57,6 +57,7 @@ public class CustomAdapter extends ArrayAdapter<PictureStatus> {
         imageView = (ImageView) convertView.findViewById(R.id.image);
 
         imageView.setImageBitmap(tweet.getImage());
+        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
