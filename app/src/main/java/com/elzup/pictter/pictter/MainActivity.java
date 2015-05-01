@@ -110,11 +110,5 @@ public class MainActivity extends FragmentActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onDestroy() {
-        if (BuildConfig.DEBUG) {
-            this.twitterManager.clearSession();
-        }
-    }
 }
 
