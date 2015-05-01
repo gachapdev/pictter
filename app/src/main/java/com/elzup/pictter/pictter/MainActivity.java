@@ -1,8 +1,8 @@
 package com.elzup.pictter.pictter;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,7 +13,7 @@ import android.widget.ListView;
 import java.util.ArrayList;
 
 
-public class MainActivity extends Activity {
+public class MainActivity extends FragmentActivity {
 
     private CustomAdapter customAdapater;
     private TwitterManager twitterManager;
@@ -25,7 +25,9 @@ public class MainActivity extends Activity {
         if (!this.loginCheck()) {
             return;
         }
+
         setContentView(R.layout.activity_main2);
+
         String keyword = getString(R.string.debug_default_search_q);
 
         //EditTextのフォーカスをきる
@@ -59,6 +61,8 @@ public class MainActivity extends Activity {
                             public void onDismiss(ListView listView, int[] reverseSortedPositions) {
                                 for (int position : reverseSortedPositions) {
                                     customAdapater.remove(customAdapater.getItem(position));
+                                    PictureStatus pictureStatus = customAdapater.getItem(position);
+                                    DeviceUtils.saveToFile(pictureStatus.getImage());
                                 }
                                 customAdapater.notifyDataSetChanged();
                             }
@@ -69,7 +73,6 @@ public class MainActivity extends Activity {
         listView.setOnScrollListener(touchListener.makeScrollListener());
 
         this.twitterManager.searchTweets(keyword, null, getResources().getInteger(R.integer.search_tweet_limit), customAdapater);
-
     }
 
     private boolean loginCheck() {
@@ -106,7 +109,6 @@ public class MainActivity extends Activity {
 
         return super.onOptionsItemSelected(item);
     }
-
 
 }
 
