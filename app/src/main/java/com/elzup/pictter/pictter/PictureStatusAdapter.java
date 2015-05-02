@@ -21,17 +21,17 @@ import java.util.List;
 /**
  * Created by mike on 15/04/25.
  */
-public class CustomAdapter extends ArrayAdapter<PictureStatus> {
+public class PictureStatusAdapter extends ArrayAdapter<PictureStatus> {
     private Activity activity;
-    List<PictureStatus> tweets;
+    List<PictureStatus> pictureStatusList;
     private LayoutInflater layoutInflater_;
     private static final float BUTTON_WIDTH_DP = 70f;
     private int margin;
 
-    public CustomAdapter(Context context, int textViewResourceId, List<PictureStatus> tweets) {
-        super(context, textViewResourceId, tweets);
+    public PictureStatusAdapter(Context context, int textViewResourceId, List<PictureStatus> pictureStatusList) {
+        super(context, textViewResourceId, pictureStatusList);
         layoutInflater_ = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        this.tweets = tweets;
+        this.pictureStatusList = pictureStatusList;
         this.activity = (Activity) this.getContext();
         //ページ2のRelativeLayoutの幅を計算してmarginへ格納する。
         float density = getContext().getResources().getDisplayMetrics().density;
@@ -49,13 +49,13 @@ public class CustomAdapter extends ArrayAdapter<PictureStatus> {
         if (null == convertView) {
             convertView = layoutInflater_.inflate(R.layout.item_layout, null);
         }
-        final PictureStatus tweet = tweets.get(position);
+        final PictureStatus pictureStatus = pictureStatusList.get(position);
 
         //イメージをタップして詳細表示
         ImageView imageView;
         imageView = (ImageView) convertView.findViewById(R.id.image);
 
-        imageView.setImageBitmap(tweet.getImage());
+        imageView.setImageBitmap(pictureStatus.getImage());
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
         imageView.setOnClickListener(new View.OnClickListener() {
@@ -72,7 +72,7 @@ public class CustomAdapter extends ArrayAdapter<PictureStatus> {
 
         TextView textView;
         textView = (TextView) convertView.findViewById(R.id.text);
-        textView.setText(tweet.getText());
+        textView.setText(pictureStatus.getText());
 
         return convertView;
     }

@@ -44,9 +44,6 @@
             android:value="7244bfde4c0b11528ae855b3d9c8e334dc03435e" />
 
         <activity
-            android:name=".ShowGridItem"
-            android:label="@string/title_activity_show_grid_item"></activity>
-        <activity
             android:name=".AboutImage"
             android:label="@string/title_activity_about_image"></activity>
         <activity

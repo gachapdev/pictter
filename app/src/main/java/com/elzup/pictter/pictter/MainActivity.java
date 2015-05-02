@@ -6,7 +6,6 @@ import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -19,7 +18,7 @@ import java.util.ArrayList;
 
 public class MainActivity extends FragmentActivity {
 
-    private CustomAdapter customAdapater;
+    private PictureStatusAdapter pictureStatusAdapter;
     private TwitterManager twitterManager;
 
     private EditText search_box;
@@ -38,20 +37,21 @@ public class MainActivity extends FragmentActivity {
         String keyword = getString(R.string.debug_default_search_q);
 
         setupSearchForm();
+        setupAdapter();
 
-        customAdapater = new CustomAdapter(this, 0, new ArrayList<PictureStatus>());
+        this.twitterManager.searchTweets(keyword, null, getResources().getInteger(R.integer.search_tweet_limit), pictureStatusAdapter);
+    }
+
+    private void setupAdapter () {
+        pictureStatusAdapter = new PictureStatusAdapter(this, 0, new ArrayList<PictureStatus>());
         ListView listView = (ListView) findViewById(R.id.list);
 
-        String[] content = new String[20];
-        for (int i = 0; i < 20; i++) {
-            content[i] = "Row " + (i + 1);
-        }
-        swipeAdapter = new SwipeActionAdapter(customAdapater);
+        swipeAdapter = new SwipeActionAdapter(pictureStatusAdapter);
         swipeAdapter.setListView(listView);
         listView.setAdapter(swipeAdapter);
 
         swipeAdapter.addBackground(SwipeDirections.DIRECTION_NORMAL_LEFT, R.layout.row_bg_left)
-                    .addBackground(SwipeDirections.DIRECTION_NORMAL_RIGHT, R.layout.row_bg_right);
+                .addBackground(SwipeDirections.DIRECTION_NORMAL_RIGHT, R.layout.row_bg_right);
         swipeAdapter.setSwipeActionListener(new SwipeActionAdapter.SwipeActionListener() {
             @Override
             public boolean hasActions(int i) {
@@ -71,8 +71,8 @@ public class MainActivity extends FragmentActivity {
             }
 
             public void onSwipeSingle(int position, int direction) {
-                PictureStatus status = customAdapater.getItem(position);
-                customAdapater.remove(status);
+                PictureStatus status = pictureStatusAdapter.getItem(position);
+                pictureStatusAdapter.remove(status);
                 switch (direction) {
                     case SwipeDirections.DIRECTION_NORMAL_LEFT:
                     case SwipeDirections.DIRECTION_FAR_LEFT:
@@ -85,7 +85,6 @@ public class MainActivity extends FragmentActivity {
             }
         });
 
-        this.twitterManager.searchTweets(keyword, null, getResources().getInteger(R.integer.search_tweet_limit), customAdapater);
     }
 
     private boolean loginCheck() {
@@ -138,8 +137,8 @@ public class MainActivity extends FragmentActivity {
             if ("".equals(keyword)) {
                 return;
             }
-            customAdapater.clear();
-            twitterManager.searchTweets(keyword, null, getResources().getInteger(R.integer.search_tweet_limit), customAdapater);
+            pictureStatusAdapter.clear();
+            twitterManager.searchTweets(keyword, null, getResources().getInteger(R.integer.search_tweet_limit), pictureStatusAdapter);
         }
     }
 

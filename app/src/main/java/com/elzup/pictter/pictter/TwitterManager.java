@@ -62,7 +62,7 @@ public class TwitterManager {
         this.session = com.twitter.sdk.android.Twitter.getSessionManager().getActiveSession();
     }
 
-    public void searchTweets(final String q, final Long maxId, final Integer count, final CustomAdapter customAdapter) {
+    public void searchTweets(final String q, final Long maxId, final Integer count, final PictureStatusAdapter customAdapter) {
 
         AsyncTask<Void, Void, List<Status>> task = new AsyncTask<Void, Void, List<Status>>() {
             @Override
