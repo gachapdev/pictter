@@ -6,9 +6,13 @@ import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+
+import com.wdullaer.swipeactionadapter.SwipeActionAdapter;
+import com.wdullaer.swipeactionadapter.SwipeDirections;
 
 import java.util.ArrayList;
 
@@ -19,6 +23,7 @@ public class MainActivity extends FragmentActivity {
     private TwitterManager twitterManager;
 
     private EditText search_box;
+    private SwipeActionAdapter swipeAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,30 +41,49 @@ public class MainActivity extends FragmentActivity {
 
         customAdapater = new CustomAdapter(this, 0, new ArrayList<PictureStatus>());
         ListView listView = (ListView) findViewById(R.id.list);
-        listView.setAdapter(customAdapater);
-        SwipeAction touchListener =
-                new SwipeAction(
-                        listView,
-                        new SwipeAction.DismissCallbacks() {
-                            @Override
-                            public boolean canDismiss(int position) {
-                                return true;
-                            }
 
-                            @Override
-                            public void onDismiss(ListView listView, int[] reverseSortedPositions) {
-                                for (int position : reverseSortedPositions) {
-                                    customAdapater.remove(customAdapater.getItem(position));
-                                    PictureStatus pictureStatus = customAdapater.getItem(position);
-                                    DeviceUtils.saveToFile(pictureStatus.getImage());
-                                }
-                                customAdapater.notifyDataSetChanged();
-                            }
-                        });
-        listView.setOnTouchListener(touchListener);
-        // Setting this scroll listener is required to ensure that during ListView scrolling,
-        // we don't look for swipes.
-        listView.setOnScrollListener(touchListener.makeScrollListener());
+        String[] content = new String[20];
+        for (int i = 0; i < 20; i++) {
+            content[i] = "Row " + (i + 1);
+        }
+        swipeAdapter = new SwipeActionAdapter(customAdapater);
+        swipeAdapter.setListView(listView);
+        listView.setAdapter(swipeAdapter);
+
+        swipeAdapter.addBackground(SwipeDirections.DIRECTION_NORMAL_LEFT, R.layout.row_bg_left)
+                    .addBackground(SwipeDirections.DIRECTION_NORMAL_RIGHT, R.layout.row_bg_right);
+        swipeAdapter.setSwipeActionListener(new SwipeActionAdapter.SwipeActionListener() {
+            @Override
+            public boolean hasActions(int i) {
+                return true;
+            }
+
+            @Override
+            public boolean shouldDismiss(int position, int direction) {
+                return direction == SwipeDirections.DIRECTION_FAR_LEFT;
+            }
+
+            @Override
+            public void onSwipe(int[] positionList, int[] directionList) {
+                for (int i = 0; i < positionList.length; i ++) {
+                    this.onSwipeSingle(positionList[i], directionList[i]);
+                }
+            }
+
+            public void onSwipeSingle(int position, int direction) {
+                PictureStatus status = customAdapater.getItem(position);
+                customAdapater.remove(status);
+                switch (direction) {
+                    case SwipeDirections.DIRECTION_NORMAL_LEFT:
+                    case SwipeDirections.DIRECTION_FAR_LEFT:
+                        break;
+                    case SwipeDirections.DIRECTION_NORMAL_RIGHT:
+                    case SwipeDirections.DIRECTION_FAR_RIGHT:
+                        DeviceUtils.saveToFile(status.getImage());
+                        break;
+                }
+            }
+        });
 
         this.twitterManager.searchTweets(keyword, null, getResources().getInteger(R.integer.search_tweet_limit), customAdapater);
     }

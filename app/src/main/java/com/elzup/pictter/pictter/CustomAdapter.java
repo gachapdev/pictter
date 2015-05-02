@@ -40,7 +40,6 @@ public class CustomAdapter extends ArrayAdapter<PictureStatus> {
         WindowManager wm = (WindowManager) getContext().getSystemService(getContext().WINDOW_SERVICE);
         Display dp = wm.getDefaultDisplay();
         margin = dp.getWidth() - buttonWidthPX;
-
     }
 
     @Override
@@ -50,7 +49,7 @@ public class CustomAdapter extends ArrayAdapter<PictureStatus> {
         if (null == convertView) {
             convertView = layoutInflater_.inflate(R.layout.item_layout, null);
         }
-        PictureStatus tweet = tweets.get(position);
+        final PictureStatus tweet = tweets.get(position);
 
         //イメージをタップして詳細表示
         ImageView imageView;
