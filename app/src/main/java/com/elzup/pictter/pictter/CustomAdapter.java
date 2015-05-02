@@ -15,7 +15,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -27,6 +30,8 @@ public class CustomAdapter extends ArrayAdapter<PictureStatus> {
     private LayoutInflater layoutInflater_;
     private static final float BUTTON_WIDTH_DP = 70f;
     private int margin;
+
+    static Bitmap img;
 
     public CustomAdapter(Context context, int textViewResourceId, List<PictureStatus> tweets) {
         super(context, textViewResourceId, tweets);
@@ -50,7 +55,7 @@ public class CustomAdapter extends ArrayAdapter<PictureStatus> {
         if (null == convertView) {
             convertView = layoutInflater_.inflate(R.layout.item_layout, null);
         }
-        PictureStatus tweet = tweets.get(position);
+        final PictureStatus tweet = tweets.get(position);
 
         //イメージをタップして詳細表示
         ImageView imageView;
@@ -61,8 +66,10 @@ public class CustomAdapter extends ArrayAdapter<PictureStatus> {
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                img = tweet.getImage();
                 Intent main4 = new Intent();
                 main4.setClassName("com.elzup.pictter.pictter", "com.elzup.pictter.pictter.AboutImage");
+//                main4.putExtra("testfile",imageName);
                 main4.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 activity.startActivity(main4);
             }
@@ -76,5 +83,6 @@ public class CustomAdapter extends ArrayAdapter<PictureStatus> {
 
         return convertView;
     }
+
 
 }
