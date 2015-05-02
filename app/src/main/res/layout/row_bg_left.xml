@@ -10,7 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingLeft="20dp"
-        android:text="削除"
+        android:text="@string/swipe_left_text"
         android:textColor="#fff"
         android:textSize="50sp" />
 </LinearLayout>

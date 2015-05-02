@@ -32,7 +32,7 @@ public class MainActivity extends FragmentActivity {
             return;
         }
 
-        setContentView(R.layout.activity_main2);
+        setContentView(R.layout.activity_main);
 
         String keyword = getString(R.string.debug_default_search_q);
 

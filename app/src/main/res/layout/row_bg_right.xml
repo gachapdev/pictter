@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:paddingRight="20dp"
         android:layout_gravity="right"
-        android:text="保存"
+        android:text="@string/swipe_right_text"
         android:textColor="#fff"
         android:textSize="50sp" />
 
