@@ -10,13 +10,19 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.wdullaer.swipeactionadapter.SwipeActionAdapter;
+import com.wdullaer.swipeactionadapter.SwipeDirections;
+
 import java.util.ArrayList;
 
 
 public class MainActivity extends FragmentActivity {
 
-    private CustomAdapter customAdapater;
+    private PictureStatusAdapter pictureStatusAdapter;
     private TwitterManager twitterManager;
+
+    private EditText search_box;
+    private SwipeActionAdapter swipeAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,53 +32,59 @@ public class MainActivity extends FragmentActivity {
             return;
         }
 
-        setContentView(R.layout.activity_main2);
+        setContentView(R.layout.activity_main);
 
         String keyword = getString(R.string.debug_default_search_q);
 
-        //EditTextのフォーカスをきる
-        EditText editText = (EditText) findViewById(R.id.editText);
-        editText.setFocusable(false);
+        setupSearchForm();
+        setupAdapter();
 
-        //ボタンのでインスタンスを移動するまで
-        Button button = (Button) findViewById(R.id.button2);
-        button.setOnClickListener(new View.OnClickListener() {
+        this.twitterManager.searchTweets(keyword, null, getResources().getInteger(R.integer.search_tweet_limit), pictureStatusAdapter);
+    }
+
+    private void setupAdapter () {
+        pictureStatusAdapter = new PictureStatusAdapter(this, 0, new ArrayList<PictureStatus>());
+        ListView listView = (ListView) findViewById(R.id.list);
+
+        swipeAdapter = new SwipeActionAdapter(pictureStatusAdapter);
+        swipeAdapter.setListView(listView);
+        listView.setAdapter(swipeAdapter);
+
+        swipeAdapter.addBackground(SwipeDirections.DIRECTION_NORMAL_LEFT, R.layout.row_bg_left)
+                .addBackground(SwipeDirections.DIRECTION_NORMAL_RIGHT, R.layout.row_bg_right);
+        swipeAdapter.setSwipeActionListener(new SwipeActionAdapter.SwipeActionListener() {
             @Override
-            public void onClick(View v) {
-                Intent main4 = new Intent();
-                main4.setClassName("com.elzup.pictter.pictter", "com.elzup.pictter.pictter.ShowGridItem");
-                startActivity(main4);
+            public boolean hasActions(int i) {
+                return true;
+            }
+
+            @Override
+            public boolean shouldDismiss(int position, int direction) {
+                return direction == SwipeDirections.DIRECTION_FAR_LEFT;
+            }
+
+            @Override
+            public void onSwipe(int[] positionList, int[] directionList) {
+                for (int i = 0; i < positionList.length; i ++) {
+                    this.onSwipeSingle(positionList[i], directionList[i]);
+                }
+            }
+
+            public void onSwipeSingle(int position, int direction) {
+                PictureStatus status = pictureStatusAdapter.getItem(position);
+                pictureStatusAdapter.remove(status);
+                switch (direction) {
+                    case SwipeDirections.DIRECTION_NORMAL_LEFT:
+                    case SwipeDirections.DIRECTION_FAR_LEFT:
+                        break;
+                    case SwipeDirections.DIRECTION_NORMAL_RIGHT:
+                    case SwipeDirections.DIRECTION_FAR_RIGHT:
+                        DeviceUtils.saveToFile(status.getImage());
+                        break;
+                }
             }
         });
 
-        customAdapater = new CustomAdapter(this, 0, new ArrayList<PictureStatus>());
-        ListView listView = (ListView) findViewById(R.id.list);
-        listView.setAdapter(customAdapater);
-        SwipeAction touchListener =
-                new SwipeAction(
-                        listView,
-                        new SwipeAction.DismissCallbacks() {
-                            @Override
-                            public boolean canDismiss(int position) {
-                                return true;
-                            }
-
-                            @Override
-                            public void onDismiss(ListView listView, int[] reverseSortedPositions) {
-                                for (int position : reverseSortedPositions) {
-                                    customAdapater.remove(customAdapater.getItem(position));
-                                    PictureStatus pictureStatus = customAdapater.getItem(position);
-                                    DeviceUtils.saveToFile(pictureStatus.getImage());
-                                }
-                                customAdapater.notifyDataSetChanged();
-                            }
-                        });
-        listView.setOnTouchListener(touchListener);
-        // Setting this scroll listener is required to ensure that during ListView scrolling,
-        // we don't look for swipes.
-        listView.setOnScrollListener(touchListener.makeScrollListener());
-
-        this.twitterManager.searchTweets(keyword, null, getResources().getInteger(R.integer.search_tweet_limit), customAdapater);
     }
 
     private boolean loginCheck() {
@@ -108,6 +120,26 @@ public class MainActivity extends FragmentActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void setupSearchForm() {
+        this.search_box = (EditText) findViewById(R.id.searchBar);
+        search_box.setFocusable(true);
+        Button searchButton = (Button) findViewById(R.id.searchButton);
+        searchButton.setOnClickListener(new onClickSearchListener());
+    }
+
+    class onClickSearchListener implements View.OnClickListener {
+
+        @Override
+        public void onClick(View v) {
+            String keyword = search_box.getText().toString();
+            if ("".equals(keyword)) {
+                return;
+            }
+            pictureStatusAdapter.clear();
+            twitterManager.searchTweets(keyword, null, getResources().getInteger(R.integer.search_tweet_limit), pictureStatusAdapter);
+        }
     }
 
 }

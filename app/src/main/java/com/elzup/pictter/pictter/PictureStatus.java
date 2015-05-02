@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.widget.ArrayAdapter;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.URL;
 
 import twitter4j.Status;
@@ -14,7 +15,7 @@ import twitter4j.Status;
  * Created by hiro on 4/29/15.
  */
 
-public class PictureStatus {
+public class PictureStatus implements Serializable {
     private Status status;
     private Bitmap image;
 

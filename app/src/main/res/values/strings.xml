@@ -10,4 +10,8 @@
 
     <string name="debug_default_search_q">#艦これ版深夜の真剣お絵描き60分一本勝負</string>
 
+    <string name="swipe_left_text">削除</string>
+    <string name="swipe_right_text">保存</string>
+    <string name="title_activity_login">ログイン</string>
+
 </resources>

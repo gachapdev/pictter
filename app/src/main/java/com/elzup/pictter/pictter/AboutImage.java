@@ -22,7 +22,7 @@ public class AboutImage extends Activity {
             super.onCreate(savedInstanceState);
                 setContentView(R.layout.activity_main3);
               ImageView imageView  = (ImageView)findViewById(R.id.imageView3);
-            imageView.setImageBitmap(CustomAdapter.img);
+            imageView.setImageBitmap(PictureStatusAdapter.img);
 
 
     }
