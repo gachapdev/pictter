@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/linearLayout"
+    android:layout_centerHorizontal="true"
+    android:layout_height="60dp"
+    android:layout_width="fill_parent"
+    android:orientation="horizontal">
+
+    <EditText
+        android:id="@+id/searchBar"
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_weight="7"
+        android:focusable="true"
+        android:focusableInTouchMode="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:focusable="true"
+        android:focusableInTouchMode="true">
+
+        <requestFocus />
+    </TextView>
+
+    <Button
+        android:id="@+id/searchButton"
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_weight="3"
+        android:text="検索" />
+</LinearLayout>
+

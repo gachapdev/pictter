@@ -1,11 +1,19 @@
 package com.elzup.pictter.pictter;
 
+import android.app.Activity;
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -16,13 +24,17 @@ import com.wdullaer.swipeactionadapter.SwipeDirections;
 import java.util.ArrayList;
 
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends ActionBarActivity
+    implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
     private PictureStatusAdapter pictureStatusAdapter;
     private TwitterManager twitterManager;
 
     private EditText search_box;
     private SwipeActionAdapter swipeAdapter;
+
+    private NavigationDrawerFragment mNavigationDrawerFragment;
+    private CharSequence mTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +45,7 @@ public class MainActivity extends FragmentActivity {
         }
 
         setContentView(R.layout.activity_main);
+        setupNavigation();
 
         String keyword = getString(R.string.debug_default_search_q);
 
@@ -40,6 +53,12 @@ public class MainActivity extends FragmentActivity {
         setupAdapter();
 
         this.twitterManager.searchTweets(keyword, null, getResources().getInteger(R.integer.search_tweet_limit), pictureStatusAdapter);
+    }
+
+    private void setupNavigation() {
+        mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
+        mTitle = getTitle();
+        mNavigationDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout));
     }
 
     private void setupAdapter () {
@@ -103,9 +122,12 @@ public class MainActivity extends FragmentActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+        if (!mNavigationDrawerFragment.isDrawerOpen()) {
+            getMenuInflater().inflate(R.menu.nav_main, menu);
+            restoreActionbar();
+            return true;
+        }
+        return super.onCreateOptionsMenu(menu);
     }
 
 
@@ -125,10 +147,10 @@ public class MainActivity extends FragmentActivity {
     }
 
     private void setupSearchForm() {
-        this.search_box = (EditText) findViewById(R.id.searchBar);
-        search_box.setFocusable(true);
-        Button searchButton = (Button) findViewById(R.id.searchButton);
-        searchButton.setOnClickListener(new onClickSearchListener());
+//         this.search_box = (EditText) findViewById(R.id.searchBar);
+//         search_box.setFocusable(true);
+//         Button searchButton = (Button) findViewById(R.id.searchButton);
+//         searchButton.setOnClickListener(new onClickSearchListener());
     }
 
     class onClickSearchListener implements View.OnClickListener {
@@ -141,6 +163,62 @@ public class MainActivity extends FragmentActivity {
             }
             pictureStatusAdapter.clear();
             twitterManager.searchTweets(keyword, null, getResources().getInteger(R.integer.search_tweet_limit), pictureStatusAdapter);
+        }
+    }
+
+    @Override
+    public void onNavigationDrawerItemSelected(int position) {
+        android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.container, MainActivity.PlaceholderFragment.newInstance(position + 1))
+                .commit();
+    }
+
+    public void onSectionAttached(int number) {
+        switch (number) {
+            case 1:
+                mTitle = "Pictter - hoge";
+                break;
+            case 2:
+                mTitle = "Pictter - fuga";
+                break;
+            case 3:
+                mTitle = "Pictter - foo";
+                break;
+        }
+    }
+
+    public void restoreActionbar() {
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+        actionBar.setDisplayShowTitleEnabled(true);
+        actionBar.setTitle(mTitle);
+    }
+
+    public static class PlaceholderFragment extends Fragment {
+        private static final String ARG_SECTION_NUMBER =  "section_number";
+
+        public static PlaceholderFragment newInstance(int sectionNumber) {
+            PlaceholderFragment fragment = new PlaceholderFragment();
+            Bundle args = new Bundle();
+            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+            fragment.setArguments(args);
+            return fragment;
+        }
+
+
+        @Nullable
+        @Override
+        public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+            View rootView = inflater.inflate(R.layout.fragment_nav_main, container, false);
+            return rootView;
+        }
+
+        @Override
+        public void onAttach(Activity activity) {
+            super.onAttach(activity);
+            ((MainActivity) activity).onSectionAttached(
+                    getArguments().getInt(ARG_SECTION_NUMBER));
         }
     }
 
