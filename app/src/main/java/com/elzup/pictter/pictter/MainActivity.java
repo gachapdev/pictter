@@ -52,6 +52,8 @@ public class MainActivity extends FragmentActivity {
 
         swipeAdapter.addBackground(SwipeDirections.DIRECTION_NORMAL_LEFT, R.layout.row_bg_left)
                 .addBackground(SwipeDirections.DIRECTION_NORMAL_RIGHT, R.layout.row_bg_right);
+        swipeAdapter.setFarSwipeFraction(0);
+        swipeAdapter.setFarSwipeFraction(1);
         swipeAdapter.setSwipeActionListener(new SwipeActionAdapter.SwipeActionListener() {
             @Override
             public boolean hasActions(int i) {
@@ -60,7 +62,7 @@ public class MainActivity extends FragmentActivity {
 
             @Override
             public boolean shouldDismiss(int position, int direction) {
-                return direction == SwipeDirections.DIRECTION_FAR_LEFT;
+                return true;
             }
 
             @Override
