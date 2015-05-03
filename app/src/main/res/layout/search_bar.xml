@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/linearLayout"
+    android:id="@+id/searchBox"
     android:layout_centerHorizontal="true"
     android:layout_height="60dp"
     android:layout_width="fill_parent"

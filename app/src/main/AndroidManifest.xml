@@ -52,9 +52,6 @@
                 <action android:name="android.intent.action.VIEW" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".NavMainActivity"
-            android:label="@string/title_activity_nav_main"></activity>
     </application>
 
 </manifest>

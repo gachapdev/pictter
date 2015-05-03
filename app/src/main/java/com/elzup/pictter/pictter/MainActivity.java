@@ -1,31 +1,41 @@
 package com.elzup.pictter.pictter;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.FragmentManager;
+import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.wdullaer.swipeactionadapter.SwipeActionAdapter;
 import com.wdullaer.swipeactionadapter.SwipeDirections;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
 
 public class MainActivity extends ActionBarActivity
-    implements NavigationDrawerFragment.NavigationDrawerCallbacks {
+        implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
     private PictureStatusAdapter pictureStatusAdapter;
     private TwitterManager twitterManager;
@@ -35,6 +45,8 @@ public class MainActivity extends ActionBarActivity
 
     private NavigationDrawerFragment mNavigationDrawerFragment;
     private CharSequence mTitle;
+
+    InputMethodManager inputMethodManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +73,7 @@ public class MainActivity extends ActionBarActivity
         mNavigationDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout));
     }
 
-    private void setupAdapter () {
+    private void setupAdapter() {
         pictureStatusAdapter = new PictureStatusAdapter(this, 0, new ArrayList<PictureStatus>());
         ListView listView = (ListView) findViewById(R.id.list);
 
@@ -86,7 +98,7 @@ public class MainActivity extends ActionBarActivity
 
             @Override
             public void onSwipe(int[] positionList, int[] directionList) {
-                for (int i = 0; i < positionList.length; i ++) {
+                for (int i = 0; i < positionList.length; i++) {
                     this.onSwipeSingle(positionList[i], directionList[i]);
                 }
             }
@@ -147,10 +159,11 @@ public class MainActivity extends ActionBarActivity
     }
 
     private void setupSearchForm() {
-//         this.search_box = (EditText) findViewById(R.id.searchBar);
-//         search_box.setFocusable(true);
-//         Button searchButton = (Button) findViewById(R.id.searchButton);
-//         searchButton.setOnClickListener(new onClickSearchListener());
+        this.search_box = (EditText) findViewById(R.id.searchBar);
+        search_box.setFocusable(true);
+        Button searchButton = (Button) findViewById(R.id.searchButton);
+        searchButton.setOnClickListener(new onClickSearchListener());
+        inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
     }
 
     class onClickSearchListener implements View.OnClickListener {
@@ -161,8 +174,10 @@ public class MainActivity extends ActionBarActivity
             if ("".equals(keyword)) {
                 return;
             }
+            mTitle = "Pictter - " + keyword;
             pictureStatusAdapter.clear();
             twitterManager.searchTweets(keyword, null, getResources().getInteger(R.integer.search_tweet_limit), pictureStatusAdapter);
+            killFocus();
         }
     }
 
@@ -195,8 +210,14 @@ public class MainActivity extends ActionBarActivity
         actionBar.setTitle(mTitle);
     }
 
+    private void killFocus() {
+        TextView mainLayout = (TextView) findViewById(R.id.killFocus);
+        inputMethodManager.hideSoftInputFromWindow(mainLayout.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        mainLayout.requestFocus();
+    }
+
     public static class PlaceholderFragment extends Fragment {
-        private static final String ARG_SECTION_NUMBER =  "section_number";
+        private static final String ARG_SECTION_NUMBER = "section_number";
 
         public static PlaceholderFragment newInstance(int sectionNumber) {
             PlaceholderFragment fragment = new PlaceholderFragment();
@@ -205,7 +226,6 @@ public class MainActivity extends ActionBarActivity
             fragment.setArguments(args);
             return fragment;
         }
-
 
         @Nullable
         @Override
@@ -223,4 +243,3 @@ public class MainActivity extends ActionBarActivity
     }
 
 }
-

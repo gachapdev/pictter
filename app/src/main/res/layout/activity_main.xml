@@ -5,21 +5,56 @@
     android:layout_height="match_parent"
     android:background="@drawable/background">
 
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/searchBox"
+        android:layout_width="fill_parent"
+        android:layout_height="60dp"
+        android:layout_centerHorizontal="true"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/searchBar"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="7"
+            android:focusable="true"
+            android:focusableInTouchMode="true" />
+
+        <TextView
+            android:id="@+id/killFocus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:focusable="true"
+            android:focusableInTouchMode="true">
+
+            <requestFocus />
+        </TextView>
+
+        <Button
+            android:id="@+id/searchButton"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:text="検索" />
+    </LinearLayout>
+
     <LinearLayout
         android:id="@+id/linearLayout2"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_alignParentEnd="false"
         android:layout_alignParentStart="false"
-        android:layout_below="@+id/linearLayout"
+        android:layout_below="@+id/searchBox"
         android:layout_centerHorizontal="true"
         android:orientation="vertical"
+        android:paddingTop="60dp"
         android:weightSum="1">
 
         <ListView
             android:id="@+id/list"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
+
     </LinearLayout>
 
     <FrameLayout
@@ -34,7 +69,6 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         tools:layout="@layout/fragment_navigation_drawer" />
-
 
 </android.support.v4.widget.DrawerLayout>
 
