@@ -56,8 +56,7 @@ public class MainActivity extends ActionBarActivity
 
         setupSearchForm();
         setupAdapter();
-
-        this.twitterManager.searchTweets(keyword, null, getResources().getInteger(R.integer.search_tweet_limit), pictureStatusAdapter);
+        searchKeyword(keyword);
     }
 
     private void setupNavigation() {
@@ -155,37 +154,42 @@ public class MainActivity extends ActionBarActivity
         searchEditText = (EditText) findViewById(R.id.searchBar);
         searchEditText.setFocusable(true);
         final Button searchButton = (Button) findViewById(R.id.searchButton);
-        searchButton.setOnClickListener(new onClickSearchListener());
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchSubmit();
+            }
+        });
+
         inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         searchEditText.setOnKeyListener(new View.OnKeyListener() {
 
-            //コールバックとしてonKey()メソッドを定義
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                    searchButton.callOnClick();
+                    searchSubmit();
                     return true;
                 }
-
                 return false;
             }
         });
     }
 
-    class onClickSearchListener implements View.OnClickListener {
-
-        @Override
-        public void onClick(View v) {
-            String keyword = searchEditText.getText().toString();
-            if ("".equals(keyword)) {
-                return;
-            }
-            mTitle = "Pictter - " + keyword;
-            getSupportActionBar().setTitle(mTitle);
-            pictureStatusAdapter.clear();
-            twitterManager.searchTweets(keyword, null, getResources().getInteger(R.integer.search_tweet_limit), pictureStatusAdapter);
-            killFocus();
+    private void searchSubmit() {
+        String keyword = searchEditText.getText().toString();
+        if ("".equals(keyword)) {
+            return;
         }
+        pictureStatusAdapter.clear();
+        searchKeyword(keyword);
+        killFocus();
+        mNavigationDrawerFragment.addSearchKeyword(keyword);
+    }
+
+    private void searchKeyword(String keyword) {
+        mTitle = "Pictter - " + keyword;
+        getSupportActionBar().setTitle(mTitle);
+        twitterManager.searchTweets(keyword, null, getResources().getInteger(R.integer.search_tweet_limit), pictureStatusAdapter);
     }
 
     @Override
