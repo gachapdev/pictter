@@ -102,7 +102,7 @@ public class MainActivity extends ActionBarActivity
             }
 
             public void onSwipeSingle(int position, int direction) {
-                PictureStatus status = pictureStatusAdapter.getItem(position);
+                PictureStatus status = pictureStatusAdapter.getItem(position - 1);
                 pictureStatusAdapter.remove(status);
                 switch (direction) {
                     case SwipeDirections.DIRECTION_NORMAL_LEFT:
