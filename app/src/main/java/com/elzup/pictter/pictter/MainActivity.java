@@ -184,21 +184,25 @@ public class MainActivity extends ActionBarActivity
         });
     }
 
-    private void searchSubmit() {
-        String keyword = searchEditText.getText().toString();
+    private void searchSubmit(String keyword) {
         if ("".equals(keyword)) {
             return;
         }
-        pictureStatusAdapter.clear();
         searchKeyword(keyword);
         killFocus();
-        mNavigationDrawerFragment.addSearchKeyword(keyword);
+    }
+
+    private void searchSubmit() {
+        String keyword = searchEditText.getText().toString();
+        this.searchSubmit(keyword);
     }
 
     private void searchKeyword(String keyword) {
+        pictureStatusAdapter.clear();
         mTitle = "Pictter - " + keyword;
         getSupportActionBar().setTitle(mTitle);
         twitterManager.searchTweets(keyword, null, getResources().getInteger(R.integer.search_tweet_limit), pictureStatusAdapter);
+        mNavigationDrawerFragment.addSearchKeyword(keyword);
     }
 
     @Override
@@ -210,17 +214,11 @@ public class MainActivity extends ActionBarActivity
     }
 
     public void onSectionAttached(int number) {
-        switch (number) {
-            case 1:
-                mTitle = "Pictter - hoge";
-                break;
-            case 2:
-                mTitle = "Pictter - fuga";
-                break;
-            case 3:
-                mTitle = "Pictter - foo";
-                break;
+        String keyword = mNavigationDrawerFragment.getSearchKeyword(number - 1);
+        if (keyword == null) {
+            return ;
         }
+        this.searchKeyword(keyword);
     }
 
     public void restoreActionbar() {
@@ -274,8 +272,7 @@ public class MainActivity extends ActionBarActivity
         @Override
         public void onAttach(Activity activity) {
             super.onAttach(activity);
-            ((MainActivity) activity).onSectionAttached(
-                    getArguments().getInt(ARG_SECTION_NUMBER));
+            ((MainActivity) activity).onSectionAttached(getArguments().getInt(ARG_SECTION_NUMBER));
         }
     }
 

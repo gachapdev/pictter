@@ -45,7 +45,19 @@ public class NavigationDrawerFragment extends Fragment {
     ArrayAdapter<String> searchHisotryAdapter;
 
     public void addSearchKeyword(String keyword) {
-        this.searchHisotryAdapter.add(keyword);
+        int position = searchHisotryAdapter.getPosition(keyword);
+        if (position != -1) {
+            this.searchHisotryAdapter.remove(keyword);
+        }
+        this.searchHisotryAdapter.insert(keyword, 0);
+        mDrawerListView.setItemChecked(0, true);
+    }
+
+    public String getSearchKeyword(int position) {
+        if (this.searchHisotryAdapter.getCount() == 0) {
+            return null;
+        }
+        return this.searchHisotryAdapter.getItem(position);
     }
 
     public NavigationDrawerFragment() {
