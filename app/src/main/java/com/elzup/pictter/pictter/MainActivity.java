@@ -4,9 +4,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.KeyEvent;
@@ -56,6 +58,7 @@ public class MainActivity extends ActionBarActivity
 
         setupSearchForm();
         setupAdapter();
+        setupSwipeRefreshLayout();
         searchKeyword(keyword);
     }
 
@@ -72,6 +75,9 @@ public class MainActivity extends ActionBarActivity
         swipeAdapter = new SwipeActionAdapter(pictureStatusAdapter);
         swipeAdapter.setListView(listView);
         listView.setAdapter(swipeAdapter);
+
+//        listView.addHeaderView(findViewById(R.id.searchBox));
+        listView.addHeaderView(this.searchBar);
 
         swipeAdapter.addBackground(SwipeDirections.DIRECTION_NORMAL_LEFT, R.layout.row_bg_left)
                 .addBackground(SwipeDirections.DIRECTION_NORMAL_RIGHT, R.layout.row_bg_right);
@@ -150,10 +156,13 @@ public class MainActivity extends ActionBarActivity
         return super.onOptionsItemSelected(item);
     }
 
+    private View searchBar;
+
     private void setupSearchForm() {
-        searchEditText = (EditText) findViewById(R.id.searchBar);
+        this.searchBar = getLayoutInflater().inflate(R.layout.search_bar, null);
+        searchEditText = (EditText) this.searchBar.findViewById(R.id.searchBar);
         searchEditText.setFocusable(true);
-        final Button searchButton = (Button) findViewById(R.id.searchButton);
+        final Button searchButton = (Button) this.searchBar.findViewById(R.id.searchButton);
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -225,6 +234,23 @@ public class MainActivity extends ActionBarActivity
         TextView mainLayout = (TextView) findViewById(R.id.killFocus);
         inputMethodManager.hideSoftInputFromWindow(mainLayout.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         mainLayout.requestFocus();
+    }
+
+    public void setupSwipeRefreshLayout() {
+        final SwipeRefreshLayout mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.refresh_1, R.color.refresh_2, R.color.refresh_3);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                twitterManager.searchTweetsNext(pictureStatusAdapter);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    }
+                }, 3000);
+            }
+        });
     }
 
     public static class PlaceholderFragment extends Fragment {
