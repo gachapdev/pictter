@@ -69,7 +69,6 @@ public class PictureStatusAdapter extends ArrayAdapter<PictureStatus> {
                 img = pictureStatus.getImage();
                 Intent main4 = new Intent();
                 main4.setClassName("com.elzup.pictter.pictter", "com.elzup.pictter.pictter.AboutImage");
-//                main4.putExtra("testfile",imageName);
                 main4.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 activity.startActivity(main4);
             }
