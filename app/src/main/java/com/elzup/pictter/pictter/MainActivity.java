@@ -76,7 +76,6 @@ public class MainActivity extends ActionBarActivity
         swipeAdapter.setListView(listView);
         listView.setAdapter(swipeAdapter);
 
-//        listView.addHeaderView(findViewById(R.id.searchBox));
         listView.addHeaderView(this.searchBar);
 
         swipeAdapter.addBackground(SwipeDirections.DIRECTION_NORMAL_LEFT, R.layout.row_bg_left)

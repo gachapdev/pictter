@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -93,19 +94,20 @@ public class NavigationDrawerFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
-        mDrawerListView = (ListView) mView.findViewById(R.id.drawlist);
-        TextView text = (TextView) mView.findViewById(R.id.textView);
-        text.setText("履歴");
+        mDrawerListView = (ListView) mView.findViewById(R.id.keywordList);
+//        TextView text = (TextView) mView.findViewById(R.id.textView);
+
+        Button logoutButton = (Button) inflater.inflate(R.layout.navigation_drawer_footer, container, false);
+        mDrawerListView.addFooterView(logoutButton);
+
         mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 selectItem(position);
             }
         });
-
         searchHisotryAdapter = new ArrayAdapter<>(
                 getActionBar().getThemedContext(),
                 android.R.layout.simple_list_item_activated_1,
