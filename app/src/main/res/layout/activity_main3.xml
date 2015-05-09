@@ -10,33 +10,18 @@
     <FrameLayout
         android:id="@+id/framelayout"
         android:layout_width="fill_parent"
-        android:layout_height="480dp"
+        android:layout_height="fill_parent"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:background="#ff00ffd0">
+        android:layout_alignParentBottom="true">
+
+
 
         <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/imageView3"
             android:layout_gravity="center" />
     </FrameLayout>
 
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="60dp"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:background="#ffff301f"
-        android:gravity="bottom|left"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/button1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="戻る"
-            android:textSize="30dp" />
-
-    </LinearLayout>
 </RelativeLayout>

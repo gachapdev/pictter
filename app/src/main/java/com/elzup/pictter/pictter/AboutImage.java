@@ -2,34 +2,32 @@ package com.elzup.pictter.pictter;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Environment;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+
+import java.io.File;
 
 
 public class AboutImage extends Activity {
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main3);
+        protected void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+                setContentView(R.layout.activity_main3);
+              ImageView imageView  = (ImageView)findViewById(R.id.imageView3);
+            imageView.setImageBitmap(PictureStatusAdapter.img);
 
 
-        Button button;
-        button = (Button) findViewById(R.id.button1);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                Intent main4 = new Intent();
-                main4.setClassName("com.elzup.pictter.pictter", "com.elzup.pictter.pictter.MainActivity");
-                main4.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(main4);
-            }
-        });
     }
+
+
 
 
     @Override
