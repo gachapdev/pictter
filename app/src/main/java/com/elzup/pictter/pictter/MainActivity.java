@@ -64,6 +64,23 @@ public class MainActivity extends ActionBarActivity
 
     private void setupNavigation() {
         mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
+        mNavigationDrawerFragment.setLogoutListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                twitterManager.clearSession();
+                // 認証セッションが残っていなければログイン画面へ
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+        mNavigationDrawerFragment.setNavDrawerListClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TextView textView = (TextView) v;
+                searchKeyword(textView.getText().toString());
+            }
+        });
         mTitle = getTitle();
         mNavigationDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout));
     }
@@ -76,7 +93,6 @@ public class MainActivity extends ActionBarActivity
         swipeAdapter.setListView(listView);
         listView.setAdapter(swipeAdapter);
 
-//        listView.addHeaderView(findViewById(R.id.searchBox));
         listView.addHeaderView(this.searchBar);
 
         swipeAdapter.addBackground(SwipeDirections.DIRECTION_NORMAL_LEFT, R.layout.row_bg_left)
@@ -213,14 +229,6 @@ public class MainActivity extends ActionBarActivity
                 .commit();
     }
 
-    public void onSectionAttached(int number) {
-        String keyword = mNavigationDrawerFragment.getSearchKeyword(number - 1);
-        if (keyword == null) {
-            return ;
-        }
-        this.searchKeyword(keyword);
-    }
-
     public void restoreActionbar() {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
@@ -272,7 +280,6 @@ public class MainActivity extends ActionBarActivity
         @Override
         public void onAttach(Activity activity) {
             super.onAttach(activity);
-            ((MainActivity) activity).onSectionAttached(getArguments().getInt(ARG_SECTION_NUMBER));
         }
     }
 

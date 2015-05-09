@@ -35,18 +35,26 @@ public class TwitterManager {
 
     private Query nextQuery;
 
+    private boolean isLogin;
+
+
     TwitterManager(Context context) {
         setupClient(context);
     }
 
     public boolean isLogin() {
-        return this.twitter != null;
+        return this.isLogin;
+    }
+
+    public void setLogin(boolean isLogin) {
+        this.isLogin = isLogin;
     }
 
     public void setupClient(Context context) {
         this.setupSession(context);
         this.twitter = null;
-        if (!this.hasSession()) {
+        this.setLogin(this.hasSession());
+        if (!this.isLogin()) {
             return;
         }
         TwitterAuthToken token = this.session.getAuthToken();
@@ -79,7 +87,7 @@ public class TwitterManager {
                         query.maxId(maxId);
                     }
                     query.count(count);
-//                    query.resultType(Query.ResultType.popular);
+//                    query.setResultType(Query.ResultType.popular);
                     QueryResult res = twitter.search(query);
 
                     RateLimitStatus rateLimitStatus = res.getRateLimitStatus();
@@ -110,6 +118,11 @@ public class TwitterManager {
 
     public void searchTweetsNext(final PictureStatusAdapter customAdapter) {
 
+        // TODO: empty nexQuery
+//        if (nextQuery == null) {
+//            this.searchTweets();
+//            return;
+//        }
         AsyncTask<Void, Void, List<Status>> task = new AsyncTask<Void, Void, List<Status>>() {
             @Override
             protected List<twitter4j.Status> doInBackground(Void... voids) {

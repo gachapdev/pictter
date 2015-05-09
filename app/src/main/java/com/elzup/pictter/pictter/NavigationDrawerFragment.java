@@ -1,6 +1,7 @@
 package com.elzup.pictter.pictter;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -19,10 +20,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class NavigationDrawerFragment extends Fragment {
 
@@ -34,30 +39,33 @@ public class NavigationDrawerFragment extends Fragment {
 
     private ActionBarDrawerToggle mDrawerToggle;
 
+    private View mView;
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerListView;
     private View mFragmentContainerView;
+
+    private Button logoutButton;
+    private Button deleteButton;
 
     private int mCurrentSelectedPosition = 0;
     private boolean mFromSavedInstanceState;
     private boolean mUserLearnedDrawer;
 
-    ArrayAdapter<String> searchHisotryAdapter;
+    private NavDrawerListAdapter navDrawerListAdapter;
 
     public void addSearchKeyword(String keyword) {
-        int position = searchHisotryAdapter.getPosition(keyword);
-        if (position != -1) {
-            this.searchHisotryAdapter.remove(keyword);
+        NavDrawerItem item = navDrawerListAdapter.get(keyword);
+        if (item == null) {
+            item = new NavDrawerItem(false, keyword);
+        } else {
+            this.navDrawerListAdapter.remove(item);
         }
-        this.searchHisotryAdapter.insert(keyword, 0);
+        this.navDrawerListAdapter.insert(item, 0);
         mDrawerListView.setItemChecked(0, true);
     }
 
-    public String getSearchKeyword(int position) {
-        if (this.searchHisotryAdapter.getCount() == 0) {
-            return null;
-        }
-        return this.searchHisotryAdapter.getItem(position);
+    public void setNavDrawerListClickListener(View.OnClickListener clickListener) {
+        this.navDrawerListAdapter.setClickListener(clickListener);
     }
 
     public NavigationDrawerFragment() {
@@ -89,25 +97,45 @@ public class NavigationDrawerFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        //container.findViewById(R.id.drawer_layout);
-        mDrawerListView = (ListView) inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        mView = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
+        mDrawerListView = (ListView) mView.findViewById(R.id.keywordList);
+//        TextView text = (TextView) mView.findViewById(R.id.textView);
+
+        logoutButton = (Button) inflater.inflate(R.layout.navigation_drawer_footer, container, false);
+        mDrawerListView.addFooterView(logoutButton);
+
+        setupDeleteButton(mView);
+
         mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 selectItem(position);
             }
         });
-
-        searchHisotryAdapter = new ArrayAdapter<>(
-                getActionBar().getThemedContext(),
-                android.R.layout.simple_list_item_activated_1,
-                android.R.id.text1,
-                new ArrayList<String>());
-        mDrawerListView.setAdapter(searchHisotryAdapter);
+        navDrawerListAdapter = new NavDrawerListAdapter(getActionBar().getThemedContext(), 0, new ArrayList<NavDrawerItem>());
+        mDrawerListView.setAdapter(navDrawerListAdapter);
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
-        return mDrawerListView;
+        return mView;
+    }
+
+    public void setLogoutListener(View.OnClickListener listener) {
+        logoutButton.setOnClickListener(listener);
+    }
+
+    public void setupDeleteButton(View v) {
+        deleteButton = (Button) v.findViewById(R.id.deleteButton);
+        setDeleteButtonListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                navDrawerListAdapter.removeUncheckedItems();
+            }
+        });
+
+    }
+
+    public void setDeleteButtonListener(View.OnClickListener listener) {
+        deleteButton.setOnClickListener(listener);
     }
 
     public boolean isDrawerOpen() {
