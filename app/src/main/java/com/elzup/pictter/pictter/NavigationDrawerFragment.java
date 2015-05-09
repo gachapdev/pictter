@@ -93,13 +93,15 @@ public class NavigationDrawerFragment extends Fragment {
         setHasOptionsMenu(true);
     }
 
+    private Button logoutButton;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
         mDrawerListView = (ListView) mView.findViewById(R.id.keywordList);
 //        TextView text = (TextView) mView.findViewById(R.id.textView);
 
-        Button logoutButton = (Button) inflater.inflate(R.layout.navigation_drawer_footer, container, false);
+        logoutButton = (Button) inflater.inflate(R.layout.navigation_drawer_footer, container, false);
         mDrawerListView.addFooterView(logoutButton);
 
         mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -116,6 +118,10 @@ public class NavigationDrawerFragment extends Fragment {
         mDrawerListView.setAdapter(searchHisotryAdapter);
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
         return mView;
+    }
+
+    public void setLogoutListener(View.OnClickListener listener) {
+        logoutButton.setOnClickListener(listener);
     }
 
     public boolean isDrawerOpen() {

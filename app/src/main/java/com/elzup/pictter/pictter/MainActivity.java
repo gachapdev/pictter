@@ -64,6 +64,16 @@ public class MainActivity extends ActionBarActivity
 
     private void setupNavigation() {
         mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
+        mNavigationDrawerFragment.setLogoutListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                twitterManager.clearSession();
+                // 認証セッションが残っていなければログイン画面へ
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
         mTitle = getTitle();
         mNavigationDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout));
     }
@@ -215,7 +225,7 @@ public class MainActivity extends ActionBarActivity
     public void onSectionAttached(int number) {
         String keyword = mNavigationDrawerFragment.getSearchKeyword(number - 1);
         if (keyword == null) {
-            return ;
+            return;
         }
         this.searchKeyword(keyword);
     }
