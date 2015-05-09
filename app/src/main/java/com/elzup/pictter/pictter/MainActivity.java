@@ -74,6 +74,13 @@ public class MainActivity extends ActionBarActivity
                 finish();
             }
         });
+        mNavigationDrawerFragment.setNavDrawerListClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TextView textView = (TextView) v;
+                searchKeyword(textView.getText().toString());
+            }
+        });
         mTitle = getTitle();
         mNavigationDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout));
     }
@@ -223,11 +230,11 @@ public class MainActivity extends ActionBarActivity
     }
 
     public void onSectionAttached(int number) {
-        String keyword = mNavigationDrawerFragment.getSearchKeyword(number - 1);
-        if (keyword == null) {
+        NavDrawerItem item = mNavigationDrawerFragment.getSearchKeyword(number - 1);
+        if (item == null) {
             return;
         }
-        this.searchKeyword(keyword);
+        this.searchKeyword(item.getName());
     }
 
     public void restoreActionbar() {
@@ -281,7 +288,6 @@ public class MainActivity extends ActionBarActivity
         @Override
         public void onAttach(Activity activity) {
             super.onAttach(activity);
-            ((MainActivity) activity).onSectionAttached(getArguments().getInt(ARG_SECTION_NUMBER));
         }
     }
 

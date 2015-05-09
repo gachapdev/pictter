@@ -1,6 +1,7 @@
 package com.elzup.pictter.pictter;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -47,22 +48,28 @@ public class NavigationDrawerFragment extends Fragment {
     private boolean mFromSavedInstanceState;
     private boolean mUserLearnedDrawer;
 
-    ArrayAdapter<String> searchHisotryAdapter;
+    private NavDrawerListAdapter navDrawerListAdapter;
 
     public void addSearchKeyword(String keyword) {
-        int position = searchHisotryAdapter.getPosition(keyword);
-        if (position != -1) {
-            this.searchHisotryAdapter.remove(keyword);
+        NavDrawerItem item = navDrawerListAdapter.get(keyword);
+        if (item == null) {
+            item = new NavDrawerItem(false, keyword);
+        } else {
+            this.navDrawerListAdapter.remove(item);
         }
-        this.searchHisotryAdapter.insert(keyword, 0);
+        this.navDrawerListAdapter.insert(item, 0);
         mDrawerListView.setItemChecked(0, true);
     }
 
-    public String getSearchKeyword(int position) {
-        if (this.searchHisotryAdapter.getCount() == 0) {
+    public void setNavDrawerListClickListener(View.OnClickListener clickListener) {
+        this.navDrawerListAdapter.setClickListener(clickListener);
+    }
+
+    public NavDrawerItem getSearchKeyword(int position) {
+        if (this.navDrawerListAdapter.getCount() == 0) {
             return null;
         }
-        return this.searchHisotryAdapter.getItem(position);
+        return this.navDrawerListAdapter.getItem(position);
     }
 
     public NavigationDrawerFragment() {
@@ -110,12 +117,8 @@ public class NavigationDrawerFragment extends Fragment {
                 selectItem(position);
             }
         });
-        searchHisotryAdapter = new ArrayAdapter<>(
-                getActionBar().getThemedContext(),
-                android.R.layout.simple_list_item_activated_1,
-                android.R.id.text1,
-                new ArrayList<String>());
-        mDrawerListView.setAdapter(searchHisotryAdapter);
+        navDrawerListAdapter = new NavDrawerListAdapter(getActionBar().getThemedContext(), 0, new ArrayList<NavDrawerItem>());
+        mDrawerListView.setAdapter(navDrawerListAdapter);
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
         return mView;
     }
