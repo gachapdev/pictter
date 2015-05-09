@@ -13,6 +13,4 @@
         android:text="@string/swipe_left_text"
         android:textColor="#fff"
         android:textSize="50sp" />
-
-
 </LinearLayout>
