@@ -2,6 +2,8 @@ package com.elzup.pictter.pictter;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Debug;
+import android.util.Log;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
@@ -18,6 +20,8 @@ import javax.annotation.Nullable;
 import io.fabric.sdk.android.Fabric;
 import twitter4j.Query;
 import twitter4j.QueryResult;
+import twitter4j.RateLimitStatus;
+import twitter4j.ResponseList;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -28,6 +32,8 @@ public class TwitterManager {
 
     private TwitterSession session;
     private Twitter twitter;
+
+    private Query nextQuery;
 
     TwitterManager(Context context) {
         setupClient(context);
@@ -75,6 +81,45 @@ public class TwitterManager {
                     query.count(count);
 //                    query.resultType(Query.ResultType.popular);
                     QueryResult res = twitter.search(query);
+
+                    RateLimitStatus rateLimitStatus = res.getRateLimitStatus();
+                    Log.d("TwitterAPi", String.format("%3d/%3d", rateLimitStatus.getRemaining(), rateLimitStatus.getLimit()));
+
+                    nextQuery = res.nextQuery();
+                    return res.getTweets();
+                } catch (TwitterException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(List<twitter4j.Status> tweets) {
+                if (tweets == null) {
+                    return;
+                }
+                List<PictureStatus> pictureStatusList = new ArrayList<>();
+                for (twitter4j.Status status : TwitterManager.filterImageTweet(tweets)) {
+                    PictureStatus pictureStatus = new PictureStatus(status);
+                    pictureStatus.asyncImage(customAdapter);
+                }
+            }
+        };
+        task.execute();
+    }
+
+    public void searchTweetsNext(final PictureStatusAdapter customAdapter) {
+
+        AsyncTask<Void, Void, List<Status>> task = new AsyncTask<Void, Void, List<Status>>() {
+            @Override
+            protected List<twitter4j.Status> doInBackground(Void... voids) {
+                try {
+                    QueryResult res = twitter.search(nextQuery);
+
+                    RateLimitStatus rateLimitStatus = res.getRateLimitStatus();
+                    Log.d("TwitterAPi", String.format("%3d/%3d", rateLimitStatus.getRemaining(), rateLimitStatus.getLimit()));
+
+                    nextQuery = res.nextQuery();
                     return res.getTweets();
                 } catch (TwitterException e) {
                     e.printStackTrace();
@@ -116,5 +161,4 @@ public class TwitterManager {
             }
         }));
     }
-
 }

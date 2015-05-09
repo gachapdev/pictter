@@ -1,0 +1,10 @@
+#Contains API Secret used to validate your application. Commit to internal source control; avoid making secret public.
+#Tue Apr 28 04:09:31 JST 2015
+twitterConsumerKey=****
+twitterConsumerSecret=****
+
+apiSecret=****
+debugAccessToken=****
+twitterPluginId=****
+debugAccessTokenSecret=****
+

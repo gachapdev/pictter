@@ -49,7 +49,7 @@ public class PictureStatus implements Serializable {
             @Override
             protected void onPostExecute(Bitmap bimage) {
                 image = bimage;
-                toriggerAdapter.add(PictureStatus.this);
+                toriggerAdapter.insert(PictureStatus.this, 0);
             }
         };
         task.execute();

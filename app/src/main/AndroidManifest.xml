@@ -21,7 +21,6 @@
     <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
-
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -45,11 +44,10 @@
 
         <activity
             android:name=".AboutImage"
-            android:label="@string/title_activity_about_image"></activity>
+            android:label="@string/title_activity_about_image" />
         <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login">
-
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
             </intent-filter>

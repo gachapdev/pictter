@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="150dp"
     android:padding="10dp"
-    android:background="#fff"
+    android:background="@drawable/listview"
     android:orientation="vertical">
 
     <ImageView
