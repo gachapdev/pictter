@@ -44,6 +44,9 @@ public class NavigationDrawerFragment extends Fragment {
     private ListView mDrawerListView;
     private View mFragmentContainerView;
 
+    private Button logoutButton;
+    private Button deleteButton;
+
     private int mCurrentSelectedPosition = 0;
     private boolean mFromSavedInstanceState;
     private boolean mUserLearnedDrawer;
@@ -63,13 +66,6 @@ public class NavigationDrawerFragment extends Fragment {
 
     public void setNavDrawerListClickListener(View.OnClickListener clickListener) {
         this.navDrawerListAdapter.setClickListener(clickListener);
-    }
-
-    public NavDrawerItem getSearchKeyword(int position) {
-        if (this.navDrawerListAdapter.getCount() == 0) {
-            return null;
-        }
-        return this.navDrawerListAdapter.getItem(position);
     }
 
     public NavigationDrawerFragment() {
@@ -100,8 +96,6 @@ public class NavigationDrawerFragment extends Fragment {
         setHasOptionsMenu(true);
     }
 
-    private Button logoutButton;
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
@@ -110,6 +104,8 @@ public class NavigationDrawerFragment extends Fragment {
 
         logoutButton = (Button) inflater.inflate(R.layout.navigation_drawer_footer, container, false);
         mDrawerListView.addFooterView(logoutButton);
+
+        setupDeleteButton(mView);
 
         mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -125,6 +121,21 @@ public class NavigationDrawerFragment extends Fragment {
 
     public void setLogoutListener(View.OnClickListener listener) {
         logoutButton.setOnClickListener(listener);
+    }
+
+    public void setupDeleteButton(View v) {
+        deleteButton = (Button) v.findViewById(R.id.deleteButton);
+        setDeleteButtonListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                navDrawerListAdapter.removeUncheckedItems();
+            }
+        });
+
+    }
+
+    public void setDeleteButtonListener(View.OnClickListener listener) {
+        deleteButton.setOnClickListener(listener);
     }
 
     public boolean isDrawerOpen() {

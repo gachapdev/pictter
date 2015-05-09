@@ -229,14 +229,6 @@ public class MainActivity extends ActionBarActivity
                 .commit();
     }
 
-    public void onSectionAttached(int number) {
-        NavDrawerItem item = mNavigationDrawerFragment.getSearchKeyword(number - 1);
-        if (item == null) {
-            return;
-        }
-        this.searchKeyword(item.getName());
-    }
-
     public void restoreActionbar() {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);

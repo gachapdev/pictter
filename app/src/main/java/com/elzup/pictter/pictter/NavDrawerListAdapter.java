@@ -9,7 +9,14 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+
+import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.Nullable;
 
 public class NavDrawerListAdapter extends ArrayAdapter<NavDrawerItem> {
     private Context context;
@@ -87,11 +94,18 @@ public class NavDrawerListAdapter extends ArrayAdapter<NavDrawerItem> {
         return null;
     }
 
-    public View.OnClickListener getClickListener() {
-        return clickListener;
-    }
-
     public void setClickListener(View.OnClickListener clickListener) {
         this.clickListener = clickListener;
+    }
+
+    public void removeUncheckedItems() {
+        List<NavDrawerItem> removes = new ArrayList<>();
+        for (NavDrawerItem item : this.navDrawerItems) {
+            if (!item.isFavorite()) {
+                removes.add(item);
+            }
+        }
+        this.navDrawerItems.removeAll(removes);
+        this.notifyDataSetChanged();
     }
 }
