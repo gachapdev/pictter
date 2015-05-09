@@ -15,7 +15,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -27,6 +30,8 @@ public class PictureStatusAdapter extends ArrayAdapter<PictureStatus> {
     private LayoutInflater layoutInflater_;
     private static final float BUTTON_WIDTH_DP = 70f;
     private int margin;
+
+    static Bitmap img;
 
     public PictureStatusAdapter(Context context, int textViewResourceId, List<PictureStatus> pictureStatusList) {
         super(context, textViewResourceId, pictureStatusList);
@@ -61,6 +66,7 @@ public class PictureStatusAdapter extends ArrayAdapter<PictureStatus> {
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                img = pictureStatus.getImage();
                 Intent main4 = new Intent();
                 main4.setClassName("com.elzup.pictter.pictter", "com.elzup.pictter.pictter.AboutImage");
                 main4.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -76,5 +82,6 @@ public class PictureStatusAdapter extends ArrayAdapter<PictureStatus> {
 
         return convertView;
     }
+
 
 }
