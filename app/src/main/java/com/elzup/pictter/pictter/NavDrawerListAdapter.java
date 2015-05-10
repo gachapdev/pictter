@@ -2,6 +2,7 @@ package com.elzup.pictter.pictter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,18 +56,32 @@ public class NavDrawerListAdapter extends ArrayAdapter<NavDrawerItem> {
             convertView = mInflater.inflate(R.layout.item_nav_drawer, null);
         }
 
-        final ToggleButton favButton = (ToggleButton) convertView.findViewById(R.id.favButton);
         TextView txtTitle = (TextView) convertView.findViewById(R.id.title);
         txtTitle.setOnClickListener(this.clickListener);
 
+        final ToggleButton favButton = (ToggleButton) convertView.findViewById(R.id.favButton);
         final NavDrawerItem navDrawerItem = navDrawerItems.get(position);
+        final Drawable iconStarOn = convertView.getResources().getDrawable(android.R.drawable.btn_star_big_on);
+        final Drawable iconStarOff = convertView.getResources().getDrawable(android.R.drawable.btn_star_big_off);
+
         favButton.setChecked(navDrawerItem.isFavorite());
+        if (navDrawerItem.isFavorite()) {
+            favButton.setBackgroundDrawable(iconStarOn);
+        } else {
+            favButton.setBackgroundDrawable(iconStarOff);
+        }
+
         txtTitle.setText(navDrawerItem.getName());
 
         favButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 navDrawerItem.toggle();
+                if (navDrawerItem.isFavorite()) {
+                    favButton.setBackgroundDrawable(iconStarOn);
+                } else {
+                    favButton.setBackgroundDrawable(iconStarOff);
+                }
             }
         });
 

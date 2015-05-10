@@ -8,8 +8,9 @@
         android:layout_width="0dip"
         android:layout_height="wrap_content"
         android:layout_weight="2"
-        android:textOn="★"
-        android:textOff="☆"
+        android:drawableLeft="@android:drawable/star_off"
+        android:textOff=""
+        android:textOn=""
         android:id="@+id/favButton" />
 
     <TextView
