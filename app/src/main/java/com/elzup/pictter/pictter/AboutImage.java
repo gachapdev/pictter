@@ -3,15 +3,10 @@ package com.elzup.pictter.pictter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.os.Bundle;
-import android.os.Environment;
-import android.util.Log;
-import android.view.Display;
-import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -21,10 +16,6 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
-import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.graphics.PointF;
 
 import java.io.File;
 
@@ -37,10 +28,6 @@ public class AboutImage extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(new CustomView(this));
-//        gesture  = new ScaleGestureDetector(this,j);
-//        ImageView imageView = (ImageView) findViewById(R.id.imageView3);
-//        imageView.setImageBitmap(PictureStatusAdapter.img);
-
     }
 
 
