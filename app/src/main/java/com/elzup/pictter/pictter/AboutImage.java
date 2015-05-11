@@ -59,14 +59,43 @@ public class AboutImage extends Activity {
         private Matrix mMatrix;
         private float mTranslateX, mTranslateY;
 
+        private float mPrevX, mPrevY;
+
         float postScalePosX;
         float postScalePosY;
+
+        private TranslationGestureDetector mTranslationGestureDetector;
+
+        private TranslationGestureListener mTranslationListener
+                = new TranslationGestureListener() {
+            @Override
+            public void onTranslationEnd(TranslationGestureDetector detector) {
+            }
+
+            @Override
+            public void onTranslationBegin(TranslationGestureDetector detector) {
+                mPrevX = detector.getX();
+                mPrevY = detector.getY();
+            }
+
+            @Override
+            public void onTranslation(TranslationGestureDetector detector) {
+                float deltaX = detector.getX() - mPrevX;
+                float deltaY = detector.getY() - mPrevY;
+                mTranslateX += deltaX;
+                mTranslateY += deltaY;
+                mPrevX = detector.getX();
+                mPrevY = detector.getY();
+            }
+        };
+
 
         public CustomView(Context context) {
             super(context);
             getHolder().addCallback(this);
             scale = 1.0f;
             gesture = new ScaleGestureDetector(context, mOnScaleListener);
+            mTranslationGestureDetector = new TranslationGestureDetector(mTranslationListener);
             mMatrix = new Matrix();
             setOnTouchListener(this);
         }
@@ -111,20 +140,24 @@ public class AboutImage extends Activity {
             Canvas canvas = mHolder.lockCanvas();
 
             mMatrix.reset();
-//            mMatrix.postScale(scale, scale, w / 2, h / 2);
 
+
+//            mMatrix.postScale(scale, scale, w / 2, h / 2);
+//            mMatrix.postScale(scale, scale, Math.abs(postScalePosX + mTranslateX - canvas.getWidth() / 2), Math.abs(postScalePosY + mTranslateY - canvas.getHeight() / 2));
+//            mMatrix.postScale(scale, scale);
             mMatrix.postScale(scale, scale, postScalePosX, postScalePosY);
             mMatrix.postTranslate(-PictureStatusAdapter.img.getWidth() / 2, -PictureStatusAdapter.img.getHeight() / 2);
             mMatrix.postTranslate(mTranslateX, mTranslateY);
 
-            canvas.drawColor(Color.WHITE);
+            canvas.drawColor(Color.BLACK);
             canvas.drawBitmap(PictureStatusAdapter.img, mMatrix, null);
 
-            this.drawGridLine(canvas);
+//            this.drawGridLine(canvas);
             mHolder.unlockCanvasAndPost(canvas);
         }
 
         public void drawGridLine(Canvas canvas) {
+            // Debug Grid line
             int h = canvas.getHeight();
             int w = canvas.getWidth();
 
@@ -148,12 +181,13 @@ public class AboutImage extends Activity {
 
         @Override
         public boolean onTouch(View v, MotionEvent event) {
+            mTranslationGestureDetector.onTouch(v, event);
             gesture.onTouchEvent(event);
             if (event.getPointerCount() >= 2) {
-                postScalePosX = Math.abs((event.getX(0) + event.getX(1)) / 2);
-                postScalePosY = Math.abs((event.getY(0) + event.getY(1)) / 2);
-                present();
+                postScalePosX = Math.abs(((event.getX(0) + event.getX(1)) / 2));
+                postScalePosY = Math.abs(((event.getY(0) + event.getY(1)) / 2));
             }
+            present();
             return true;
         }
     }
