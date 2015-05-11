@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <integer name="search_tweet_limit">10</integer>
+
+    <string name="path_image_stroage">/pictter/</string>
+    <string name="extension_save_image">jpg</string>
+
+    <string name="separator_save_keywords">:::</string>
 </resources>

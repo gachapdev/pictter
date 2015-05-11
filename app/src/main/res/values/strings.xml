@@ -2,21 +2,22 @@
 <resources>
 
     <string name="app_name">pictter</string>
-    <string name="title_activity_main">pictter</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
+
+    <string name="title_activity_main">Pictter</string>
     <string name="title_activity_show_grid_item">ShowGridItem</string>
     <string name="title_activity_about_image">AboutImage</string>
-    <string name="debug_default_search_q">#艦これ版深夜の真剣お絵描き60分一本勝負</string>
+    <string name="title_activity_login">ログイン</string>
+    <string name="title_activity_showImage">画像View</string>
+
+    <string name="action_settings">Settings</string>
     <string name="swipe_left_text">削除</string>
     <string name="swipe_right_text">保存</string>
-    <string name="title_activity_login">ログイン</string>
     <string name="list_title_history">検索履歴</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_example">Example action</string>
     <string name="search_bar_height">60dp</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="title_activity_showImage">画像View</string>
+
+    <string name="debug_default_search_q">#艦これ版深夜の真剣お絵描き60分一本勝負</string>
 
 </resources>

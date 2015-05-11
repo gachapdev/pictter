@@ -16,16 +16,15 @@ public class DeviceUtils {
         }
         try {
             File file = new File(Environment.getExternalStorageDirectory()
-                    .getPath() + "/" + Environment.DIRECTORY_PICTURES + "/pictter/");
+                    .getPath() + "/" + Environment.DIRECTORY_PICTURES + context.getResources().getString(R.string.path_image_stroage));
             if (!file.exists()) {
                 file.mkdir();
             }
-            String AttachName = file.getAbsolutePath() + "/" + System.currentTimeMillis() + ".jpg";
+            String AttachName = file.getAbsolutePath() + "/" + System.currentTimeMillis() + "." + context.getResources().getString(R.string.extension_save_image);
             FileOutputStream out = new FileOutputStream(AttachName);
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
             out.flush();
             out.close();
-            // /storage/emulated/0/images/1430541663207.jpg
             mediaScan(context, new String[]{AttachName});
         } catch (Exception e) {
             e.printStackTrace();

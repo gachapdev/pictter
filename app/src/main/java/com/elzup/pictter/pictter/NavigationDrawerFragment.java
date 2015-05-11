@@ -1,7 +1,6 @@
 package com.elzup.pictter.pictter;
 
 import android.app.Activity;
-import android.content.ContentResolver;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -19,11 +18,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -53,21 +49,6 @@ public class NavigationDrawerFragment extends Fragment {
     private boolean mUserLearnedDrawer;
 
     private NavDrawerListAdapter navDrawerListAdapter;
-
-    public void addSearchKeyword(String keyword) {
-        NavDrawerItem item = navDrawerListAdapter.get(keyword);
-        if (item == null) {
-            item = new NavDrawerItem(false, keyword);
-        } else {
-            this.navDrawerListAdapter.remove(item);
-        }
-        this.navDrawerListAdapter.insert(item, 0);
-        mDrawerListView.setItemChecked(0, true);
-    }
-
-    public void setNavDrawerListClickListener(View.OnClickListener clickListener) {
-        this.navDrawerListAdapter.setClickListener(clickListener);
-    }
 
     public NavigationDrawerFragment() {
     }
@@ -118,55 +99,6 @@ public class NavigationDrawerFragment extends Fragment {
         mDrawerListView.setAdapter(navDrawerListAdapter);
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
         return mView;
-    }
-
-    public void addFavoriteKeyword(String keyword) {
-        navDrawerListAdapter.add(new NavDrawerItem(true, keyword));
-    }
-
-    public void addFavoriteKeywordAll(List<String> keywords) {
-        for (String k : keywords) {
-            this.addFavoriteKeyword(k);
-        }
-    }
-
-    public void addFavoriteKeywordAll(String[] keywords) {
-        addFavoriteKeywordAll(Arrays.asList(keywords));
-    }
-
-    public void setLogoutListener(View.OnClickListener listener) {
-        logoutButton.setOnClickListener(listener);
-    }
-
-    public void setToggleListener(View.OnClickListener listener) {
-        navDrawerListAdapter.setToggleListener(listener);
-    }
-
-    public void setupDeleteButton(View v) {
-        deleteButton = (Button) v.findViewById(R.id.deleteButton);
-        setDeleteButtonListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                navDrawerListAdapter.removeUncheckedItems();
-            }
-        });
-    }
-
-    public void setDeleteButtonListener(View.OnClickListener listener) {
-        deleteButton.setOnClickListener(listener);
-    }
-
-    public boolean isDrawerOpen() {
-        return mDrawerLayout != null && mDrawerLayout.isDrawerOpen(mFragmentContainerView);
-    }
-
-    public List<String> getFavorteKeywords() {
-        List<NavDrawerItem> items = this.navDrawerListAdapter.getFavoriteItems();
-        List<String> keywords = new ArrayList<>();
-        for (NavDrawerItem item : items) {
-            keywords.add(item.getName());
-        }
-        return keywords;
     }
 
     /**
@@ -332,5 +264,69 @@ public class NavigationDrawerFragment extends Fragment {
          * Called when an item in the navigation drawer is selected.
          */
         void onNavigationDrawerItemSelected(int position);
+    }
+
+    public void addSearchKeyword(String keyword) {
+        NavDrawerItem item = navDrawerListAdapter.get(keyword);
+        if (item == null) {
+            item = new NavDrawerItem(false, keyword);
+        } else {
+            this.navDrawerListAdapter.remove(item);
+        }
+        this.navDrawerListAdapter.insert(item, 0);
+        mDrawerListView.setItemChecked(0, true);
+    }
+
+    public List<String> getFavorteKeywords() {
+        List<NavDrawerItem> items = this.navDrawerListAdapter.getFavoriteItems();
+        List<String> keywords = new ArrayList<>();
+        for (NavDrawerItem item : items) {
+            keywords.add(item.getName());
+        }
+        return keywords;
+    }
+
+    public void addFavoriteKeyword(String keyword) {
+        navDrawerListAdapter.add(new NavDrawerItem(true, keyword));
+    }
+
+    public void addFavoriteKeywordAll(List<String> keywords) {
+        for (String k : keywords) {
+            this.addFavoriteKeyword(k);
+        }
+    }
+
+    public void addFavoriteKeywordAll(String[] keywords) {
+        addFavoriteKeywordAll(Arrays.asList(keywords));
+    }
+
+    public void setNavDrawerListClickListener(View.OnClickListener clickListener) {
+        this.navDrawerListAdapter.setClickListener(clickListener);
+    }
+
+    public void setLogoutListener(View.OnClickListener listener) {
+        logoutButton.setOnClickListener(listener);
+    }
+
+    public void setToggleListener(View.OnClickListener listener) {
+        navDrawerListAdapter.setToggleListener(listener);
+    }
+
+    public void setupDeleteButton(View v) {
+        deleteButton = (Button) v.findViewById(R.id.deleteButton);
+        setDeleteButtonListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                navDrawerListAdapter.removeUncheckedItems();
+            }
+        });
+    }
+
+    public void setDeleteButtonListener(View.OnClickListener listener) {
+        deleteButton.setOnClickListener(listener);
+    }
+
+    public boolean isDrawerOpen() {
+        return mDrawerLayout != null && mDrawerLayout.isDrawerOpen(mFragmentContainerView);
     }
 }

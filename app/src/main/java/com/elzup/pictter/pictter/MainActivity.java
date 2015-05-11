@@ -36,16 +36,20 @@ import java.util.List;
 public class MainActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
-    private PictureStatusAdapter pictureStatusAdapter;
     private TwitterManager twitterManager;
-
-    private EditText searchEditText;
+    private PictureStatusAdapter pictureStatusAdapter;
     private SwipeActionAdapter swipeAdapter;
 
     private NavigationDrawerFragment mNavigationDrawerFragment;
+
+    private View searchBar;
+    private EditText searchEditText;
     private CharSequence mTitle;
 
-    InputMethodManager inputMethodManager;
+    private InputMethodManager inputMethodManager;
+
+    public static String PREFERENCE_KEYWORDS = "keywords";
+    public static String PREFERENCE_KEYWORDS_DELIMITER = ":::";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +62,6 @@ public class MainActivity extends ActionBarActivity
         setContentView(R.layout.activity_main);
         List<String> initKeywords = this.loadPreferenceKeywords();
         setupNavigation(initKeywords);
-
         setupSearchForm();
         setupAdapter();
         setupSwipeRefreshLayout();
@@ -67,18 +70,53 @@ public class MainActivity extends ActionBarActivity
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        if (!mNavigationDrawerFragment.isDrawerOpen()) {
+            getMenuInflater().inflate(R.menu.nav_main, menu);
+            restoreActionbar();
+            return true;
+        }
+        return super.onCreateOptionsMenu(menu);
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onNavigationDrawerItemSelected(int position) {
+        android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.container, MainActivity.PlaceholderFragment.newInstance(position + 1))
+                .commit();
+    }
+
+
+
+    private boolean loginCheck() {
+        if (twitterManager.isLogin()) {
+            return true;
+        }
+        // 認証セッションが残っていなければログイン画面へ
+        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+        startActivity(intent);
+        finish();
+        return false;
+    }
+
     private void setupNavigation(List<String> initKeywords) {
         mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
-        mNavigationDrawerFragment.setLogoutListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                twitterManager.clearSession();
-                // 認証セッションが残っていなければログイン画面へ
-                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        });
         mNavigationDrawerFragment.setNavDrawerListClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -86,13 +124,48 @@ public class MainActivity extends ActionBarActivity
                 searchKeyword(textView.getText().toString());
             }
         });
-        mTitle = getTitle();
-        mNavigationDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout));
-        mNavigationDrawerFragment.addFavoriteKeywordAll(initKeywords);
         mNavigationDrawerFragment.setToggleListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 savePreferenceKeywords();
+            }
+        });
+        mNavigationDrawerFragment.setLogoutListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                twitterManager.clearSession();
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+        mTitle = getTitle();
+        mNavigationDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout));
+        mNavigationDrawerFragment.addFavoriteKeywordAll(initKeywords);
+    }
+
+    private void setupSearchForm() {
+        this.searchBar = getLayoutInflater().inflate(R.layout.search_bar, null);
+        searchEditText = (EditText) this.searchBar.findViewById(R.id.searchBar);
+        searchEditText.setFocusable(true);
+        final Button searchButton = (Button) this.searchBar.findViewById(R.id.searchButton);
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchSubmit();
+            }
+        });
+
+        inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        searchEditText.setOnKeyListener(new View.OnKeyListener() {
+
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    searchSubmit();
+                    return true;
+                }
+                return false;
             }
         });
     }
@@ -146,71 +219,7 @@ public class MainActivity extends ActionBarActivity
 
     }
 
-    private boolean loginCheck() {
-        if (twitterManager.isLogin()) {
-            return true;
-        }
-        // 認証セッションが残っていなければログイン画面へ
-        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-        startActivity(intent);
-        finish();
-        return false;
-    }
 
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        if (!mNavigationDrawerFragment.isDrawerOpen()) {
-            getMenuInflater().inflate(R.menu.nav_main, menu);
-            restoreActionbar();
-            return true;
-        }
-        return super.onCreateOptionsMenu(menu);
-    }
-
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    private View searchBar;
-
-    private void setupSearchForm() {
-        this.searchBar = getLayoutInflater().inflate(R.layout.search_bar, null);
-        searchEditText = (EditText) this.searchBar.findViewById(R.id.searchBar);
-        searchEditText.setFocusable(true);
-        final Button searchButton = (Button) this.searchBar.findViewById(R.id.searchButton);
-        searchButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                searchSubmit();
-            }
-        });
-
-        inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        searchEditText.setOnKeyListener(new View.OnKeyListener() {
-
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                    searchSubmit();
-                    return true;
-                }
-                return false;
-            }
-        });
-    }
 
     private void searchSubmit(String keyword) {
         if ("".equals(keyword)) {
@@ -221,8 +230,7 @@ public class MainActivity extends ActionBarActivity
     }
 
     private void searchSubmit() {
-        String keyword = searchEditText.getText().toString();
-        this.searchSubmit(keyword);
+        this.searchSubmit(searchEditText.getText().toString());
     }
 
     private void searchKeyword(String keyword) {
@@ -232,14 +240,6 @@ public class MainActivity extends ActionBarActivity
         twitterManager.searchTweets(keyword, null, getResources().getInteger(R.integer.search_tweet_limit), pictureStatusAdapter);
         mNavigationDrawerFragment.addSearchKeyword(keyword);
         this.savePreferenceKeywords();
-    }
-
-    @Override
-    public void onNavigationDrawerItemSelected(int position) {
-        android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.container, MainActivity.PlaceholderFragment.newInstance(position + 1))
-                .commit();
     }
 
     public void restoreActionbar() {
@@ -272,20 +272,18 @@ public class MainActivity extends ActionBarActivity
         });
     }
 
-    public static String PREFERENCE_KEYWORDS = "keywords";
-    public static String PREFERENCE_KEYWORDS_DELIMITER = ":::";
     private List<String> loadPreferenceKeywords() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         String keywords = preferences.getString(PREFERENCE_KEYWORDS, "");
         if ("".equals(keywords)) {
             return new ArrayList<>();
         }
-        return Arrays.asList(keywords.split(PREFERENCE_KEYWORDS_DELIMITER));
+        return Arrays.asList(keywords.split(getResources().getString(R.string.separator_save_keywords)));
     }
 
     private void savePreferenceKeywords(List<String> keywords) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String keywordStr = StringUtils.join(PREFERENCE_KEYWORDS_DELIMITER, keywords);
+        String keywordStr = StringUtils.join(getResources().getString(R.string.separator_save_keywords), keywords);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(PREFERENCE_KEYWORDS, keywordStr);
         editor.commit();

@@ -16,15 +16,12 @@ import java.util.List;
 public class NavDrawerListAdapter extends ArrayAdapter<NavDrawerItem> {
     private Context context;
     private List<NavDrawerItem> navDrawerItems;
-    private LayoutInflater layoutInflater_;
     private View.OnClickListener clickListener;
     private View.OnClickListener toggleListener;
 
     public NavDrawerListAdapter(Context context, int textViewResourceId, List<NavDrawerItem> navDrawerItems) {
         super(context, textViewResourceId, navDrawerItems);
         this.context = context;
-        // TODO: remove?
-        layoutInflater_ = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.navDrawerItems = navDrawerItems;
     }
 
@@ -51,8 +48,8 @@ public class NavDrawerListAdapter extends ArrayAdapter<NavDrawerItem> {
             convertView = mInflater.inflate(R.layout.item_nav_drawer, null);
         }
 
-        TextView txtTitle = (TextView) convertView.findViewById(R.id.title);
-        txtTitle.setOnClickListener(this.clickListener);
+        TextView nameTitle = (TextView) convertView.findViewById(R.id.title);
+        nameTitle.setOnClickListener(this.clickListener);
 
         final ToggleButton favButton = (ToggleButton) convertView.findViewById(R.id.favButton);
         final NavDrawerItem navDrawerItem = navDrawerItems.get(position);
@@ -66,7 +63,7 @@ public class NavDrawerListAdapter extends ArrayAdapter<NavDrawerItem> {
             favButton.setBackgroundDrawable(iconStarOff);
         }
 
-        txtTitle.setText(navDrawerItem.getName());
+        nameTitle.setText(navDrawerItem.getName());
 
         favButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,8 +78,6 @@ public class NavDrawerListAdapter extends ArrayAdapter<NavDrawerItem> {
             }
         });
 
-        // displaying count
-        // check whether it set visible or not
         return convertView;
     }
 
@@ -108,6 +103,7 @@ public class NavDrawerListAdapter extends ArrayAdapter<NavDrawerItem> {
     public void setClickListener(View.OnClickListener clickListener) {
         this.clickListener = clickListener;
     }
+
     public void setToggleListener(View.OnClickListener toggleListener) {
         this.toggleListener = toggleListener;
     }

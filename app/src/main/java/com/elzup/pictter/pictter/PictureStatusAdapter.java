@@ -3,9 +3,6 @@ package com.elzup.pictter.pictter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Picture;
-import android.os.Environment;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,11 +12,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.List;
 
 /**

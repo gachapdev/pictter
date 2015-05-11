@@ -2,7 +2,6 @@ package com.elzup.pictter.pictter;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.os.Debug;
 import android.util.Log;
 
 import com.google.common.base.Predicate;
@@ -12,7 +11,6 @@ import com.twitter.sdk.android.core.TwitterAuthConfig;
 import com.twitter.sdk.android.core.TwitterAuthToken;
 import com.twitter.sdk.android.core.TwitterSession;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -21,7 +19,6 @@ import io.fabric.sdk.android.Fabric;
 import twitter4j.Query;
 import twitter4j.QueryResult;
 import twitter4j.RateLimitStatus;
-import twitter4j.ResponseList;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -33,10 +30,13 @@ public class TwitterManager {
     private TwitterSession session;
     private Twitter twitter;
 
+    private boolean isLogin;
     private Query nextQuery;
 
-    private boolean isLogin;
-
+    private static String SEARCH_IGNORE_OPERATOR = "-";
+    private static String SEARCH_FILTER_OPTION_RT = "RT";
+    private static String SEARCH_FILTER_OPTION_NORT = SEARCH_IGNORE_OPERATOR + SEARCH_FILTER_OPTION_RT;
+    private static String SEARCH_FILTER_OPTION_IMAGE = "filter:images";
 
     TwitterManager(Context context) {
         setupClient(context);
@@ -82,16 +82,15 @@ public class TwitterManager {
             @Override
             protected List<twitter4j.Status> doInBackground(Void... voids) {
                 try {
-                    Query query = new Query(q + " -RT filter:images");
+                    Query query = new Query(StringUtils.join(" ", new String[]{q, SEARCH_FILTER_OPTION_NORT, SEARCH_FILTER_OPTION_IMAGE}));
                     if (maxId != null) {
                         query.maxId(maxId);
                     }
                     query.count(count);
-//                    query.setResultType(Query.ResultType.popular);
                     QueryResult res = twitter.search(query);
 
                     RateLimitStatus rateLimitStatus = res.getRateLimitStatus();
-                    Log.d("TwitterAPi", String.format("%3d/%3d", rateLimitStatus.getRemaining(), rateLimitStatus.getLimit()));
+                    logApiRemining(rateLimitStatus);
 
                     nextQuery = res.nextQuery();
                     return res.getTweets();
@@ -106,7 +105,6 @@ public class TwitterManager {
                 if (tweets == null) {
                     return;
                 }
-                List<PictureStatus> pictureStatusList = new ArrayList<>();
                 for (twitter4j.Status status : TwitterManager.filterImageTweet(tweets)) {
                     PictureStatus pictureStatus = new PictureStatus(status);
                     pictureStatus.asyncImage(customAdapter);
@@ -117,12 +115,6 @@ public class TwitterManager {
     }
 
     public void searchTweetsNext(final PictureStatusAdapter customAdapter) {
-
-        // TODO: empty nexQuery
-//        if (nextQuery == null) {
-//            this.searchTweets();
-//            return;
-//        }
         AsyncTask<Void, Void, List<Status>> task = new AsyncTask<Void, Void, List<Status>>() {
             @Override
             protected List<twitter4j.Status> doInBackground(Void... voids) {
@@ -130,7 +122,7 @@ public class TwitterManager {
                     QueryResult res = twitter.search(nextQuery);
 
                     RateLimitStatus rateLimitStatus = res.getRateLimitStatus();
-                    Log.d("TwitterAPi", String.format("%3d/%3d", rateLimitStatus.getRemaining(), rateLimitStatus.getLimit()));
+                    logApiRemining(rateLimitStatus);
 
                     nextQuery = res.nextQuery();
                     return res.getTweets();
@@ -145,7 +137,6 @@ public class TwitterManager {
                 if (tweets == null) {
                     return;
                 }
-                List<PictureStatus> pictureStatusList = new ArrayList<>();
                 for (twitter4j.Status status : TwitterManager.filterImageTweet(tweets)) {
                     PictureStatus pictureStatus = new PictureStatus(status);
                     pictureStatus.asyncImage(customAdapter);
@@ -173,5 +164,15 @@ public class TwitterManager {
                 return input.getMediaEntities().length != 0;
             }
         }));
+    }
+
+    public static String TAG_API = "TwitterAPI";
+
+    public static void logApiRemining(int remining, int limit) {
+        Log.d(TAG_API, String.format("%3d/%3d", remining, limit));
+    }
+
+    public static void logApiRemining(RateLimitStatus rate) {
+        logApiRemining(rate.getRemaining(), rate.getLimit());
     }
 }
