@@ -2,6 +2,7 @@ package com.elzup.pictter.pictter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
@@ -64,6 +65,8 @@ public class AboutImage extends Activity {
         float postScalePosX;
         float postScalePosY;
 
+        private Bitmap image;
+
         private TranslationGestureDetector mTranslationGestureDetector;
 
         private TranslationGestureListener mTranslationListener
@@ -93,11 +96,11 @@ public class AboutImage extends Activity {
         public CustomView(Context context) {
             super(context);
             getHolder().addCallback(this);
-            scale = 1.0f;
             gesture = new ScaleGestureDetector(context, mOnScaleListener);
             mTranslationGestureDetector = new TranslationGestureDetector(mTranslationListener);
             mMatrix = new Matrix();
             setOnTouchListener(this);
+            image = PictureStatusAdapter.img;
         }
 
         @Override
@@ -109,6 +112,7 @@ public class AboutImage extends Activity {
             mHolder = holder;
             mTranslateX = width / 2;
             mTranslateY = height / 2;
+            scale = (image.getWidth() * height > width * image.getHeight()) ? (float) width / image.getWidth() : height / (float) image.getHeight();
             present();
         }
 
@@ -146,7 +150,7 @@ public class AboutImage extends Activity {
 //            mMatrix.postScale(scale, scale, Math.abs(postScalePosX + mTranslateX - canvas.getWidth() / 2), Math.abs(postScalePosY + mTranslateY - canvas.getHeight() / 2));
 //            mMatrix.postScale(scale, scale);
             mMatrix.postScale(scale, scale, postScalePosX, postScalePosY);
-            mMatrix.postTranslate(-PictureStatusAdapter.img.getWidth() / 2, -PictureStatusAdapter.img.getHeight() / 2);
+            mMatrix.postTranslate(-image.getWidth() / 2, -image.getHeight() / 2);
             mMatrix.postTranslate(mTranslateX, mTranslateY);
 
             canvas.drawColor(Color.BLACK);
