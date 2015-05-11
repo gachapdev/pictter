@@ -102,7 +102,7 @@ public class NavDrawerListAdapter extends ArrayAdapter<NavDrawerItem> {
 
     public NavDrawerItem get(String keyword) {
         for (NavDrawerItem item : navDrawerItems) {
-            if (item.getName() == keyword) {
+            if (item.getName().equals(keyword)) {
                 return item;
             }
         }
