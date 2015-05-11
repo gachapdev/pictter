@@ -27,6 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class NavigationDrawerFragment extends Fragment {
@@ -119,6 +120,20 @@ public class NavigationDrawerFragment extends Fragment {
         return mView;
     }
 
+    public void addFavoriteKeyword(String keyword) {
+        navDrawerListAdapter.add(new NavDrawerItem(true, keyword));
+    }
+
+    public void addFavoriteKeywordAll(List<String> keywords) {
+        for (String k : keywords) {
+            this.addFavoriteKeyword(k);
+        }
+    }
+
+    public void addFavoriteKeywordAll(String[] keywords) {
+        addFavoriteKeywordAll(Arrays.asList(keywords));
+    }
+
     public void setLogoutListener(View.OnClickListener listener) {
         logoutButton.setOnClickListener(listener);
     }
@@ -131,7 +146,6 @@ public class NavigationDrawerFragment extends Fragment {
                 navDrawerListAdapter.removeUncheckedItems();
             }
         });
-
     }
 
     public void setDeleteButtonListener(View.OnClickListener listener) {
@@ -140,6 +154,15 @@ public class NavigationDrawerFragment extends Fragment {
 
     public boolean isDrawerOpen() {
         return mDrawerLayout != null && mDrawerLayout.isDrawerOpen(mFragmentContainerView);
+    }
+
+    public List<String> getFavorteKeywords() {
+        List<NavDrawerItem> items = this.navDrawerListAdapter.getFavoriteItems();
+        List<String> keywords = new ArrayList<>();
+        for (NavDrawerItem item : items) {
+            keywords.add(item.getName());
+        }
+        return keywords;
     }
 
     /**

@@ -10,14 +10,8 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.annotation.Nullable;
 
 public class NavDrawerListAdapter extends ArrayAdapter<NavDrawerItem> {
     private Context context;
@@ -122,5 +116,15 @@ public class NavDrawerListAdapter extends ArrayAdapter<NavDrawerItem> {
         }
         this.navDrawerItems.removeAll(removes);
         this.notifyDataSetChanged();
+    }
+
+    public List<NavDrawerItem> getFavoriteItems() {
+        List<NavDrawerItem> items = new ArrayList<>();
+        for (NavDrawerItem item : this.navDrawerItems) {
+            if (item.isFavorite()) {
+                items.add(item);
+            }
+        }
+        return items;
     }
 }
