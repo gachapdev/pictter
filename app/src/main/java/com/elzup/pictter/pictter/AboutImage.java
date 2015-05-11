@@ -2,22 +2,18 @@ package com.elzup.pictter.pictter;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
-import android.view.ScaleGestureDetector.OnScaleGestureListener;
-import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
-
-import java.io.File;
 
 
 public class AboutImage extends Activity {
@@ -62,6 +58,7 @@ public class AboutImage extends Activity {
         private SurfaceHolder mHolder;
         private Matrix mMatrix;
         private float mTranslateX, mTranslateY;
+
         float postScalePosX;
         float postScalePosY;
 
@@ -76,7 +73,6 @@ public class AboutImage extends Activity {
 
         @Override
         public void surfaceCreated(SurfaceHolder holder) {
-
         }
 
         @Override
@@ -109,27 +105,51 @@ public class AboutImage extends Activity {
                 scale *= detector.getScaleFactor();
                 return true;
             }
-
-            ;
         };
 
         public void present() {
             Canvas canvas = mHolder.lockCanvas();
 
             mMatrix.reset();
+//            mMatrix.postScale(scale, scale, w / 2, h / 2);
+
             mMatrix.postScale(scale, scale, postScalePosX, postScalePosY);
             mMatrix.postTranslate(-PictureStatusAdapter.img.getWidth() / 2, -PictureStatusAdapter.img.getHeight() / 2);
             mMatrix.postTranslate(mTranslateX, mTranslateY);
 
             canvas.drawColor(Color.WHITE);
             canvas.drawBitmap(PictureStatusAdapter.img, mMatrix, null);
+
+            this.drawGridLine(canvas);
             mHolder.unlockCanvasAndPost(canvas);
+        }
+
+        public void drawGridLine(Canvas canvas) {
+            int h = canvas.getHeight();
+            int w = canvas.getWidth();
+
+            Paint paint = new Paint();
+            paint.setColor(Color.RED);
+            paint.setStrokeWidth(3);
+            canvas.drawLine(w / 2, 0, w / 2, h - 1, paint);
+            canvas.drawLine(0, h / 2, w - 1, h / 2, paint);
+
+            paint.setColor(Color.argb(75, 100, 100, 100));
+            paint.setStrokeWidth(1);
+            for (int y = 0; y < h; y = y + 10) {
+                paint.setStrokeWidth(y % 100 == 0 ? 2 : 1);
+                canvas.drawLine(0, y, w - 1, y, paint);
+            }
+            for (int x = 0; x < w; x = x + 10) {
+                paint.setStrokeWidth(x % 100 == 0 ? 2 : 1);
+                canvas.drawLine(x, 0, x, h - 1, paint);
+            }
         }
 
         @Override
         public boolean onTouch(View v, MotionEvent event) {
             gesture.onTouchEvent(event);
-            if(event.getPointerCount() >= 2) {
+            if (event.getPointerCount() >= 2) {
                 postScalePosX = Math.abs((event.getX(0) + event.getX(1)) / 2);
                 postScalePosY = Math.abs((event.getY(0) + event.getY(1)) / 2);
                 present();
