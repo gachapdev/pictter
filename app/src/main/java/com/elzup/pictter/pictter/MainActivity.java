@@ -3,8 +3,10 @@ package com.elzup.pictter.pictter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
@@ -27,6 +29,8 @@ import com.wdullaer.swipeactionadapter.SwipeActionAdapter;
 import com.wdullaer.swipeactionadapter.SwipeDirections;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 
 public class MainActivity extends ActionBarActivity
@@ -52,17 +56,18 @@ public class MainActivity extends ActionBarActivity
         }
 
         setContentView(R.layout.activity_main);
-        setupNavigation();
-
-        String keyword = getString(R.string.debug_default_search_q);
+        List<String> initKeywords = this.loadPreferenceKeywords();
+        setupNavigation(initKeywords);
 
         setupSearchForm();
         setupAdapter();
         setupSwipeRefreshLayout();
-        searchKeyword(keyword);
+        if (initKeywords.size() > 0) {
+            searchKeyword(initKeywords.get(0));
+        }
     }
 
-    private void setupNavigation() {
+    private void setupNavigation(List<String> initKeywords) {
         mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
         mNavigationDrawerFragment.setLogoutListener(new View.OnClickListener() {
             @Override
@@ -83,6 +88,13 @@ public class MainActivity extends ActionBarActivity
         });
         mTitle = getTitle();
         mNavigationDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout));
+        mNavigationDrawerFragment.addFavoriteKeywordAll(initKeywords);
+        mNavigationDrawerFragment.setToggleListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                savePreferenceKeywords();
+            }
+        });
     }
 
     private void setupAdapter() {
@@ -219,6 +231,7 @@ public class MainActivity extends ActionBarActivity
         getSupportActionBar().setTitle(mTitle);
         twitterManager.searchTweets(keyword, null, getResources().getInteger(R.integer.search_tweet_limit), pictureStatusAdapter);
         mNavigationDrawerFragment.addSearchKeyword(keyword);
+        this.savePreferenceKeywords();
     }
 
     @Override
@@ -257,6 +270,29 @@ public class MainActivity extends ActionBarActivity
                 }, 3000);
             }
         });
+    }
+
+    public static String PREFERENCE_KEYWORDS = "keywords";
+    public static String PREFERENCE_KEYWORDS_DELIMITER = ":::";
+    private List<String> loadPreferenceKeywords() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String keywords = preferences.getString(PREFERENCE_KEYWORDS, "");
+        if ("".equals(keywords)) {
+            return new ArrayList<>();
+        }
+        return Arrays.asList(keywords.split(PREFERENCE_KEYWORDS_DELIMITER));
+    }
+
+    private void savePreferenceKeywords(List<String> keywords) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String keywordStr = StringUtils.join(PREFERENCE_KEYWORDS_DELIMITER, keywords);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(PREFERENCE_KEYWORDS, keywordStr);
+        editor.commit();
+    }
+
+    private void savePreferenceKeywords() {
+        this.savePreferenceKeywords(mNavigationDrawerFragment.getFavorteKeywords());
     }
 
     public static class PlaceholderFragment extends Fragment {

@@ -10,20 +10,15 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.annotation.Nullable;
 
 public class NavDrawerListAdapter extends ArrayAdapter<NavDrawerItem> {
     private Context context;
     private List<NavDrawerItem> navDrawerItems;
     private LayoutInflater layoutInflater_;
     private View.OnClickListener clickListener;
+    private View.OnClickListener toggleListener;
 
     public NavDrawerListAdapter(Context context, int textViewResourceId, List<NavDrawerItem> navDrawerItems) {
         super(context, textViewResourceId, navDrawerItems);
@@ -82,6 +77,7 @@ public class NavDrawerListAdapter extends ArrayAdapter<NavDrawerItem> {
                 } else {
                     favButton.setBackgroundDrawable(iconStarOff);
                 }
+                toggleListener.onClick(v);
             }
         });
 
@@ -112,6 +108,9 @@ public class NavDrawerListAdapter extends ArrayAdapter<NavDrawerItem> {
     public void setClickListener(View.OnClickListener clickListener) {
         this.clickListener = clickListener;
     }
+    public void setToggleListener(View.OnClickListener toggleListener) {
+        this.toggleListener = toggleListener;
+    }
 
     public void removeUncheckedItems() {
         List<NavDrawerItem> removes = new ArrayList<>();
@@ -122,5 +121,15 @@ public class NavDrawerListAdapter extends ArrayAdapter<NavDrawerItem> {
         }
         this.navDrawerItems.removeAll(removes);
         this.notifyDataSetChanged();
+    }
+
+    public List<NavDrawerItem> getFavoriteItems() {
+        List<NavDrawerItem> items = new ArrayList<>();
+        for (NavDrawerItem item : this.navDrawerItems) {
+            if (item.isFavorite()) {
+                items.add(item);
+            }
+        }
+        return items;
     }
 }
