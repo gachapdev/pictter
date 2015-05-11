@@ -138,6 +138,10 @@ public class NavigationDrawerFragment extends Fragment {
         logoutButton.setOnClickListener(listener);
     }
 
+    public void setToggleListener(View.OnClickListener listener) {
+        navDrawerListAdapter.setToggleListener(listener);
+    }
+
     public void setupDeleteButton(View v) {
         deleteButton = (Button) v.findViewById(R.id.deleteButton);
         setDeleteButtonListener(new View.OnClickListener() {

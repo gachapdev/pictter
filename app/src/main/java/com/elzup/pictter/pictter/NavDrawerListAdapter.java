@@ -18,6 +18,7 @@ public class NavDrawerListAdapter extends ArrayAdapter<NavDrawerItem> {
     private List<NavDrawerItem> navDrawerItems;
     private LayoutInflater layoutInflater_;
     private View.OnClickListener clickListener;
+    private View.OnClickListener toggleListener;
 
     public NavDrawerListAdapter(Context context, int textViewResourceId, List<NavDrawerItem> navDrawerItems) {
         super(context, textViewResourceId, navDrawerItems);
@@ -76,6 +77,7 @@ public class NavDrawerListAdapter extends ArrayAdapter<NavDrawerItem> {
                 } else {
                     favButton.setBackgroundDrawable(iconStarOff);
                 }
+                toggleListener.onClick(v);
             }
         });
 
@@ -105,6 +107,9 @@ public class NavDrawerListAdapter extends ArrayAdapter<NavDrawerItem> {
 
     public void setClickListener(View.OnClickListener clickListener) {
         this.clickListener = clickListener;
+    }
+    public void setToggleListener(View.OnClickListener toggleListener) {
+        this.toggleListener = toggleListener;
     }
 
     public void removeUncheckedItems() {

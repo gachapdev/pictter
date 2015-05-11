@@ -89,6 +89,12 @@ public class MainActivity extends ActionBarActivity
         mTitle = getTitle();
         mNavigationDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout));
         mNavigationDrawerFragment.addFavoriteKeywordAll(initKeywords);
+        mNavigationDrawerFragment.setToggleListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                savePreferenceKeywords();
+            }
+        });
     }
 
     private void setupAdapter() {
