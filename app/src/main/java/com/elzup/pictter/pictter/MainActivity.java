@@ -126,7 +126,7 @@ public class MainActivity extends ActionBarActivity
                         break;
                     case SwipeDirections.DIRECTION_NORMAL_RIGHT:
                     case SwipeDirections.DIRECTION_FAR_RIGHT:
-                        DeviceUtils.saveToFile(status.getImage());
+                        DeviceUtils.saveToFile(MainActivity.this, status.getImage());
                         break;
                 }
             }

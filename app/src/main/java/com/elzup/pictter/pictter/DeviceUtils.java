@@ -1,6 +1,8 @@
 package com.elzup.pictter.pictter;
 
+import android.content.Context;
 import android.graphics.Bitmap;
+import android.media.MediaScannerConnection;
 import android.os.Environment;
 
 import java.io.File;
@@ -8,11 +10,10 @@ import java.io.FileOutputStream;
 
 public class DeviceUtils {
 
-    public static void saveToFile(Bitmap bitmap) {
+    public static void saveToFile(Context context, Bitmap bitmap) {
         if (!sdcardWriteReady()) {
-            return ;
+            return;
         }
-
         try {
             File file = new File(Environment.getExternalStorageDirectory()
                     .getPath() + "/" + Environment.DIRECTORY_PICTURES + "/pictter/");
@@ -25,9 +26,15 @@ public class DeviceUtils {
             out.flush();
             out.close();
             // /storage/emulated/0/images/1430541663207.jpg
+            mediaScan(context, new String[]{AttachName});
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private static void mediaScan(Context context, String[] paths) {
+        String[] mimeTypes = {"image/jpeg"};
+        MediaScannerConnection.scanFile(context, paths, mimeTypes, null);
     }
 
     private static boolean sdcardWriteReady() {
