@@ -6,3 +6,4 @@
 /build
 /app/fabric.properties
 *.log
+/lib

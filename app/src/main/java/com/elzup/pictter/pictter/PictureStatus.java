@@ -32,6 +32,10 @@ public class PictureStatus implements Serializable {
         return this.status.getText();
     }
 
+    public String getImageUrl() {
+        return this.status.getMediaEntities()[0].getMediaURL();
+    }
+
     public void asyncImage(final ArrayAdapter<PictureStatus> toriggerAdapter) {
 
         AsyncTask<Void, Void, Bitmap> task = new AsyncTask<Void, Void, Bitmap>() {

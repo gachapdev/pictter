@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Picture;
 import android.os.Environment;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -30,8 +31,6 @@ public class PictureStatusAdapter extends ArrayAdapter<PictureStatus> {
     private LayoutInflater layoutInflater_;
     private static final float BUTTON_WIDTH_DP = 70f;
     private int margin;
-
-    static Bitmap img;
 
     public PictureStatusAdapter(Context context, int textViewResourceId, List<PictureStatus> pictureStatusList) {
         super(context, textViewResourceId, pictureStatusList);
@@ -66,11 +65,10 @@ public class PictureStatusAdapter extends ArrayAdapter<PictureStatus> {
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                img = pictureStatus.getImage();
-                Intent main4 = new Intent();
-                main4.setClassName("com.elzup.pictter.pictter", "com.elzup.pictter.pictter.AboutImage");
-                main4.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                activity.startActivity(main4);
+                Intent intent = new Intent(v.getContext(), ShowImage.class);
+                intent.putExtra(ShowImage.EXTRA_STRING_URL, pictureStatus.getImageUrl());
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                activity.startActivity(intent);
             }
 
 
