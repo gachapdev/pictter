@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -82,12 +83,13 @@ public class NavigationDrawerFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
         mDrawerListView = (ListView) mView.findViewById(R.id.keywordList);
+        mDrawerListView.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
 //        TextView text = (TextView) mView.findViewById(R.id.textView);
 
-        logoutButton = (Button) inflater.inflate(R.layout.navigation_drawer_footer, container, false);
-        mDrawerListView.addFooterView(logoutButton);
+        logoutButton = (Button) mView.findViewById(R.id.logoutButton);
 
         setupDeleteButton(mView);
+        syncListHeight();
 
         mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -99,6 +101,26 @@ public class NavigationDrawerFragment extends Fragment {
         mDrawerListView.setAdapter(navDrawerListAdapter);
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
         return mView;
+    }
+
+    private void syncListHeight() {
+        ListAdapter la = mDrawerListView.getAdapter();
+        if (la == null) {
+            return;
+        }
+
+        int i;
+        int h = 0; // ListView トータルの高さ
+
+        for (i = 0; i < la.getCount(); i++) {
+            View item = la.getView(i, null, mDrawerListView);
+            item.measure(0, 0);
+            h += item.getMeasuredHeight();
+        }
+
+        ViewGroup.LayoutParams p = mDrawerListView.getLayoutParams();
+        p.height = h + (mDrawerListView.getDividerHeight() * (la.getCount() - 1));
+        mDrawerListView.setLayoutParams(p);
     }
 
     /**
@@ -274,6 +296,7 @@ public class NavigationDrawerFragment extends Fragment {
             this.navDrawerListAdapter.remove(item);
         }
         this.navDrawerListAdapter.insert(item, 0);
+        syncListHeight();
         mDrawerListView.setItemChecked(0, true);
     }
 
@@ -318,6 +341,7 @@ public class NavigationDrawerFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 navDrawerListAdapter.removeUncheckedItems();
+                syncListHeight();
             }
         });
     }
