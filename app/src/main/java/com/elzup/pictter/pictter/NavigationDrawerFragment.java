@@ -18,9 +18,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -40,6 +42,7 @@ public class NavigationDrawerFragment extends Fragment {
     private View mView;
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerListView;
+    private ListView mTrendListView;
     private View mFragmentContainerView;
 
     private Button logoutButton;
@@ -50,6 +53,7 @@ public class NavigationDrawerFragment extends Fragment {
     private boolean mUserLearnedDrawer;
 
     private NavDrawerListAdapter navDrawerListAdapter;
+    private ArrayAdapter<String> trendListAdapter;
 
     public NavigationDrawerFragment() {
     }
@@ -82,15 +86,16 @@ public class NavigationDrawerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
-        mDrawerListView = (ListView) mView.findViewById(R.id.keywordList);
-        mDrawerListView.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-//        TextView text = (TextView) mView.findViewById(R.id.textView);
-
+        setupDrawerListView();
         logoutButton = (Button) mView.findViewById(R.id.logoutButton);
 
         setupDeleteButton(mView);
-        syncListHeight();
+        return mView;
+    }
 
+    private void setupDrawerListView() {
+        mDrawerListView = (ListView) mView.findViewById(R.id.keywordList);
+        mDrawerListView.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
         mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -100,27 +105,36 @@ public class NavigationDrawerFragment extends Fragment {
         navDrawerListAdapter = new NavDrawerListAdapter(getActionBar().getThemedContext(), 0, new ArrayList<NavDrawerItem>());
         mDrawerListView.setAdapter(navDrawerListAdapter);
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
-        return mView;
+    }
+
+    public void setupTrendListView(List<String> wordList, AdapterView.OnItemClickListener onItemClickListener) {
+        mTrendListView = (ListView) mView.findViewById(R.id.trendWordList);
+        final ArrayAdapter<String> adapter = new ArrayAdapter<>(getActionBar().getThemedContext(), android.R.layout.simple_list_item_1);
+        adapter.addAll(wordList);
+        mTrendListView.setAdapter(adapter);
+        mTrendListView.setOnItemClickListener(onItemClickListener);
+        syncListHeight();
     }
 
     private void syncListHeight() {
-        ListAdapter la = mDrawerListView.getAdapter();
+        syncListHeight(mDrawerListView);
+        syncListHeight(mTrendListView);
+    }
+
+    private static void syncListHeight(ListView listView) {
+        ListAdapter la = listView.getAdapter();
         if (la == null) {
             return;
         }
-
-        int i;
-        int h = 0; // ListView トータルの高さ
-
-        for (i = 0; i < la.getCount(); i++) {
-            View item = la.getView(i, null, mDrawerListView);
+        int h = 0;
+        for (int i = 0; i < la.getCount(); i++) {
+            View item = la.getView(i, null, listView);
             item.measure(0, 0);
             h += item.getMeasuredHeight();
         }
-
-        ViewGroup.LayoutParams p = mDrawerListView.getLayoutParams();
-        p.height = h + (mDrawerListView.getDividerHeight() * (la.getCount() - 1));
-        mDrawerListView.setLayoutParams(p);
+        ViewGroup.LayoutParams p = listView.getLayoutParams();
+        p.height = h + (listView.getDividerHeight() * (la.getCount() - 1));
+        listView.setLayoutParams(p);
     }
 
     /**
@@ -323,7 +337,7 @@ public class NavigationDrawerFragment extends Fragment {
         addFavoriteKeywordAll(Arrays.asList(keywords));
     }
 
-    public void setNavDrawerListClickListener(View.OnClickListener clickListener) {
+    public void setListClickListener(View.OnClickListener clickListener) {
         this.navDrawerListAdapter.setClickListener(clickListener);
     }
 

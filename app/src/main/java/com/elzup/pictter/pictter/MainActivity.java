@@ -20,6 +20,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -117,11 +119,20 @@ public class MainActivity extends ActionBarActivity
 
     private void setupNavigation(List<String> initKeywords) {
         mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
-        mNavigationDrawerFragment.setNavDrawerListClickListener(new View.OnClickListener() {
+        // TODO:
+        List<String> wordList = Arrays.asList(new String[]{"aaa", "bbb", "ccc"});
+        mNavigationDrawerFragment.setListClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 TextView textView = (TextView) v;
                 searchKeyword(textView.getText().toString());
+            }
+        });
+        mNavigationDrawerFragment.setupTrendListView(wordList, new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String text = ((AdapterView<ArrayAdapter<String>>) parent).getAdapter().getItem(position);
+                searchKeyword(text);
             }
         });
         mNavigationDrawerFragment.setToggleListener(new View.OnClickListener() {
