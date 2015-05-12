@@ -22,7 +22,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -83,6 +82,10 @@ public class NavigationDrawerFragment extends Fragment {
         setHasOptionsMenu(true);
     }
 
+    public ArrayAdapter<String> getTrendListAdapter() {
+        return this.trendListAdapter;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
@@ -109,9 +112,9 @@ public class NavigationDrawerFragment extends Fragment {
 
     public void setupTrendListView(List<String> wordList, AdapterView.OnItemClickListener onItemClickListener) {
         mTrendListView = (ListView) mView.findViewById(R.id.trendWordList);
-        final ArrayAdapter<String> adapter = new ArrayAdapter<>(getActionBar().getThemedContext(), android.R.layout.simple_list_item_1);
-        adapter.addAll(wordList);
-        mTrendListView.setAdapter(adapter);
+        trendListAdapter = new ArrayAdapter<>(getActionBar().getThemedContext(), android.R.layout.simple_list_item_1);
+        trendListAdapter.addAll(wordList);
+        mTrendListView.setAdapter(trendListAdapter);
         mTrendListView.setOnItemClickListener(onItemClickListener);
         syncListHeight();
     }
