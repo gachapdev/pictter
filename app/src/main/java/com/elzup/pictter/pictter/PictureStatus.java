@@ -54,7 +54,7 @@ public class PictureStatus implements Serializable {
             @Override
             protected void onPostExecute(Bitmap bimage) {
                 image = bimage;
-                statusList.add(PictureStatus.this);
+                statusList.add(0, PictureStatus.this);
                 pictureStatusListAdapter.notifyDataSetChanged();
                 pictureStatusGridAdapter.notifyDataSetChanged();
             }

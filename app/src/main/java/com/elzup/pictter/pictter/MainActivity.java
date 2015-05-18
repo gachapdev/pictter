@@ -16,6 +16,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -84,6 +85,7 @@ public class MainActivity extends ActionBarActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(0, 10, 0, "表示切り替え");
         if (!mNavigationDrawerFragment.isDrawerOpen()) {
             restoreActionbar();
             return true;
@@ -100,14 +102,13 @@ public class MainActivity extends ActionBarActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
         this.mNavigationDrawerFragment.syncListHeight();
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (item.getItemId()) {
+            case 10:
+                listToggle();
+                break;
+            case R.id.action_settings:
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -199,7 +200,6 @@ public class MainActivity extends ActionBarActivity
         setupListAdapter();
         setupGridAdapter();
         this.gridView.setVisibility(View.GONE);
-        listToggle();
     }
 
     private void listToggle() {
