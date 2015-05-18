@@ -199,7 +199,7 @@ public class MainActivity extends ActionBarActivity
         setupListAdapter();
         setupGridAdapter();
         this.gridView.setVisibility(View.GONE);
-//        listToggle();
+        listToggle();
     }
 
     private void listToggle() {
