@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Picture;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -16,7 +15,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -254,6 +252,8 @@ public class MainActivity extends ActionBarActivity
                         DeviceUtils.saveToFile(MainActivity.this, status.getImage());
                         break;
                 }
+                pictureStatusGridAdapter.notifyDataSetChanged();
+                pictureStatusListAdapter.notifyDataSetChanged();
             }
         });
     }

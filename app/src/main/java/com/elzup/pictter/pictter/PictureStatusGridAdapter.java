@@ -56,11 +56,16 @@ public class PictureStatusGridAdapter extends RecyclerView.Adapter<RecyclerView.
         public void setPictureStatus(PictureStatus pictureStatus) {
             this.pictureStatus = pictureStatus;
             this.image.setImageBitmap(pictureStatus.getImage());
+            syncBackground();
         }
 
         @Override
         public void onClick(View v) {
             pictureStatus.toggleSelected();
+            syncBackground();
+        }
+
+        private void syncBackground() {
             int back_id = R.drawable.border;
             if (pictureStatus.isSelected()) {
                 back_id = R.drawable.border_on;
