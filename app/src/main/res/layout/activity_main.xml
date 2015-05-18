@@ -20,12 +20,49 @@
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclerview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scrollbars="vertical" />
+    <LinearLayout
+        android:id="@+id/gridController"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical" >
 
+        <LinearLayout
+            android:id="@+id/searchBox"
+            android:layout_width="fill_parent"
+            android:layout_height="60dp"
+            android:layout_centerHorizontal="true"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/selectAllButton"
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="選択" />
+
+            <Button
+                android:id="@+id/saveButton"
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="保存" />
+
+            <Button
+                android:id="@+id/deleteButton"
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="削除" />
+        </LinearLayout>
+
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="vertical" />
+
+    </LinearLayout>
 
     <FrameLayout
         android:id="@+id/container"

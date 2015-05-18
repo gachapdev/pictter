@@ -83,5 +83,15 @@ public class PictureStatusGridAdapter extends RecyclerView.Adapter<RecyclerView.
         }
         return selectedList;
     }
+
+    public void selectAll() {
+        // 全てのis_selected を統一する
+        // とりあえず一つ目と反対にする
+        boolean to_selected = !mDataList.get(0).isSelected();
+        for (PictureStatus item : mDataList) {
+            item.setSelected(to_selected);
+        }
+        notifyDataSetChanged();
+    }
 }
 

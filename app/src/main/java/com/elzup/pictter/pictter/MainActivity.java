@@ -26,6 +26,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -45,6 +46,7 @@ public class MainActivity extends ActionBarActivity
     private PictureStatusGridAdapter pictureStatusGridAdapter;
     private ListView listView;
     private RecyclerView gridView;
+    private LinearLayout gridController;
     private ArrayAdapter<String> trendListAdapter;
     private SwipeActionAdapter swipeAdapter;
 
@@ -198,15 +200,18 @@ public class MainActivity extends ActionBarActivity
         setupListAdapter();
         setupGridAdapter();
         this.gridView.setVisibility(View.GONE);
+        this.gridController.setVisibility(View.GONE);
     }
 
     private void listToggle() {
         if (this.listView.getVisibility() == View.GONE) {
             this.listView.setVisibility(View.VISIBLE);
             this.gridView.setVisibility(View.GONE);
+            this.gridController.setVisibility(View.GONE);
         } else {
             this.listView.setVisibility(View.GONE);
             this.gridView.setVisibility(View.VISIBLE);
+            this.gridController.setVisibility(View.VISIBLE);
         }
     }
 
@@ -260,9 +265,23 @@ public class MainActivity extends ActionBarActivity
 
     private void setupGridAdapter() {
         gridView = (RecyclerView) findViewById(R.id.recyclerview);
+        gridController = (LinearLayout) findViewById(R.id.gridController);
+        setupGridControllers();
         gridView.setLayoutManager(new StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.VERTICAL));
         pictureStatusGridAdapter = new PictureStatusGridAdapter(this, statusList);
         gridView.setAdapter(pictureStatusGridAdapter);
+    }
+
+    private void setupGridControllers() {
+        Button selectAllButton = (Button) gridController.findViewById(R.id.selectAllButton);
+        Button saveButton = (Button) gridController.findViewById(R.id.saveButton);
+        Button deleteButton = (Button) gridController.findViewById(R.id.deleteButton);
+        selectAllButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pictureStatusGridAdapter.selectAll();
+            }
+        });
     }
 
     private void searchSubmit(String keyword) {
