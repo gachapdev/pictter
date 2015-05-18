@@ -20,6 +20,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -38,6 +40,7 @@ public class MainActivity extends ActionBarActivity
 
     private TwitterManager twitterManager;
     private PictureStatusAdapter pictureStatusAdapter;
+    private ArrayAdapter<String> trendListAdapter;
     private SwipeActionAdapter swipeAdapter;
 
     private NavigationDrawerFragment mNavigationDrawerFragment;
@@ -49,12 +52,11 @@ public class MainActivity extends ActionBarActivity
     private InputMethodManager inputMethodManager;
 
     public static String PREFERENCE_KEYWORDS = "keywords";
-    public static String PREFERENCE_KEYWORDS_DELIMITER = ":::";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.twitterManager = new TwitterManager(this);
+        twitterManager = new TwitterManager(this);
         if (!this.loginCheck()) {
             return;
         }
@@ -65,6 +67,8 @@ public class MainActivity extends ActionBarActivity
         setupSearchForm();
         setupAdapter();
         setupSwipeRefreshLayout();
+        twitterManager.setListAdapters(pictureStatusAdapter, trendListAdapter);
+        twitterManager.setTrends();
         if (initKeywords.size() > 0) {
             searchKeyword(initKeywords.get(0));
         }
@@ -73,11 +77,16 @@ public class MainActivity extends ActionBarActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if (!mNavigationDrawerFragment.isDrawerOpen()) {
-            getMenuInflater().inflate(R.menu.nav_main, menu);
             restoreActionbar();
             return true;
         }
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu (Menu menu) {
+//        menu.getItem(1).setEnabled(false);
+        return true;
     }
 
 
@@ -87,6 +96,7 @@ public class MainActivity extends ActionBarActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+        this.mNavigationDrawerFragment.syncListHeight();
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
@@ -102,8 +112,6 @@ public class MainActivity extends ActionBarActivity
                 .commit();
     }
 
-
-
     private boolean loginCheck() {
         if (twitterManager.isLogin()) {
             return true;
@@ -117,13 +125,21 @@ public class MainActivity extends ActionBarActivity
 
     private void setupNavigation(List<String> initKeywords) {
         mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
-        mNavigationDrawerFragment.setNavDrawerListClickListener(new View.OnClickListener() {
+        mNavigationDrawerFragment.setListClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 TextView textView = (TextView) v;
                 searchKeyword(textView.getText().toString());
             }
         });
+        mNavigationDrawerFragment.setupTrendListView(new ArrayList<String>(), new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String text = ((AdapterView<ArrayAdapter<String>>) parent).getAdapter().getItem(position);
+                searchKeyword(text);
+            }
+        });
+        trendListAdapter = mNavigationDrawerFragment.getTrendListAdapter();
         mNavigationDrawerFragment.setToggleListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -237,7 +253,7 @@ public class MainActivity extends ActionBarActivity
         pictureStatusAdapter.clear();
         mTitle = "Pictter - " + keyword;
         getSupportActionBar().setTitle(mTitle);
-        twitterManager.searchTweets(keyword, null, getResources().getInteger(R.integer.search_tweet_limit), pictureStatusAdapter);
+        twitterManager.searchTweets(keyword, null, getResources().getInteger(R.integer.search_tweet_limit));
         mNavigationDrawerFragment.addSearchKeyword(keyword);
         this.savePreferenceKeywords();
     }
@@ -261,7 +277,7 @@ public class MainActivity extends ActionBarActivity
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                twitterManager.searchTweetsNext(pictureStatusAdapter);
+                twitterManager.searchTweetsNext();
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
