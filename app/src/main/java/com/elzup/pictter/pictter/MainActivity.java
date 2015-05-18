@@ -29,6 +29,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.wdullaer.swipeactionadapter.SwipeActionAdapter;
 import com.wdullaer.swipeactionadapter.SwipeDirections;
@@ -255,6 +256,8 @@ public class MainActivity extends ActionBarActivity
                     case SwipeDirections.DIRECTION_NORMAL_RIGHT:
                     case SwipeDirections.DIRECTION_FAR_RIGHT:
                         DeviceUtils.saveToFile(MainActivity.this, status.getImage());
+                        String toastText = "画像を保存しました";
+                        Toast.makeText(MainActivity.this, toastText, Toast.LENGTH_SHORT).show();
                         break;
                 }
                 pictureStatusGridAdapter.notifyDataSetChanged();
@@ -292,6 +295,8 @@ public class MainActivity extends ActionBarActivity
                 }
                 pictureStatusGridAdapter.notifyDataSetChanged();
                 pictureStatusListAdapter.notifyDataSetChanged();
+                String toastText = statuses.size() + "枚の画像を保存しました";
+                Toast.makeText(MainActivity.this, toastText, Toast.LENGTH_SHORT).show();
             }
         });
         deleteButton.setOnClickListener(new View.OnClickListener() {
