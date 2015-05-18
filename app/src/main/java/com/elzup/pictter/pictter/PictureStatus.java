@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URL;
+import java.util.ArrayList;
 
 import twitter4j.Status;
 
@@ -36,7 +37,7 @@ public class PictureStatus implements Serializable {
         return this.status.getMediaEntities()[0].getMediaURL();
     }
 
-    public void asyncImage(final ArrayAdapter<PictureStatus> toriggerAdapter) {
+    public void asyncImage(final ArrayList<PictureStatus> statusList, final PictureStatusListAdapter pictureStatusListAdapter, final PictureStatusGridAdapter pictureStatusGridAdapter) {
 
         AsyncTask<Void, Void, Bitmap> task = new AsyncTask<Void, Void, Bitmap>() {
             @Override
@@ -53,7 +54,9 @@ public class PictureStatus implements Serializable {
             @Override
             protected void onPostExecute(Bitmap bimage) {
                 image = bimage;
-                toriggerAdapter.insert(PictureStatus.this, 0);
+                statusList.add(PictureStatus.this);
+                pictureStatusListAdapter.notifyDataSetChanged();
+                pictureStatusGridAdapter.notifyDataSetChanged();
             }
         };
         task.execute();

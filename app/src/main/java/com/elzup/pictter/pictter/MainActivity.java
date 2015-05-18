@@ -75,7 +75,7 @@ public class MainActivity extends ActionBarActivity
         setupSearchForm();
         setupAdapter();
         setupSwipeRefreshLayout();
-        twitterManager.setListAdapters(pictureStatusListAdapter, trendListAdapter);
+        twitterManager.setListAdapters(statusList, pictureStatusListAdapter, pictureStatusGridAdapter, trendListAdapter);
         twitterManager.setTrends();
         if (initKeywords.size() > 0) {
             searchKeyword(initKeywords.get(0));
@@ -198,8 +198,18 @@ public class MainActivity extends ActionBarActivity
         statusList = new ArrayList<>();
         setupListAdapter();
         setupGridAdapter();
-        this.listView.setVisibility(View.GONE);
-        this.gridView.setVisibility(View.VISIBLE);
+        this.gridView.setVisibility(View.GONE);
+//        listToggle();
+    }
+
+    private void listToggle() {
+        if (this.listView.getVisibility() == View.GONE) {
+            this.listView.setVisibility(View.VISIBLE);
+            this.gridView.setVisibility(View.GONE);
+        } else {
+            this.listView.setVisibility(View.GONE);
+            this.gridView.setVisibility(View.VISIBLE);
+        }
     }
 
     private void setupListAdapter() {
@@ -234,7 +244,7 @@ public class MainActivity extends ActionBarActivity
 
             public void onSwipeSingle(int position, int direction) {
                 PictureStatus status = statusList.get(position - 1);
-                pictureStatusListAdapter.remove(status);
+                statusList.remove(status);
                 switch (direction) {
                     case SwipeDirections.DIRECTION_NORMAL_LEFT:
                     case SwipeDirections.DIRECTION_FAR_LEFT:
@@ -248,7 +258,7 @@ public class MainActivity extends ActionBarActivity
         });
     }
 
-    private void setupGridAdapter(ArrayList<PictureStatus> statusList) {
+    private void setupGridAdapter() {
         gridView = (RecyclerView) findViewById(R.id.recyclerview);
         gridView.setLayoutManager(new StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.VERTICAL));
         pictureStatusGridAdapter = new PictureStatusGridAdapter(this, statusList);

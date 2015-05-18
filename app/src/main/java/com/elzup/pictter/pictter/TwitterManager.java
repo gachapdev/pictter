@@ -12,6 +12,8 @@ import com.twitter.sdk.android.core.TwitterAuthConfig;
 import com.twitter.sdk.android.core.TwitterAuthToken;
 import com.twitter.sdk.android.core.TwitterSession;
 
+import org.apache.http.StatusLine;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,7 +44,9 @@ public class TwitterManager {
     private boolean isLogin;
     private Query nextQuery;
 
+    private ArrayList<PictureStatus> statusList;
     private PictureStatusListAdapter pictureStatusListAdapter;
+    private PictureStatusGridAdapter pictureStatusGridAdapter;
     private ArrayAdapter<String> trendAdapter;
 
     private static String SEARCH_IGNORE_OPERATOR = "-";
@@ -112,8 +116,10 @@ public class TwitterManager {
         this.session = com.twitter.sdk.android.Twitter.getSessionManager().getActiveSession();
     }
 
-    public void setListAdapters(PictureStatusListAdapter pictureStatusListAdapter, final ArrayAdapter<String> trendAdapter) {
+    public void setListAdapters(ArrayList<PictureStatus> statusList, PictureStatusListAdapter pictureStatusListAdapter, PictureStatusGridAdapter pictureStatusGridAdapter,  final ArrayAdapter<String> trendAdapter) {
+        this.statusList = statusList;
         this.pictureStatusListAdapter = pictureStatusListAdapter;
+        this.pictureStatusGridAdapter = pictureStatusGridAdapter;
         this.trendAdapter = trendAdapter;
     }
 
@@ -148,7 +154,7 @@ public class TwitterManager {
                 }
                 for (twitter4j.Status status : TwitterManager.filterImageTweet(tweets)) {
                     PictureStatus pictureStatus = new PictureStatus(status);
-                    pictureStatus.asyncImage(pictureStatusListAdapter);
+                    pictureStatus.asyncImage(statusList, pictureStatusListAdapter, pictureStatusGridAdapter);
                 }
             }
         };
@@ -180,7 +186,7 @@ public class TwitterManager {
                 }
                 for (twitter4j.Status status : TwitterManager.filterImageTweet(tweets)) {
                     PictureStatus pictureStatus = new PictureStatus(status);
-                    pictureStatus.asyncImage(pictureStatusListAdapter);
+                    pictureStatus.asyncImage(statusList, pictureStatusListAdapter, pictureStatusGridAdapter);
                 }
             }
         };
