@@ -13,6 +13,8 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -24,6 +26,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -39,9 +42,15 @@ public class MainActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
     private TwitterManager twitterManager;
-    private PictureStatusAdapter pictureStatusAdapter;
+    private PictureStatusListAdapter pictureStatusListAdapter;
+    private PictureStatusGridAdapter pictureStatusGridAdapter;
+    private ListView listView;
+    private RecyclerView gridView;
+    private LinearLayout gridController;
     private ArrayAdapter<String> trendListAdapter;
     private SwipeActionAdapter swipeAdapter;
+
+    private ArrayList<PictureStatus> statusList;
 
     private NavigationDrawerFragment mNavigationDrawerFragment;
 
@@ -67,7 +76,7 @@ public class MainActivity extends ActionBarActivity
         setupSearchForm();
         setupAdapter();
         setupSwipeRefreshLayout();
-        twitterManager.setListAdapters(pictureStatusAdapter, trendListAdapter);
+        twitterManager.setListAdapters(statusList, pictureStatusListAdapter, pictureStatusGridAdapter, trendListAdapter);
         twitterManager.setTrends();
         if (initKeywords.size() > 0) {
             searchKeyword(initKeywords.get(0));
@@ -76,6 +85,7 @@ public class MainActivity extends ActionBarActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(0, 10, 0, "表示切り替え");
         if (!mNavigationDrawerFragment.isDrawerOpen()) {
             restoreActionbar();
             return true;
@@ -84,7 +94,7 @@ public class MainActivity extends ActionBarActivity
     }
 
     @Override
-    public boolean onPrepareOptionsMenu (Menu menu) {
+    public boolean onPrepareOptionsMenu(Menu menu) {
 //        menu.getItem(1).setEnabled(false);
         return true;
     }
@@ -92,14 +102,13 @@ public class MainActivity extends ActionBarActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
         this.mNavigationDrawerFragment.syncListHeight();
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (item.getItemId()) {
+            case 10:
+                listToggle();
+                break;
+            case R.id.action_settings:
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -187,13 +196,31 @@ public class MainActivity extends ActionBarActivity
     }
 
     private void setupAdapter() {
-        pictureStatusAdapter = new PictureStatusAdapter(this, 0, new ArrayList<PictureStatus>());
-        ListView listView = (ListView) findViewById(R.id.list);
+        statusList = new ArrayList<>();
+        setupListAdapter();
+        setupGridAdapter();
+        this.gridView.setVisibility(View.GONE);
+        this.gridController.setVisibility(View.GONE);
+    }
 
-        swipeAdapter = new SwipeActionAdapter(pictureStatusAdapter);
+    private void listToggle() {
+        if (this.listView.getVisibility() == View.GONE) {
+            this.listView.setVisibility(View.VISIBLE);
+            this.gridView.setVisibility(View.GONE);
+            this.gridController.setVisibility(View.GONE);
+        } else {
+            this.listView.setVisibility(View.GONE);
+            this.gridView.setVisibility(View.VISIBLE);
+            this.gridController.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void setupListAdapter() {
+        pictureStatusListAdapter = new PictureStatusListAdapter(this, 0, statusList);
+        listView = (ListView) findViewById(R.id.list);
+        swipeAdapter = new SwipeActionAdapter(pictureStatusListAdapter);
         swipeAdapter.setListView(listView);
         listView.setAdapter(swipeAdapter);
-
         listView.addHeaderView(this.searchBar);
 
         swipeAdapter.addBackground(SwipeDirections.DIRECTION_NORMAL_LEFT, R.layout.row_bg_left)
@@ -219,8 +246,8 @@ public class MainActivity extends ActionBarActivity
             }
 
             public void onSwipeSingle(int position, int direction) {
-                PictureStatus status = pictureStatusAdapter.getItem(position - 1);
-                pictureStatusAdapter.remove(status);
+                PictureStatus status = statusList.get(position - 1);
+                statusList.remove(status);
                 switch (direction) {
                     case SwipeDirections.DIRECTION_NORMAL_LEFT:
                     case SwipeDirections.DIRECTION_FAR_LEFT:
@@ -230,12 +257,53 @@ public class MainActivity extends ActionBarActivity
                         DeviceUtils.saveToFile(MainActivity.this, status.getImage());
                         break;
                 }
+                pictureStatusGridAdapter.notifyDataSetChanged();
+                pictureStatusListAdapter.notifyDataSetChanged();
             }
         });
-
     }
 
+    private void setupGridAdapter() {
+        gridView = (RecyclerView) findViewById(R.id.recyclerview);
+        gridController = (LinearLayout) findViewById(R.id.gridController);
+        setupGridControllers();
+        gridView.setLayoutManager(new StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.VERTICAL));
+        pictureStatusGridAdapter = new PictureStatusGridAdapter(this, statusList);
+        gridView.setAdapter(pictureStatusGridAdapter);
+    }
 
+    private void setupGridControllers() {
+        Button selectAllButton = (Button) gridController.findViewById(R.id.selectAllButton);
+        Button saveButton = (Button) gridController.findViewById(R.id.saveButton);
+        Button deleteButton = (Button) gridController.findViewById(R.id.deleteButton);
+        selectAllButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pictureStatusGridAdapter.selectAll();
+            }
+        });
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ArrayList<PictureStatus> statuses = pictureStatusGridAdapter.getSelectedPictureStatus();
+                statusList.removeAll(statuses);
+                for (PictureStatus status : statuses) {
+                    DeviceUtils.saveToFile(MainActivity.this, status.getImage());
+                }
+                pictureStatusGridAdapter.notifyDataSetChanged();
+                pictureStatusListAdapter.notifyDataSetChanged();
+            }
+        });
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ArrayList<PictureStatus> statuses = pictureStatusGridAdapter.getSelectedPictureStatus();
+                statusList.removeAll(statuses);
+                pictureStatusGridAdapter.notifyDataSetChanged();
+                pictureStatusListAdapter.notifyDataSetChanged();
+            }
+        });
+    }
 
     private void searchSubmit(String keyword) {
         if ("".equals(keyword)) {
@@ -250,7 +318,7 @@ public class MainActivity extends ActionBarActivity
     }
 
     private void searchKeyword(String keyword) {
-        pictureStatusAdapter.clear();
+        pictureStatusListAdapter.clear();
         mTitle = "Pictter - " + keyword;
         getSupportActionBar().setTitle(mTitle);
         twitterManager.searchTweets(keyword, null, getResources().getInteger(R.integer.search_tweet_limit));

@@ -17,14 +17,13 @@ import java.util.List;
 /**
  * Created by mike on 15/04/25.
  */
-public class PictureStatusAdapter extends ArrayAdapter<PictureStatus> {
+public class PictureStatusListAdapter extends ArrayAdapter<PictureStatus> {
     private Activity activity;
     List<PictureStatus> pictureStatusList;
     private LayoutInflater layoutInflater_;
     private static final float BUTTON_WIDTH_DP = 70f;
-    private int margin;
 
-    public PictureStatusAdapter(Context context, int textViewResourceId, List<PictureStatus> pictureStatusList) {
+    public PictureStatusListAdapter(Context context, int textViewResourceId, List<PictureStatus> pictureStatusList) {
         super(context, textViewResourceId, pictureStatusList);
         layoutInflater_ = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.pictureStatusList = pictureStatusList;
@@ -35,7 +34,6 @@ public class PictureStatusAdapter extends ArrayAdapter<PictureStatus> {
 
         WindowManager wm = (WindowManager) getContext().getSystemService(getContext().WINDOW_SERVICE);
         Display dp = wm.getDefaultDisplay();
-        margin = dp.getWidth() - buttonWidthPX;
     }
 
     @Override
@@ -43,7 +41,7 @@ public class PictureStatusAdapter extends ArrayAdapter<PictureStatus> {
 
         // convertViewは使い回しされている可能性があるのでnullの時だけ新しく作る
         if (null == convertView) {
-            convertView = layoutInflater_.inflate(R.layout.item_layout, null);
+            convertView = layoutInflater_.inflate(R.layout.item_status_list, null);
         }
         final PictureStatus pictureStatus = pictureStatusList.get(position);
 
