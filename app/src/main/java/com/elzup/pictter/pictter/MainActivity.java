@@ -94,7 +94,7 @@ public class MainActivity extends ActionBarActivity
     }
 
     @Override
-    public boolean onPrepareOptionsMenu (Menu menu) {
+    public boolean onPrepareOptionsMenu(Menu menu) {
 //        menu.getItem(1).setEnabled(false);
         return true;
     }
@@ -280,6 +280,27 @@ public class MainActivity extends ActionBarActivity
             @Override
             public void onClick(View v) {
                 pictureStatusGridAdapter.selectAll();
+            }
+        });
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ArrayList<PictureStatus> statuses = pictureStatusGridAdapter.getSelectedPictureStatus();
+                statusList.removeAll(statuses);
+                for (PictureStatus status : statuses) {
+                    DeviceUtils.saveToFile(MainActivity.this, status.getImage());
+                }
+                pictureStatusGridAdapter.notifyDataSetChanged();
+                pictureStatusListAdapter.notifyDataSetChanged();
+            }
+        });
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ArrayList<PictureStatus> statuses = pictureStatusGridAdapter.getSelectedPictureStatus();
+                statusList.removeAll(statuses);
+                pictureStatusGridAdapter.notifyDataSetChanged();
+                pictureStatusListAdapter.notifyDataSetChanged();
             }
         });
     }
