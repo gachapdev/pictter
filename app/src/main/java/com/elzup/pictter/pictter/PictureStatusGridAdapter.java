@@ -1,8 +1,6 @@
 package com.elzup.pictter.pictter;
 
 import android.content.Context;
-import android.content.DialogInterface;
-import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,7 +33,7 @@ public class PictureStatusGridAdapter extends RecyclerView.Adapter<RecyclerView.
 
     public void onBindViewHolder(PictureStatusGridAdapter.ViewHolder holder, int position) {
         PictureStatus data = mDataList.get(position);
-        holder.image.setImageBitmap(data.getImage());
+        holder.setPictureStatus(data);
     }
 
     @Override
@@ -44,6 +42,7 @@ public class PictureStatusGridAdapter extends RecyclerView.Adapter<RecyclerView.
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        PictureStatus pictureStatus;
         ImageView image;
         View rootView;
 
@@ -54,10 +53,30 @@ public class PictureStatusGridAdapter extends RecyclerView.Adapter<RecyclerView.
             v.setOnClickListener(this);
         }
 
+        public void setPictureStatus(PictureStatus pictureStatus) {
+            this.pictureStatus = pictureStatus;
+            this.image.setImageBitmap(pictureStatus.getImage());
+        }
+
         @Override
         public void onClick(View v) {
-            rootView.setBackground(rootView.getResources().getDrawable(R.drawable.border_on));
+            pictureStatus.toggleSelected();
+            int back_id = R.drawable.border;
+            if (pictureStatus.isSelected()) {
+                back_id = R.drawable.border_on;
+            }
+            rootView.setBackground(rootView.getResources().getDrawable(back_id));
         }
+    }
+
+    public ArrayList<PictureStatus> getSelectedPictureStatus() {
+        ArrayList<PictureStatus> selectedList = new ArrayList<>();
+        for (PictureStatus item : mDataList) {
+            if (item.isSelected()) {
+                selectedList.add(item);
+            }
+        }
+        return selectedList;
     }
 }
 

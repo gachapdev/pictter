@@ -20,9 +20,12 @@ public class PictureStatus implements Serializable {
     private Status status;
     private Bitmap image;
 
+    private boolean isSelected;
+
     PictureStatus(Status status) {
         this.status = status;
         this.image = null;
+        this.isSelected = false;
     }
 
     public Bitmap getImage() {
@@ -60,6 +63,18 @@ public class PictureStatus implements Serializable {
             }
         };
         task.execute();
+    }
+
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean isSelected) {
+        this.isSelected = isSelected;
+    }
+
+    public void toggleSelected() {
+        isSelected = !isSelected;
     }
 }
 
