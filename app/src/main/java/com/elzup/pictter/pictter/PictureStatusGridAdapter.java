@@ -1,6 +1,8 @@
 package com.elzup.pictter.pictter;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,12 +43,18 @@ public class PictureStatusGridAdapter extends RecyclerView.Adapter<RecyclerView.
         return mDataList.size();
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder {
+    static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         ImageView image;
 
         public ViewHolder(View v) {
             super(v);
             image = (ImageView) v.findViewById(R.id.image);
+            v.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            image.setBackgroundColor(Color.RED);
         }
     }
 }
