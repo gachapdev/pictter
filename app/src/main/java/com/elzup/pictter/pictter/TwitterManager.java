@@ -42,7 +42,7 @@ public class TwitterManager {
     private boolean isLogin;
     private Query nextQuery;
 
-    private PictureStatusAdapter pictureStatusAdapter;
+    private PictureStatusListAdapter pictureStatusListAdapter;
     private ArrayAdapter<String> trendAdapter;
 
     private static String SEARCH_IGNORE_OPERATOR = "-";
@@ -112,8 +112,8 @@ public class TwitterManager {
         this.session = com.twitter.sdk.android.Twitter.getSessionManager().getActiveSession();
     }
 
-    public void setListAdapters(PictureStatusAdapter pictureStatusAdapter, final ArrayAdapter<String> trendAdapter) {
-        this.pictureStatusAdapter = pictureStatusAdapter;
+    public void setListAdapters(PictureStatusListAdapter pictureStatusListAdapter, final ArrayAdapter<String> trendAdapter) {
+        this.pictureStatusListAdapter = pictureStatusListAdapter;
         this.trendAdapter = trendAdapter;
     }
 
@@ -148,7 +148,7 @@ public class TwitterManager {
                 }
                 for (twitter4j.Status status : TwitterManager.filterImageTweet(tweets)) {
                     PictureStatus pictureStatus = new PictureStatus(status);
-                    pictureStatus.asyncImage(pictureStatusAdapter);
+                    pictureStatus.asyncImage(pictureStatusListAdapter);
                 }
             }
         };
@@ -180,7 +180,7 @@ public class TwitterManager {
                 }
                 for (twitter4j.Status status : TwitterManager.filterImageTweet(tweets)) {
                     PictureStatus pictureStatus = new PictureStatus(status);
-                    pictureStatus.asyncImage(pictureStatusAdapter);
+                    pictureStatus.asyncImage(pictureStatusListAdapter);
                 }
             }
         };
