@@ -45,16 +45,18 @@ public class PictureStatusGridAdapter extends RecyclerView.Adapter<RecyclerView.
 
     static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         ImageView image;
+        View rootView;
 
         public ViewHolder(View v) {
             super(v);
+            rootView = v;
             image = (ImageView) v.findViewById(R.id.image);
             v.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
-            image.setBackgroundColor(Color.RED);
+            rootView.setBackground(rootView.getResources().getDrawable(R.drawable.border_on));
         }
     }
 }
