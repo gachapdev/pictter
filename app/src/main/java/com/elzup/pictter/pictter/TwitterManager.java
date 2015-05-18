@@ -112,7 +112,7 @@ public class TwitterManager {
         this.session = com.twitter.sdk.android.Twitter.getSessionManager().getActiveSession();
     }
 
-    public void setListAdapters(PictureStatusAdapter pictureStatusAdapter, ArrayAdapter<String> trendAdapter) {
+    public void setListAdapters(PictureStatusAdapter pictureStatusAdapter, final ArrayAdapter<String> trendAdapter) {
         this.pictureStatusAdapter = pictureStatusAdapter;
         this.trendAdapter = trendAdapter;
     }

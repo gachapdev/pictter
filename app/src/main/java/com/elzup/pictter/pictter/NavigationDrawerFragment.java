@@ -119,7 +119,7 @@ public class NavigationDrawerFragment extends Fragment {
         syncListHeight();
     }
 
-    private void syncListHeight() {
+    public void syncListHeight() {
         syncListHeight(mDrawerListView);
         syncListHeight(mTrendListView);
     }
