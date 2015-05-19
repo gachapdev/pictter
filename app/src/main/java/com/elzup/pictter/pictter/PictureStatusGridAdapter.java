@@ -1,11 +1,17 @@
 package com.elzup.pictter.pictter;
 
 import android.content.Context;
+import android.content.Intent;
+import android.gesture.Gesture;
 import android.support.v7.widget.RecyclerView;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
+import com.twitter.sdk.android.core.internal.oauth.GuestAuthToken;
 
 import java.util.ArrayList;
 
@@ -41,27 +47,29 @@ public class PictureStatusGridAdapter extends RecyclerView.Adapter<RecyclerView.
         return mDataList.size();
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    static class ViewHolder extends RecyclerView.ViewHolder implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener {
         PictureStatus pictureStatus;
         ImageView image;
         View rootView;
+        private GestureDetector gestureDetector;
 
         public ViewHolder(View v) {
             super(v);
             rootView = v;
             image = (ImageView) v.findViewById(R.id.image);
-            v.setOnClickListener(this);
+            gestureDetector = new GestureDetector(v.getContext(), this);
+            v.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    boolean result = gestureDetector.onTouchEvent(event);
+                    return result;
+                }
+            });
         }
 
         public void setPictureStatus(PictureStatus pictureStatus) {
             this.pictureStatus = pictureStatus;
             this.image.setImageBitmap(pictureStatus.getImage());
-            syncBackground();
-        }
-
-        @Override
-        public void onClick(View v) {
-            pictureStatus.toggleSelected();
             syncBackground();
         }
 
@@ -71,6 +79,56 @@ public class PictureStatusGridAdapter extends RecyclerView.Adapter<RecyclerView.
                 back_id = R.drawable.border_on;
             }
             rootView.setBackground(rootView.getResources().getDrawable(back_id));
+        }
+
+        @Override
+        public boolean onDown(MotionEvent e) {
+            return true;
+        }
+
+        @Override
+        public void onShowPress(MotionEvent e) {
+
+        }
+
+        @Override
+        public boolean onSingleTapUp(MotionEvent e) {
+            return false;
+        }
+
+        @Override
+        public boolean onSingleTapConfirmed(MotionEvent e) {
+            pictureStatus.toggleSelected();
+            syncBackground();
+            return true;
+        }
+
+        @Override
+        public boolean onDoubleTap(MotionEvent e) {
+            return false;
+        }
+
+        @Override
+        public boolean onDoubleTapEvent(MotionEvent e) {
+            return false;
+        }
+
+        @Override
+        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+            return false;
+        }
+
+        @Override
+        public void onLongPress(MotionEvent e) {
+            Intent intent = new Intent(rootView.getContext(), ShowImage.class);
+            intent.putExtra(ShowImage.EXTRA_STRING_URL, pictureStatus.getImageUrl());
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            rootView.getContext().startActivity(intent);
+        }
+
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            return false;
         }
     }
 

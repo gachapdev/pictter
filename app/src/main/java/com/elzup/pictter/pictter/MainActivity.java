@@ -13,11 +13,13 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.internal.view.menu.MenuBuilder;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -84,9 +86,12 @@ public class MainActivity extends ActionBarActivity
         }
     }
 
+    MenuBuilder menu;
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(0, 10, 0, "表示切り替え");
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.main_activity_actions, menu);
         if (!mNavigationDrawerFragment.isDrawerOpen()) {
             restoreActionbar();
             return true;
@@ -96,7 +101,7 @@ public class MainActivity extends ActionBarActivity
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-//        menu.getItem(1).setEnabled(false);
+        this.menu = (MenuBuilder) menu;
         return true;
     }
 
@@ -105,7 +110,7 @@ public class MainActivity extends ActionBarActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         this.mNavigationDrawerFragment.syncListHeight();
         switch (item.getItemId()) {
-            case 10:
+            case R.id.action_switch:
                 listToggle();
                 break;
             case R.id.action_settings:
@@ -204,15 +209,22 @@ public class MainActivity extends ActionBarActivity
         this.gridController.setVisibility(View.GONE);
     }
 
+    private boolean isListView() {
+        return this.listView.getVisibility() == View.VISIBLE;
+    }
+
     private void listToggle() {
-        if (this.listView.getVisibility() == View.GONE) {
-            this.listView.setVisibility(View.VISIBLE);
-            this.gridView.setVisibility(View.GONE);
-            this.gridController.setVisibility(View.GONE);
-        } else {
+        boolean to_view = isListView();
+        if (to_view) {
             this.listView.setVisibility(View.GONE);
             this.gridView.setVisibility(View.VISIBLE);
             this.gridController.setVisibility(View.VISIBLE);
+            this.menu.getActionItems().get(0).setIcon(android.R.drawable.ic_menu_slideshow);
+        } else {
+            this.listView.setVisibility(View.VISIBLE);
+            this.gridView.setVisibility(View.GONE);
+            this.gridController.setVisibility(View.GONE);
+            this.menu.getActionItems().get(0).setIcon(android.R.drawable.ic_dialog_dialer);
         }
     }
 
@@ -223,6 +235,20 @@ public class MainActivity extends ActionBarActivity
         swipeAdapter.setListView(listView);
         listView.setAdapter(swipeAdapter);
         listView.addHeaderView(this.searchBar);
+
+        getLayoutInflater().inflate(R.layout.search_bar, null);
+        searchEditText = (EditText) this.searchBar.findViewById(R.id.searchBar);
+        searchEditText.setFocusable(true);
+
+        LinearLayout footer = (LinearLayout) getLayoutInflater().inflate(R.layout.listview_footer, null);
+        Button goTop = (Button) footer.findViewById(R.id.goTopButton);
+        goTop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listView.smoothScrollToPosition(0);
+            }
+        });
+        listView.addFooterView(footer);
 
         swipeAdapter.addBackground(SwipeDirections.DIRECTION_NORMAL_LEFT, R.layout.row_bg_left)
                 .addBackground(SwipeDirections.DIRECTION_NORMAL_RIGHT, R.layout.row_bg_right);
