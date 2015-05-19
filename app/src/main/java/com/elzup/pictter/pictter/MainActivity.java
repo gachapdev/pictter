@@ -236,6 +236,20 @@ public class MainActivity extends ActionBarActivity
         listView.setAdapter(swipeAdapter);
         listView.addHeaderView(this.searchBar);
 
+        getLayoutInflater().inflate(R.layout.search_bar, null);
+        searchEditText = (EditText) this.searchBar.findViewById(R.id.searchBar);
+        searchEditText.setFocusable(true);
+
+        LinearLayout footer = (LinearLayout) getLayoutInflater().inflate(R.layout.listview_footer, null);
+        Button goTop = (Button) footer.findViewById(R.id.goTopButton);
+        goTop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listView.smoothScrollToPosition(0);
+            }
+        });
+        listView.addFooterView(footer);
+
         swipeAdapter.addBackground(SwipeDirections.DIRECTION_NORMAL_LEFT, R.layout.row_bg_left)
                 .addBackground(SwipeDirections.DIRECTION_NORMAL_RIGHT, R.layout.row_bg_right);
         swipeAdapter.setFarSwipeFraction(0);
