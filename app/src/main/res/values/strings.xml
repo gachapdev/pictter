@@ -8,6 +8,7 @@
     <string name="title_activity_about_image">AboutImage</string>
     <string name="title_activity_login">ログイン</string>
     <string name="title_activity_showImage">画像View</string>
+    <string name="title_activity_top_view">TopView</string>
 
     <string name="action_settings">Settings</string>
     <string name="swipe_left_text">削除</string>
@@ -19,5 +20,7 @@
     <string name="search_bar_height">60dp</string>
 
     <string name="debug_default_search_q">#艦これ版深夜の真剣お絵描き60分一本勝負</string>
+
+    <string name="hello_world">Hello world!</string>
 
 </resources>
