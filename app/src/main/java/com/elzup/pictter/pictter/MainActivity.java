@@ -112,6 +112,7 @@ public class MainActivity extends ActionBarActivity
         switch (item.getItemId()) {
             case R.id.action_switch:
                 listToggle();
+                killFocus();
                 break;
             case R.id.action_settings:
                 break;
