@@ -12,8 +12,6 @@ import com.twitter.sdk.android.core.TwitterAuthConfig;
 import com.twitter.sdk.android.core.TwitterAuthToken;
 import com.twitter.sdk.android.core.TwitterSession;
 
-import org.apache.http.StatusLine;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +32,8 @@ import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.TwitterListener;
 import twitter4j.auth.AccessToken;
+import twitter4j.conf.Configuration;
+import twitter4j.conf.ConfigurationBuilder;
 
 public class TwitterManager {
 
@@ -102,9 +102,14 @@ public class TwitterManager {
     }
 
     public void setupTwitter(String token, String tokenSecret) {
-        twitter = TwitterFactory.getSingleton();
-        twitter.setOAuthConsumer(BuildConfig.CONSUMER_KEY, BuildConfig.CONSUMER_SECRET);
-        twitter.setOAuthAccessToken(new AccessToken(token, tokenSecret));
+        ConfigurationBuilder builder = new ConfigurationBuilder();
+        builder.setOAuthConsumerKey(BuildConfig.CONSUMER_KEY);
+        builder.setOAuthConsumerSecret(BuildConfig.CONSUMER_SECRET);
+        builder.setOAuthAccessToken(token);
+        builder.setOAuthAccessTokenSecret(tokenSecret);
+        Configuration conf = builder.build();
+        TwitterFactory factory = new TwitterFactory(conf);
+        twitter = factory.getInstance();
     }
 
     private void setupSession(Context context) {
@@ -116,7 +121,7 @@ public class TwitterManager {
         this.session = com.twitter.sdk.android.Twitter.getSessionManager().getActiveSession();
     }
 
-    public void setListAdapters(ArrayList<PictureStatus> statusList, PictureStatusListAdapter pictureStatusListAdapter, PictureStatusGridAdapter pictureStatusGridAdapter,  final ArrayAdapter<String> trendAdapter) {
+    public void setListAdapters(ArrayList<PictureStatus> statusList, PictureStatusListAdapter pictureStatusListAdapter, PictureStatusGridAdapter pictureStatusGridAdapter, final ArrayAdapter<String> trendAdapter) {
         this.statusList = statusList;
         this.pictureStatusListAdapter = pictureStatusListAdapter;
         this.pictureStatusGridAdapter = pictureStatusGridAdapter;
