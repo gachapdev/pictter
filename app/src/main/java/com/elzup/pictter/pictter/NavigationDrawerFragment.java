@@ -18,7 +18,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -39,6 +41,7 @@ public class NavigationDrawerFragment extends Fragment {
     private View mView;
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerListView;
+    private ListView mTrendListView;
     private View mFragmentContainerView;
 
     private Button logoutButton;
@@ -49,6 +52,7 @@ public class NavigationDrawerFragment extends Fragment {
     private boolean mUserLearnedDrawer;
 
     private NavDrawerListAdapter navDrawerListAdapter;
+    private ArrayAdapter<String> trendListAdapter;
 
     public NavigationDrawerFragment() {
     }
@@ -78,17 +82,23 @@ public class NavigationDrawerFragment extends Fragment {
         setHasOptionsMenu(true);
     }
 
+    public ArrayAdapter<String> getTrendListAdapter() {
+        return this.trendListAdapter;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
-        mDrawerListView = (ListView) mView.findViewById(R.id.keywordList);
-//        TextView text = (TextView) mView.findViewById(R.id.textView);
-
-        logoutButton = (Button) inflater.inflate(R.layout.navigation_drawer_footer, container, false);
-        mDrawerListView.addFooterView(logoutButton);
+        setupDrawerListView();
+        logoutButton = (Button) mView.findViewById(R.id.logoutButton);
 
         setupDeleteButton(mView);
+        return mView;
+    }
 
+    private void setupDrawerListView() {
+        mDrawerListView = (ListView) mView.findViewById(R.id.keywordList);
+        mDrawerListView.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
         mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -98,7 +108,36 @@ public class NavigationDrawerFragment extends Fragment {
         navDrawerListAdapter = new NavDrawerListAdapter(getActionBar().getThemedContext(), 0, new ArrayList<NavDrawerItem>());
         mDrawerListView.setAdapter(navDrawerListAdapter);
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
-        return mView;
+    }
+
+    public void setupTrendListView(List<String> wordList, AdapterView.OnItemClickListener onItemClickListener) {
+        mTrendListView = (ListView) mView.findViewById(R.id.trendWordList);
+        trendListAdapter = new ArrayAdapter<>(getActionBar().getThemedContext(), android.R.layout.simple_list_item_1);
+        trendListAdapter.addAll(wordList);
+        mTrendListView.setAdapter(trendListAdapter);
+        mTrendListView.setOnItemClickListener(onItemClickListener);
+        syncListHeight();
+    }
+
+    public void syncListHeight() {
+        syncListHeight(mDrawerListView);
+        syncListHeight(mTrendListView);
+    }
+
+    private static void syncListHeight(ListView listView) {
+        ListAdapter la = listView.getAdapter();
+        if (la == null) {
+            return;
+        }
+        int h = 0;
+        for (int i = 0; i < la.getCount(); i++) {
+            View item = la.getView(i, null, listView);
+            item.measure(0, 0);
+            h += item.getMeasuredHeight();
+        }
+        ViewGroup.LayoutParams p = listView.getLayoutParams();
+        p.height = h + (listView.getDividerHeight() * (la.getCount() - 1));
+        listView.setLayoutParams(p);
     }
 
     /**
@@ -233,11 +272,6 @@ public class NavigationDrawerFragment extends Fragment {
             return true;
         }
 
-        if (item.getItemId() == R.id.action_example) {
-            Toast.makeText(getActivity(), "Example action.", Toast.LENGTH_SHORT).show();
-            return true;
-        }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -274,6 +308,7 @@ public class NavigationDrawerFragment extends Fragment {
             this.navDrawerListAdapter.remove(item);
         }
         this.navDrawerListAdapter.insert(item, 0);
+        syncListHeight();
         mDrawerListView.setItemChecked(0, true);
     }
 
@@ -300,7 +335,7 @@ public class NavigationDrawerFragment extends Fragment {
         addFavoriteKeywordAll(Arrays.asList(keywords));
     }
 
-    public void setNavDrawerListClickListener(View.OnClickListener clickListener) {
+    public void setListClickListener(View.OnClickListener clickListener) {
         this.navDrawerListAdapter.setClickListener(clickListener);
     }
 
@@ -318,6 +353,7 @@ public class NavigationDrawerFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 navDrawerListAdapter.removeUncheckedItems();
+                syncListHeight();
             }
         });
     }

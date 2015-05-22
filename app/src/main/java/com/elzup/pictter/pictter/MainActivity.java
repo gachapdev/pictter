@@ -13,17 +13,25 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.internal.view.menu.MenuBuilder;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.wdullaer.swipeactionadapter.SwipeActionAdapter;
 import com.wdullaer.swipeactionadapter.SwipeDirections;
@@ -37,8 +45,15 @@ public class MainActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
     private TwitterManager twitterManager;
-    private PictureStatusAdapter pictureStatusAdapter;
+    private PictureStatusListAdapter pictureStatusListAdapter;
+    private PictureStatusGridAdapter pictureStatusGridAdapter;
+    private ListView listView;
+    private RecyclerView gridView;
+    private LinearLayout gridController;
+    private ArrayAdapter<String> trendListAdapter;
     private SwipeActionAdapter swipeAdapter;
+
+    private ArrayList<PictureStatus> statusList;
 
     private NavigationDrawerFragment mNavigationDrawerFragment;
 
@@ -49,12 +64,11 @@ public class MainActivity extends ActionBarActivity
     private InputMethodManager inputMethodManager;
 
     public static String PREFERENCE_KEYWORDS = "keywords";
-    public static String PREFERENCE_KEYWORDS_DELIMITER = ":::";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.twitterManager = new TwitterManager(this);
+        twitterManager = new TwitterManager(this);
         if (!this.loginCheck()) {
             return;
         }
@@ -65,31 +79,42 @@ public class MainActivity extends ActionBarActivity
         setupSearchForm();
         setupAdapter();
         setupSwipeRefreshLayout();
+        twitterManager.setListAdapters(statusList, pictureStatusListAdapter, pictureStatusGridAdapter, trendListAdapter);
+        twitterManager.setTrends();
         if (initKeywords.size() > 0) {
             searchKeyword(initKeywords.get(0));
         }
     }
 
+    MenuBuilder menu;
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.main_activity_actions, menu);
         if (!mNavigationDrawerFragment.isDrawerOpen()) {
-            getMenuInflater().inflate(R.menu.nav_main, menu);
             restoreActionbar();
             return true;
         }
         return super.onCreateOptionsMenu(menu);
     }
 
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        this.menu = (MenuBuilder) menu;
+        return true;
+    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        this.mNavigationDrawerFragment.syncListHeight();
+        switch (item.getItemId()) {
+            case R.id.action_switch:
+                listToggle();
+                break;
+            case R.id.action_settings:
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -101,8 +126,6 @@ public class MainActivity extends ActionBarActivity
                 .replace(R.id.container, MainActivity.PlaceholderFragment.newInstance(position + 1))
                 .commit();
     }
-
-
 
     private boolean loginCheck() {
         if (twitterManager.isLogin()) {
@@ -117,13 +140,21 @@ public class MainActivity extends ActionBarActivity
 
     private void setupNavigation(List<String> initKeywords) {
         mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
-        mNavigationDrawerFragment.setNavDrawerListClickListener(new View.OnClickListener() {
+        mNavigationDrawerFragment.setListClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 TextView textView = (TextView) v;
                 searchKeyword(textView.getText().toString());
             }
         });
+        mNavigationDrawerFragment.setupTrendListView(new ArrayList<String>(), new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String text = ((AdapterView<ArrayAdapter<String>>) parent).getAdapter().getItem(position);
+                searchKeyword(text);
+            }
+        });
+        trendListAdapter = mNavigationDrawerFragment.getTrendListAdapter();
         mNavigationDrawerFragment.setToggleListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -171,14 +202,53 @@ public class MainActivity extends ActionBarActivity
     }
 
     private void setupAdapter() {
-        pictureStatusAdapter = new PictureStatusAdapter(this, 0, new ArrayList<PictureStatus>());
-        ListView listView = (ListView) findViewById(R.id.list);
+        statusList = new ArrayList<>();
+        setupListAdapter();
+        setupGridAdapter();
+        this.gridView.setVisibility(View.GONE);
+        this.gridController.setVisibility(View.GONE);
+    }
 
-        swipeAdapter = new SwipeActionAdapter(pictureStatusAdapter);
+    private boolean isListView() {
+        return this.listView.getVisibility() == View.VISIBLE;
+    }
+
+    private void listToggle() {
+        boolean to_view = isListView();
+        if (to_view) {
+            this.listView.setVisibility(View.GONE);
+            this.gridView.setVisibility(View.VISIBLE);
+            this.gridController.setVisibility(View.VISIBLE);
+            this.menu.getActionItems().get(0).setIcon(android.R.drawable.ic_menu_slideshow);
+        } else {
+            this.listView.setVisibility(View.VISIBLE);
+            this.gridView.setVisibility(View.GONE);
+            this.gridController.setVisibility(View.GONE);
+            this.menu.getActionItems().get(0).setIcon(android.R.drawable.ic_dialog_dialer);
+        }
+    }
+
+    private void setupListAdapter() {
+        pictureStatusListAdapter = new PictureStatusListAdapter(this, 0, statusList);
+        listView = (ListView) findViewById(R.id.list);
+        swipeAdapter = new SwipeActionAdapter(pictureStatusListAdapter);
         swipeAdapter.setListView(listView);
         listView.setAdapter(swipeAdapter);
-
         listView.addHeaderView(this.searchBar);
+
+        getLayoutInflater().inflate(R.layout.search_bar, null);
+        searchEditText = (EditText) this.searchBar.findViewById(R.id.searchBar);
+        searchEditText.setFocusable(true);
+
+        LinearLayout footer = (LinearLayout) getLayoutInflater().inflate(R.layout.listview_footer, null);
+        Button goTop = (Button) footer.findViewById(R.id.goTopButton);
+        goTop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listView.smoothScrollToPosition(0);
+            }
+        });
+        listView.addFooterView(footer);
 
         swipeAdapter.addBackground(SwipeDirections.DIRECTION_NORMAL_LEFT, R.layout.row_bg_left)
                 .addBackground(SwipeDirections.DIRECTION_NORMAL_RIGHT, R.layout.row_bg_right);
@@ -203,8 +273,8 @@ public class MainActivity extends ActionBarActivity
             }
 
             public void onSwipeSingle(int position, int direction) {
-                PictureStatus status = pictureStatusAdapter.getItem(position - 1);
-                pictureStatusAdapter.remove(status);
+                PictureStatus status = statusList.get(position - 1);
+                statusList.remove(status);
                 switch (direction) {
                     case SwipeDirections.DIRECTION_NORMAL_LEFT:
                     case SwipeDirections.DIRECTION_FAR_LEFT:
@@ -212,14 +282,59 @@ public class MainActivity extends ActionBarActivity
                     case SwipeDirections.DIRECTION_NORMAL_RIGHT:
                     case SwipeDirections.DIRECTION_FAR_RIGHT:
                         DeviceUtils.saveToFile(MainActivity.this, status.getImage());
+                        String toastText = "画像を保存しました";
+                        Toast.makeText(MainActivity.this, toastText, Toast.LENGTH_SHORT).show();
                         break;
                 }
+                pictureStatusGridAdapter.notifyDataSetChanged();
+                pictureStatusListAdapter.notifyDataSetChanged();
             }
         });
-
     }
 
+    private void setupGridAdapter() {
+        gridView = (RecyclerView) findViewById(R.id.recyclerview);
+        gridController = (LinearLayout) findViewById(R.id.gridController);
+        setupGridControllers();
+        gridView.setLayoutManager(new StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.VERTICAL));
+        pictureStatusGridAdapter = new PictureStatusGridAdapter(this, statusList);
+        gridView.setAdapter(pictureStatusGridAdapter);
+    }
 
+    private void setupGridControllers() {
+        Button selectAllButton = (Button) gridController.findViewById(R.id.selectAllButton);
+        Button saveButton = (Button) gridController.findViewById(R.id.saveButton);
+        Button deleteButton = (Button) gridController.findViewById(R.id.deleteButton);
+        selectAllButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pictureStatusGridAdapter.selectAll();
+            }
+        });
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ArrayList<PictureStatus> statuses = pictureStatusGridAdapter.getSelectedPictureStatus();
+                statusList.removeAll(statuses);
+                for (PictureStatus status : statuses) {
+                    DeviceUtils.saveToFile(MainActivity.this, status.getImage());
+                }
+                pictureStatusGridAdapter.notifyDataSetChanged();
+                pictureStatusListAdapter.notifyDataSetChanged();
+                String toastText = statuses.size() + "枚の画像を保存しました";
+                Toast.makeText(MainActivity.this, toastText, Toast.LENGTH_SHORT).show();
+            }
+        });
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ArrayList<PictureStatus> statuses = pictureStatusGridAdapter.getSelectedPictureStatus();
+                statusList.removeAll(statuses);
+                pictureStatusGridAdapter.notifyDataSetChanged();
+                pictureStatusListAdapter.notifyDataSetChanged();
+            }
+        });
+    }
 
     private void searchSubmit(String keyword) {
         if ("".equals(keyword)) {
@@ -234,10 +349,10 @@ public class MainActivity extends ActionBarActivity
     }
 
     private void searchKeyword(String keyword) {
-        pictureStatusAdapter.clear();
+        pictureStatusListAdapter.clear();
         mTitle = "Pictter - " + keyword;
         getSupportActionBar().setTitle(mTitle);
-        twitterManager.searchTweets(keyword, null, getResources().getInteger(R.integer.search_tweet_limit), pictureStatusAdapter);
+        twitterManager.searchTweets(keyword, null, getResources().getInteger(R.integer.search_tweet_limit));
         mNavigationDrawerFragment.addSearchKeyword(keyword);
         this.savePreferenceKeywords();
     }
@@ -261,7 +376,7 @@ public class MainActivity extends ActionBarActivity
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                twitterManager.searchTweetsNext(pictureStatusAdapter);
+                twitterManager.searchTweetsNext();
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {

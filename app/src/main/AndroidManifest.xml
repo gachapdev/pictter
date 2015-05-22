@@ -32,7 +32,9 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main" >
-
+            <meta-data
+                android:name="android.support.UI_OPTIONS"
+                android:value="splitActionBarWhenNarrow" />
         </activity>
 
         <meta-data
@@ -41,14 +43,16 @@
 
         <activity
             android:name=".ShowImage"
-            android:label="@string/title_activity_showImage" >
+            android:label="@string/title_activity_showImage"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
             </intent-filter>
         </activity>
         <activity
             android:name=".LoginActivity"
-            android:label="@string/title_activity_login" >
+            android:label="@string/title_activity_login"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
             </intent-filter>

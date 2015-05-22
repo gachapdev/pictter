@@ -76,6 +76,5 @@ dependencies {
     compile 'org.twitter4j:twitter4j-async:4.0.+'
     compile group: 'com.google.guava', name: 'guava', version: '12.0'
     compile 'com.wdullaer:swipeactionadapter:1.4.1'
-
+    compile 'com.android.support:recyclerview-v7:+'
 }
-
