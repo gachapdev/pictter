@@ -7,3 +7,4 @@
 /app/fabric.properties
 *.log
 /lib
+*.apk
