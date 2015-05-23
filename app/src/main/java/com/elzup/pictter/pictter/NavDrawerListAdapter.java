@@ -2,11 +2,14 @@ package com.elzup.pictter.pictter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -51,16 +54,17 @@ public class NavDrawerListAdapter extends ArrayAdapter<NavDrawerItem> {
         TextView nameTitle = (TextView) convertView.findViewById(R.id.title);
         nameTitle.setOnClickListener(this.clickListener);
 
-        final ToggleButton favButton = (ToggleButton) convertView.findViewById(R.id.favButton);
+        final ImageButton favButton = (ImageButton) convertView.findViewById(R.id.favButton);
         final NavDrawerItem navDrawerItem = navDrawerItems.get(position);
-        final Drawable iconStarOn = convertView.getResources().getDrawable(android.R.drawable.btn_star_big_on);
-        final Drawable iconStarOff = convertView.getResources().getDrawable(android.R.drawable.btn_star_big_off);
+        final Drawable starIconOn = convertView.getResources().getDrawable(R.drawable.ic_action_star_10);
+        starIconOn.setColorFilter(Color.YELLOW, PorterDuff.Mode.SRC_IN);
+        final Drawable starIconOff = convertView.getResources().getDrawable(R.drawable.ic_action_star_0);
 
-        favButton.setChecked(navDrawerItem.isFavorite());
+        // アイコン初期化
         if (navDrawerItem.isFavorite()) {
-            favButton.setBackgroundDrawable(iconStarOn);
+            favButton.setBackground(starIconOn);
         } else {
-            favButton.setBackgroundDrawable(iconStarOff);
+            favButton.setBackground(starIconOff);
         }
 
         nameTitle.setText(navDrawerItem.getName());
@@ -68,11 +72,12 @@ public class NavDrawerListAdapter extends ArrayAdapter<NavDrawerItem> {
         favButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // お気に入り状態をトグル
                 navDrawerItem.toggle();
                 if (navDrawerItem.isFavorite()) {
-                    favButton.setBackgroundDrawable(iconStarOn);
+                    favButton.setBackground(starIconOn);
                 } else {
-                    favButton.setBackgroundDrawable(iconStarOff);
+                    favButton.setBackground(starIconOff);
                 }
                 toggleListener.onClick(v);
             }

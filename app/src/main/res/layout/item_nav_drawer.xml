@@ -4,20 +4,22 @@
     android:layout_height="match_parent"
     android:orientation="horizontal">
 
-    <ToggleButton
+    <ImageButton
         android:layout_width="0dip"
-        android:layout_height="wrap_content"
-        android:layout_weight="2"
-        android:drawableLeft="@android:drawable/star_off"
-        android:textOff=""
-        android:textOn=""
+        android:layout_weight="1"
+        android:layout_height="20dip"
+        android:background="@drawable/ic_action_star_10"
+        android:layout_margin="10dip"
+        android:layout_marginTop="0dip"
         android:id="@+id/favButton" />
 
     <TextView
         android:layout_width="0dip"
-        android:layout_height="wrap_content"
+        android:layout_height="30dip"
+        android:paddingTop="5dip"
         android:text="title"
-        android:layout_weight="8"
+        android:textSize="20dip"
+        android:layout_weight="10"
         android:id="@+id/title" />
 
 </LinearLayout>

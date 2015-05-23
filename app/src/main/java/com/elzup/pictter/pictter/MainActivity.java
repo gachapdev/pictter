@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -16,6 +19,9 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.internal.view.menu.MenuBuilder;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ImageSpan;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -102,6 +108,9 @@ public class MainActivity extends ActionBarActivity
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         this.menu = (MenuBuilder) menu;
+        final Drawable iconGridView = getResources().getDrawable(R.drawable.ic_action_tiles_large);
+        iconGridView.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
+        this.menu.getActionItems().get(0).setIcon(iconGridView);
         return true;
     }
 
@@ -181,6 +190,7 @@ public class MainActivity extends ActionBarActivity
         searchEditText = (EditText) this.searchBar.findViewById(R.id.searchBar);
         searchEditText.setFocusable(true);
         final Button searchButton = (Button) this.searchBar.findViewById(R.id.searchButton);
+
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -216,16 +226,21 @@ public class MainActivity extends ActionBarActivity
 
     private void listToggle() {
         boolean to_view = isListView();
+        final Drawable iconListView = getResources().getDrawable(R.drawable.ic_action_database);
+        final Drawable iconGridView = getResources().getDrawable(R.drawable.ic_action_tiles_large);
+        iconListView.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
+        iconGridView.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
+
         if (to_view) {
             this.listView.setVisibility(View.GONE);
             this.gridView.setVisibility(View.VISIBLE);
             this.gridController.setVisibility(View.VISIBLE);
-            this.menu.getActionItems().get(0).setIcon(android.R.drawable.ic_menu_slideshow);
+            this.menu.getActionItems().get(0).setIcon(iconListView);
         } else {
             this.listView.setVisibility(View.VISIBLE);
             this.gridView.setVisibility(View.GONE);
             this.gridController.setVisibility(View.GONE);
-            this.menu.getActionItems().get(0).setIcon(android.R.drawable.ic_dialog_dialer);
+            this.menu.getActionItems().get(0).setIcon(iconGridView);
         }
     }
 

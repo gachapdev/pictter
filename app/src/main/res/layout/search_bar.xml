@@ -20,7 +20,6 @@
         android:focusable="true"
         android:focusableInTouchMode="true">
 
-        <requestFocus />
     </TextView>
 
     <TextView
@@ -36,7 +35,9 @@
     <Button
         android:id="@+id/searchButton"
         android:layout_width="0dip"
-        android:layout_height="wrap_content"
-        android:layout_weight="3"
-        android:text="検索" />
+        android:layout_height="50dip"
+        android:drawableTop="@drawable/ic_action_search"
+        android:paddingTop="10dip"
+        android:gravity="center_horizontal|top"
+        android:layout_weight="3" />
 </LinearLayout>

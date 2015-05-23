@@ -29,7 +29,7 @@
         <LinearLayout
             android:id="@+id/searchBox"
             android:layout_width="fill_parent"
-            android:layout_height="60dp"
+            android:layout_height="50dp"
             android:layout_centerHorizontal="true"
             android:orientation="horizontal">
 
@@ -38,21 +38,24 @@
                 android:layout_width="0dip"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="選択" />
+                android:drawableTop="@drawable/ic_action_tiles_small"
+                android:gravity="center_horizontal|center_vertical" />
 
             <Button
                 android:id="@+id/saveButton"
                 android:layout_width="0dip"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="保存" />
+                android:drawableTop="@drawable/ic_action_save"
+                android:gravity="center_horizontal|center_vertical" />
 
             <Button
                 android:id="@+id/deleteButton"
                 android:layout_width="0dip"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="削除" />
+                android:drawableTop="@drawable/ic_action_trash"
+                android:gravity="center_horizontal|center_vertical" />
         </LinearLayout>
 
 

@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:paddingRight="20dp"
         android:layout_gravity="right"
-        android:drawableRight="@android:drawable/ic_menu_gallery"
+        android:drawableRight="@drawable/ic_action_save"
         android:text=""
         android:textColor="#fff"
         android:textSize="50sp" />
