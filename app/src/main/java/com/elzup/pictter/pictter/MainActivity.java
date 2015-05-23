@@ -391,14 +391,13 @@ public class MainActivity extends ActionBarActivity
             public void onRefresh() {
                 if (!twitterManager.searchTweetsNext()) {
                     Toast.makeText(MainActivity.this, "画像が見つかりませんでした", Toast.LENGTH_SHORT).show();
-                    return;
                 }
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         mSwipeRefreshLayout.setRefreshing(false);
                     }
-                }, 3000);
+                }, 2000);
             }
         });
     }
