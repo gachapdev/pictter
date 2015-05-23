@@ -7,3 +7,5 @@
 /app/fabric.properties
 *.log
 /lib
+*.apk
+/app/manifest-merger-release-report.txt
