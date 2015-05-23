@@ -48,7 +48,7 @@ public class NavigationDrawerFragment extends Fragment {
     private View mFragmentContainerView;
 
     private Button logoutButton;
-    private Button deleteButton;
+    private ImageButton deleteButton;
 
     private int mCurrentSelectedPosition = 0;
     private boolean mFromSavedInstanceState;
@@ -351,7 +351,7 @@ public class NavigationDrawerFragment extends Fragment {
     }
 
     public void setupDeleteButton(View v) {
-        deleteButton = (Button) v.findViewById(R.id.deleteButton);
+        deleteButton = (ImageButton) v.findViewById(R.id.deleteButton);
         setDeleteButtonListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
