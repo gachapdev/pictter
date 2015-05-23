@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
@@ -166,7 +167,10 @@ public class TwitterManager {
         task.execute();
     }
 
-    public void searchTweetsNext() {
+    public boolean searchTweetsNext() {
+        if (nextQuery == null) {
+            return false;
+        }
         AsyncTask<Void, Void, List<Status>> task = new AsyncTask<Void, Void, List<Status>>() {
             @Override
             protected List<twitter4j.Status> doInBackground(Void... voids) {
@@ -196,6 +200,7 @@ public class TwitterManager {
             }
         };
         task.execute();
+        return true;
     }
 
     public void setTrends() {

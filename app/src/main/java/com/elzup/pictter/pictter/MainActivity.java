@@ -392,7 +392,10 @@ public class MainActivity extends ActionBarActivity
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                twitterManager.searchTweetsNext();
+                if (! twitterManager.searchTweetsNext()) {
+                    Toast.makeText(MainActivity.this, "画像が見つかりませんでした", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
