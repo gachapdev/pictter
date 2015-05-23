@@ -19,9 +19,6 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.internal.view.menu.MenuBuilder;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.style.ImageSpan;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -67,6 +64,7 @@ public class MainActivity extends ActionBarActivity
     private View searchBar;
     private EditText searchEditText;
     private CharSequence mTitle;
+    private MenuBuilder menu;
 
     private InputMethodManager inputMethodManager;
 
@@ -92,8 +90,6 @@ public class MainActivity extends ActionBarActivity
             searchKeyword(initKeywords.get(0));
         }
     }
-
-    MenuBuilder menu;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -393,7 +389,7 @@ public class MainActivity extends ActionBarActivity
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if (! twitterManager.searchTweetsNext()) {
+                if (!twitterManager.searchTweetsNext()) {
                     Toast.makeText(MainActivity.this, "画像が見つかりませんでした", Toast.LENGTH_SHORT).show();
                     return;
                 }
