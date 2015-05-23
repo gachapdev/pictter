@@ -3,6 +3,8 @@ package com.elzup.pictter.pictter;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ScaleDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -46,7 +48,7 @@ public class NavigationDrawerFragment extends Fragment {
     private View mFragmentContainerView;
 
     private Button logoutButton;
-    private ImageButton deleteButton;
+    private Button deleteButton;
 
     private int mCurrentSelectedPosition = 0;
     private boolean mFromSavedInstanceState;
@@ -349,7 +351,7 @@ public class NavigationDrawerFragment extends Fragment {
     }
 
     public void setupDeleteButton(View v) {
-        deleteButton = (ImageButton) v.findViewById(R.id.deleteButton);
+        deleteButton = (Button) v.findViewById(R.id.deleteButton);
         setDeleteButtonListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

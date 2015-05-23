@@ -1,7 +1,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:yourapp="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/action_switch"
-        android:icon="@android:drawable/ic_dialog_dialer"
+        android:icon="@drawable/ic_action_tiles_large"
+        android:color="#fff"
         android:title="switch"
         yourapp:showAsAction="ifRoom" />
 </menu>
