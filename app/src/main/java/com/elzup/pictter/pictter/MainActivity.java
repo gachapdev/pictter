@@ -37,6 +37,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.elzup.pictter.pictter.twitter.TwitterManager;
+import com.elzup.pictter.pictter.util.DeviceUtils;
+import com.elzup.pictter.pictter.util.StringUtils;
 import com.wdullaer.swipeactionadapter.SwipeActionAdapter;
 import com.wdullaer.swipeactionadapter.SwipeDirections;
 
@@ -84,7 +87,11 @@ public class MainActivity extends ActionBarActivity
         setupSearchForm();
         setupAdapter();
         setupSwipeRefreshLayout();
-        twitterManager.setListAdapters(statusList, pictureStatusListAdapter, pictureStatusGridAdapter, trendListAdapter);
+        twitterManager.setup(statusList,
+                pictureStatusListAdapter,
+                pictureStatusGridAdapter,
+                trendListAdapter,
+                getResources().getInteger(R.integer.search_tweet_limit));
         twitterManager.setTrends();
         if (initKeywords.size() > 0) {
             searchKeyword(initKeywords.get(0));
@@ -365,7 +372,7 @@ public class MainActivity extends ActionBarActivity
         pictureStatusListAdapter.clear();
         mTitle = "Pictter - " + keyword;
         getSupportActionBar().setTitle(mTitle);
-        twitterManager.searchTweets(keyword, null, getResources().getInteger(R.integer.search_tweet_limit));
+        twitterManager.searchTweets(keyword, null);
         mNavigationDrawerFragment.addSearchKeyword(keyword);
         this.savePreferenceKeywords();
     }

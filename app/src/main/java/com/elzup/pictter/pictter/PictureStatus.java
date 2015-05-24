@@ -23,7 +23,7 @@ public class PictureStatus implements Serializable {
 
     private boolean isSelected;
 
-    PictureStatus(Tweet tweet) {
+    public PictureStatus(Tweet tweet) {
         this.image = null;
         this.text = tweet.text;
         this.url = tweet.entities.media.get(0).mediaUrl;

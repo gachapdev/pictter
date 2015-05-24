@@ -1,27 +1,29 @@
-package com.elzup.pictter.pictter;
+package com.elzup.pictter.pictter.twitter;
 
 import android.content.Context;
-import android.os.AsyncTask;
-import android.util.Log;
 import android.widget.ArrayAdapter;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
+import com.elzup.pictter.pictter.BuildConfig;
+import com.elzup.pictter.pictter.PictureStatus;
+import com.elzup.pictter.pictter.PictureStatusGridAdapter;
+import com.elzup.pictter.pictter.PictureStatusListAdapter;
+import com.elzup.pictter.pictter.util.StringUtils;
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
 import com.twitter.sdk.android.core.TwitterAuthConfig;
-import com.twitter.sdk.android.core.TwitterAuthToken;
 import com.twitter.sdk.android.core.TwitterCore;
 import com.twitter.sdk.android.core.TwitterException;
 import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.core.models.Search;
 import com.twitter.sdk.android.core.models.Tweet;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.annotation.Nullable;
+import java.util.Map;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -33,19 +35,26 @@ public class TwitterManager {
 
     private boolean isLogin;
 
+    private String nextQueryStr;
+
     private ArrayList<PictureStatus> statusList;
     private PictureStatusListAdapter pictureStatusListAdapter;
     private PictureStatusGridAdapter pictureStatusGridAdapter;
     private ArrayAdapter<String> trendAdapter;
+    private int searchLimit;
 
-    private static String SEARCH_IGNORE_OPERATOR = "-";
-    private static String SEARCH_FILTER_OPTION_RT = "RT";
-    private static String SEARCH_FILTER_OPTION_NORT = SEARCH_IGNORE_OPERATOR + SEARCH_FILTER_OPTION_RT;
-    private static String SEARCH_FILTER_OPTION_IMAGE = "filter:images";
+    private static final String SEARCH_IGNORE_OPERATOR = "-";
+    private static final String SEARCH_FILTER_OPTION_RT = "RT";
+    private static final String SEARCH_FILTER_OPTION_NORT = SEARCH_IGNORE_OPERATOR + SEARCH_FILTER_OPTION_RT;
+    private static final String SEARCH_FILTER_OPTION_IMAGE = "filter:images";
+
+    private static final String PARAM_MAX_ID = "max_id";
+    private static final String PARAM_Q = "q";
+    private static final String PARAM_COUNT = "count";
 
     public static int WOEID_JAPAN = 23424856;
 
-    TwitterManager(Context context) {
+    public TwitterManager(Context context) {
         setupClient(context);
     }
 
@@ -64,41 +73,7 @@ public class TwitterManager {
             return;
         }
         twitter = TwitterCore.getInstance();
-//        setupTwitter(token.token, token.secret);
-//        setupTwitterListener(token.token, token.secret);
     }
-
-//    private void setupTwitterListener(String token, String tokenSecret) {
-//        TwitterListener listener = new TwitterAdapter() {
-//
-//            @Override
-//            public void gotPlaceTrends(Trends trends) {
-//                ArrayList<String> trendWords = new ArrayList<>();
-//                for (Trend trend : trends.getTrends()) {
-//                    Log.d("Trend", trend.getName() + " " + trend.getURL());
-//                    trendWords.add(trend.getName());
-//                }
-//                trendAdapter.addAll(trendWords);
-//            }
-//        };
-//        AsyncTwitterFactory factory = new AsyncTwitterFactory();
-//        asyncTwitter = factory.getInstance();
-//        asyncTwitter.addListener(listener);
-//
-//        asyncTwitter.setOAuthConsumer(BuildConfig.CONSUMER_KEY, BuildConfig.CONSUMER_SECRET);
-//        asyncTwitter.setOAuthAccessToken(new AccessToken(token, tokenSecret));
-//    }
-//
-//    public void setupTwitter(String token, String tokenSecret) {
-//        ConfigurationBuilder builder = new ConfigurationBuilder();
-//        builder.setOAuthConsumerKey(BuildConfig.CONSUMER_KEY);
-//        builder.setOAuthConsumerSecret(BuildConfig.CONSUMER_SECRET);
-//        builder.setOAuthAccessToken(token);
-//        builder.setOAuthAccessTokenSecret(tokenSecret);
-//        Configuration conf = builder.build();
-//        TwitterFactory factory = new TwitterFactory(conf);
-//        twitter = factory.getInstance();
-//    }
 
     private void setupSession(Context context) {
         if (this.hasSession()) {
@@ -109,25 +84,32 @@ public class TwitterManager {
         this.session = com.twitter.sdk.android.Twitter.getSessionManager().getActiveSession();
     }
 
-    public void setListAdapters(ArrayList<PictureStatus> statusList, PictureStatusListAdapter pictureStatusListAdapter, PictureStatusGridAdapter pictureStatusGridAdapter, final ArrayAdapter<String> trendAdapter) {
+    public void setup(ArrayList<PictureStatus> statusList,
+                      PictureStatusListAdapter pictureStatusListAdapter,
+                      PictureStatusGridAdapter pictureStatusGridAdapter,
+                      final ArrayAdapter<String> trendAdapter,
+                      int searchLimit) {
         this.statusList = statusList;
         this.pictureStatusListAdapter = pictureStatusListAdapter;
         this.pictureStatusGridAdapter = pictureStatusGridAdapter;
         this.trendAdapter = trendAdapter;
+        this.searchLimit = searchLimit;
     }
 
-    public void searchTweets(final String keyword, final Long maxId, final Integer count) {
+    public void searchTweets(final String keyword, final Long maxId, int count, boolean isNext) {
+        String q = keyword;
+        if (!isNext) {
+            q = StringUtils.join(" ", new String[]{keyword, SEARCH_FILTER_OPTION_NORT, SEARCH_FILTER_OPTION_IMAGE});
+        }
 
-        String q = StringUtils.join(" ", new String[]{keyword, SEARCH_FILTER_OPTION_NORT, SEARCH_FILTER_OPTION_IMAGE});
-
-        twitter.getApiClient().getSearchService().tweets(q, null, null, null, null, count, null, maxId, null, null, new Callback<Search>() {
+        twitter.getApiClient().getSearchService().tweets(q, null, null, null, null, count, null, null, maxId, true, new Callback<Search>() {
             @Override
             public void success(Result<Search> searchResult) {
                 for (Tweet tweet : filterImageTweet(searchResult.data.tweets)) {
                     PictureStatus pictureStatus = new PictureStatus(tweet);
                     pictureStatus.asyncImage(statusList, pictureStatusListAdapter, pictureStatusGridAdapter);
                 }
-                // TODO: log nextQuery
+                nextQueryStr = searchResult.data.searchMetadata.nextResults;
             }
 
             @Override
@@ -137,8 +119,25 @@ public class TwitterManager {
         });
     }
 
+    public void searchTweets(final String keyword, final Long maxId, int count) {
+        this.searchTweets(keyword, maxId, this.searchLimit, false);
+    }
+
+    public void searchTweets(final String keyword, final Long maxId) {
+        this.searchTweets(keyword, maxId, this.searchLimit);
+    }
+
+
     public boolean searchTweetsNext() {
-        return false;
+        if (null == this.nextQueryStr || "".equals(nextQueryStr)) {
+            return false;
+        }
+        Map<String, String> map = StringUtils.getQueryMap(nextQueryStr);
+        String q = URLDecoder.decode(map.get(PARAM_Q));
+        long maxId = Long.parseLong(map.get(PARAM_MAX_ID));
+        int count = Integer.parseInt(map.get(PARAM_COUNT));
+        searchTweets(q, maxId, count, true);
+        return true;
     }
 
     public void setTrends() {
@@ -166,6 +165,14 @@ public class TwitterManager {
             }
         }
         return tweets;
+    }
+
+    public static long getOldId(List<Tweet> tweets) {
+        long oldId = tweets.get(0).getId();
+        for (Tweet tweet : tweets) {
+            oldId = Math.min(oldId, tweet.getId());
+        }
+        return oldId - 1;
     }
 
     public static String TAG_API = "TwitterAPI";
