@@ -4,10 +4,9 @@ import android.content.Context;
 import android.widget.ArrayAdapter;
 
 import com.elzup.pictter.pictter.BuildConfig;
-import com.elzup.pictter.pictter.model.pojo.PictureStatus;
+import com.elzup.pictter.pictter.controller.util.StringUtils;
 import com.elzup.pictter.pictter.view.adapter.PictureStatusGridAdapter;
 import com.elzup.pictter.pictter.view.adapter.PictureStatusListAdapter;
-import com.elzup.pictter.pictter.controller.util.StringUtils;
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
 import com.twitter.sdk.android.core.TwitterAuthConfig;
@@ -23,12 +22,14 @@ import java.util.List;
 import java.util.Map;
 
 import io.fabric.sdk.android.Fabric;
+import retrofit.client.Response;
 
 public class TwitterManager {
 
     private TwitterSession session;
 
     private TwitterCore twitter;
+    private PictterTwitterApiClient pictterClient;
 
     private boolean isLogin;
 
@@ -70,6 +71,7 @@ public class TwitterManager {
             return;
         }
         twitter = TwitterCore.getInstance();
+        pictterClient = new PictterTwitterApiClient(twitter.getSessionManager().getActiveSession());
     }
 
     private void setupSession(Context context) {
@@ -99,7 +101,7 @@ public class TwitterManager {
             q = StringUtils.join(" ", new String[]{keyword, SEARCH_FILTER_OPTION_NORT, SEARCH_FILTER_OPTION_IMAGE});
         }
 
-        twitter.getApiClient().getSearchService().tweets(q, null, null, null, null, count, null, null, maxId, true, new Callback<Search>() {
+        pictterClient.getSearchService().tweets(q, null, null, null, null, count, null, null, maxId, true, new Callback<Search>() {
             @Override
             public void success(Result<Search> searchResult) {
                 for (Tweet tweet : filterImageTweet(searchResult.data.tweets)) {
@@ -107,6 +109,7 @@ public class TwitterManager {
                     pictureStatus.asyncImage(statusList, pictureStatusListAdapter, pictureStatusGridAdapter);
                 }
                 nextQueryStr = searchResult.data.searchMetadata.nextResults;
+                getRateLimit();
             }
 
             @Override
@@ -170,6 +173,19 @@ public class TwitterManager {
             oldId = Math.min(oldId, tweet.getId());
         }
         return oldId - 1;
+    }
+
+    public void getRateLimit() {
+        pictterClient.getRateLimitService().getLimit(new Callback<Response>() {
+            @Override
+            public void success(Result<Response> responseResult) {
+                // TODO:
+            }
+
+            @Override
+            public void failure(TwitterException e) {
+            }
+        });
     }
 
     public static String TAG_API = "TwitterAPI";

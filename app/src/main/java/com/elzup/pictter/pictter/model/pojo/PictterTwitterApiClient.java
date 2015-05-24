@@ -21,6 +21,7 @@ public class PictterTwitterApiClient extends TwitterApiClient {
 
 }
 interface RateLimitService {
-    @GET("1.1/application/rate_limit_status")
+    @GET("/1.1/application/rate_limit_status.json")
+
     void getLimit(Callback<Response> cb);
 }
