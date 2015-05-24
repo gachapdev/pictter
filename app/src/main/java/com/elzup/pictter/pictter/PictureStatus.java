@@ -3,28 +3,30 @@ package com.elzup.pictter.pictter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.widget.ArrayAdapter;
+
+import com.twitter.sdk.android.core.models.Tweet;
 
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
 
-import twitter4j.Status;
-
 /**
  * Created by hiro on 4/29/15.
  */
 
 public class PictureStatus implements Serializable {
-    private Status status;
+    private int type;
+    private String url;
+    private String text;
     private Bitmap image;
 
     private boolean isSelected;
 
-    PictureStatus(Status status) {
-        this.status = status;
+    PictureStatus(Tweet tweet) {
         this.image = null;
+        this.text = tweet.text;
+        this.url = tweet.entities.media.get(0).mediaUrl;
         this.isSelected = false;
     }
 
@@ -33,11 +35,11 @@ public class PictureStatus implements Serializable {
     }
 
     public String getText() {
-        return this.status.getText();
+        return this.text;
     }
 
     public String getImageUrl() {
-        return this.status.getMediaEntities()[0].getMediaURL();
+        return this.url;
     }
 
     public void asyncImage(final ArrayList<PictureStatus> statusList, final PictureStatusListAdapter pictureStatusListAdapter, final PictureStatusGridAdapter pictureStatusGridAdapter) {
@@ -46,8 +48,8 @@ public class PictureStatus implements Serializable {
             @Override
             protected Bitmap doInBackground(Void... voids) {
                 try {
-                    URL url = new URL(PictureStatus.this.status.getMediaEntities()[0].getMediaURL());
-                    return BitmapFactory.decodeStream(url.openConnection().getInputStream());
+                    URL mUrl = new URL(url);
+                    return BitmapFactory.decodeStream(mUrl.openConnection().getInputStream());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

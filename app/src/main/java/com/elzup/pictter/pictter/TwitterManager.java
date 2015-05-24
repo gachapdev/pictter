@@ -4,14 +4,19 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.ArrayAdapter;
-import android.widget.Toast;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+import com.twitter.sdk.android.core.Callback;
+import com.twitter.sdk.android.core.Result;
 import com.twitter.sdk.android.core.TwitterAuthConfig;
 import com.twitter.sdk.android.core.TwitterAuthToken;
+import com.twitter.sdk.android.core.TwitterCore;
+import com.twitter.sdk.android.core.TwitterException;
 import com.twitter.sdk.android.core.TwitterSession;
+import com.twitter.sdk.android.core.models.Search;
+import com.twitter.sdk.android.core.models.Tweet;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,31 +24,14 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import io.fabric.sdk.android.Fabric;
-import twitter4j.AsyncTwitter;
-import twitter4j.AsyncTwitterFactory;
-import twitter4j.Query;
-import twitter4j.QueryResult;
-import twitter4j.RateLimitStatus;
-import twitter4j.Status;
-import twitter4j.Trend;
-import twitter4j.Trends;
-import twitter4j.Twitter;
-import twitter4j.TwitterAdapter;
-import twitter4j.TwitterException;
-import twitter4j.TwitterFactory;
-import twitter4j.TwitterListener;
-import twitter4j.auth.AccessToken;
-import twitter4j.conf.Configuration;
-import twitter4j.conf.ConfigurationBuilder;
 
 public class TwitterManager {
 
     private TwitterSession session;
-    private Twitter twitter;
-    private AsyncTwitter asyncTwitter;
+
+    private TwitterCore twitter;
 
     private boolean isLogin;
-    private Query nextQuery;
 
     private ArrayList<PictureStatus> statusList;
     private PictureStatusListAdapter pictureStatusListAdapter;
@@ -71,47 +59,46 @@ public class TwitterManager {
 
     public void setupClient(Context context) {
         this.setupSession(context);
-        this.twitter = null;
         this.setLogin(this.hasSession());
         if (!this.isLogin()) {
             return;
         }
-        TwitterAuthToken token = this.session.getAuthToken();
-        setupTwitter(token.token, token.secret);
-        setupTwitterListener(token.token, token.secret);
+        twitter = TwitterCore.getInstance();
+//        setupTwitter(token.token, token.secret);
+//        setupTwitterListener(token.token, token.secret);
     }
 
-    private void setupTwitterListener(String token, String tokenSecret) {
-        TwitterListener listener = new TwitterAdapter() {
-
-            @Override
-            public void gotPlaceTrends(Trends trends) {
-                ArrayList<String> trendWords = new ArrayList<>();
-                for (Trend trend : trends.getTrends()) {
-                    Log.d("Trend", trend.getName() + " " + trend.getURL());
-                    trendWords.add(trend.getName());
-                }
-                trendAdapter.addAll(trendWords);
-            }
-        };
-        AsyncTwitterFactory factory = new AsyncTwitterFactory();
-        asyncTwitter = factory.getInstance();
-        asyncTwitter.addListener(listener);
-
-        asyncTwitter.setOAuthConsumer(BuildConfig.CONSUMER_KEY, BuildConfig.CONSUMER_SECRET);
-        asyncTwitter.setOAuthAccessToken(new AccessToken(token, tokenSecret));
-    }
-
-    public void setupTwitter(String token, String tokenSecret) {
-        ConfigurationBuilder builder = new ConfigurationBuilder();
-        builder.setOAuthConsumerKey(BuildConfig.CONSUMER_KEY);
-        builder.setOAuthConsumerSecret(BuildConfig.CONSUMER_SECRET);
-        builder.setOAuthAccessToken(token);
-        builder.setOAuthAccessTokenSecret(tokenSecret);
-        Configuration conf = builder.build();
-        TwitterFactory factory = new TwitterFactory(conf);
-        twitter = factory.getInstance();
-    }
+//    private void setupTwitterListener(String token, String tokenSecret) {
+//        TwitterListener listener = new TwitterAdapter() {
+//
+//            @Override
+//            public void gotPlaceTrends(Trends trends) {
+//                ArrayList<String> trendWords = new ArrayList<>();
+//                for (Trend trend : trends.getTrends()) {
+//                    Log.d("Trend", trend.getName() + " " + trend.getURL());
+//                    trendWords.add(trend.getName());
+//                }
+//                trendAdapter.addAll(trendWords);
+//            }
+//        };
+//        AsyncTwitterFactory factory = new AsyncTwitterFactory();
+//        asyncTwitter = factory.getInstance();
+//        asyncTwitter.addListener(listener);
+//
+//        asyncTwitter.setOAuthConsumer(BuildConfig.CONSUMER_KEY, BuildConfig.CONSUMER_SECRET);
+//        asyncTwitter.setOAuthAccessToken(new AccessToken(token, tokenSecret));
+//    }
+//
+//    public void setupTwitter(String token, String tokenSecret) {
+//        ConfigurationBuilder builder = new ConfigurationBuilder();
+//        builder.setOAuthConsumerKey(BuildConfig.CONSUMER_KEY);
+//        builder.setOAuthConsumerSecret(BuildConfig.CONSUMER_SECRET);
+//        builder.setOAuthAccessToken(token);
+//        builder.setOAuthAccessTokenSecret(tokenSecret);
+//        Configuration conf = builder.build();
+//        TwitterFactory factory = new TwitterFactory(conf);
+//        twitter = factory.getInstance();
+//    }
 
     private void setupSession(Context context) {
         if (this.hasSession()) {
@@ -129,82 +116,34 @@ public class TwitterManager {
         this.trendAdapter = trendAdapter;
     }
 
-    public void searchTweets(final String q, final Long maxId, final Integer count) {
+    public void searchTweets(final String keyword, final Long maxId, final Integer count) {
 
-        AsyncTask<Void, Void, List<Status>> task = new AsyncTask<Void, Void, List<Status>>() {
+        String q = StringUtils.join(" ", new String[]{keyword, SEARCH_FILTER_OPTION_NORT, SEARCH_FILTER_OPTION_IMAGE});
+
+        twitter.getApiClient().getSearchService().tweets(q, null, null, null, null, count, null, maxId, null, null, new Callback<Search>() {
             @Override
-            protected List<twitter4j.Status> doInBackground(Void... voids) {
-                try {
-                    Query query = new Query(StringUtils.join(" ", new String[]{q, SEARCH_FILTER_OPTION_NORT, SEARCH_FILTER_OPTION_IMAGE}));
-                    if (maxId != null) {
-                        query.maxId(maxId);
-                    }
-                    query.count(count);
-                    QueryResult res = twitter.search(query);
-
-                    RateLimitStatus rateLimitStatus = res.getRateLimitStatus();
-                    logApiRemining(rateLimitStatus);
-
-                    nextQuery = res.nextQuery();
-                    return res.getTweets();
-                } catch (TwitterException e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(List<twitter4j.Status> tweets) {
-                if (tweets == null) {
-                    return;
-                }
-                for (twitter4j.Status status : TwitterManager.filterImageTweet(tweets)) {
-                    PictureStatus pictureStatus = new PictureStatus(status);
+            public void success(Result<Search> searchResult) {
+                for (Tweet tweet : filterImageTweet(searchResult.data.tweets)) {
+                    PictureStatus pictureStatus = new PictureStatus(tweet);
                     pictureStatus.asyncImage(statusList, pictureStatusListAdapter, pictureStatusGridAdapter);
                 }
+                // TODO: log nextQuery
             }
-        };
-        task.execute();
+
+            @Override
+            public void failure(TwitterException e) {
+
+            }
+        });
     }
 
     public boolean searchTweetsNext() {
-        if (nextQuery == null) {
-            return false;
-        }
-        AsyncTask<Void, Void, List<Status>> task = new AsyncTask<Void, Void, List<Status>>() {
-            @Override
-            protected List<twitter4j.Status> doInBackground(Void... voids) {
-                try {
-                    QueryResult res = twitter.search(nextQuery);
-
-                    RateLimitStatus rateLimitStatus = res.getRateLimitStatus();
-                    logApiRemining(rateLimitStatus);
-
-                    nextQuery = res.nextQuery();
-                    return res.getTweets();
-                } catch (TwitterException e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(List<twitter4j.Status> tweets) {
-                if (tweets == null) {
-                    return;
-                }
-                for (twitter4j.Status status : TwitterManager.filterImageTweet(tweets)) {
-                    PictureStatus pictureStatus = new PictureStatus(status);
-                    pictureStatus.asyncImage(statusList, pictureStatusListAdapter, pictureStatusGridAdapter);
-                }
-            }
-        };
-        task.execute();
-        return true;
+        return false;
     }
 
     public void setTrends() {
-        asyncTwitter.getPlaceTrends(WOEID_JAPAN);
+        // TODO:
+        // asyncTwitter.getPlaceTrends(WOEID_JAPAN);
     }
 
     public boolean hasSession() {
@@ -215,25 +154,23 @@ public class TwitterManager {
         if (!this.hasSession()) {
             return;
         }
-        com.twitter.sdk.android.Twitter.getSessionManager().clearSession(session.getId());
+//        com.twitter.sdk.android.Twitter.getSessionManager().clearSession(session.getId());
+        TwitterCore.getInstance().getSessionManager().clearActiveSession();
     }
 
-    public static List<Status> filterImageTweet(List<Status> tweets) {
-        return ImmutableList.copyOf(Iterables.filter(tweets, new Predicate<Status>() {
-            @Override
-            public boolean apply(@Nullable Status input) {
-                return input.getMediaEntities().length != 0;
+    public static List<Tweet> filterImageTweet(List<Tweet> tweets) {
+        List<Tweet> resList = new ArrayList<>();
+        for (Tweet tweet : tweets) {
+            if (tweet.entities.media != null && tweet.entities.media.size() != 0) {
+                resList.add(tweet);
             }
-        }));
+        }
+        return tweets;
     }
 
     public static String TAG_API = "TwitterAPI";
 
     public static void logApiRemining(int remining, int limit) {
-        Log.d(TAG_API, String.format("%3d/%3d", remining, limit));
-    }
-
-    public static void logApiRemining(RateLimitStatus rate) {
-        logApiRemining(rate.getRemaining(), rate.getLimit());
+        // TODO:
     }
 }
