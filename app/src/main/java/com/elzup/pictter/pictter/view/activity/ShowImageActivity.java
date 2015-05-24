@@ -1,4 +1,4 @@
-package com.elzup.pictter.pictter;
+package com.elzup.pictter.pictter.view.activity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -15,7 +15,7 @@ import java.net.URL;
 
 import jp.ogwork.gesturetransformableview.view.GestureTransformableImageView;
 
-public class ShowImage extends Activity {
+public class ShowImageActivity extends Activity {
 
     public final static String EXTRA_STRING_URL = "url";
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,9 +35,9 @@ public class ShowImage extends Activity {
 
             @Override
             protected void onPreExecute() {
-                ProgressBar bar = new ProgressBar(ShowImage.this);
+                ProgressBar bar = new ProgressBar(ShowImageActivity.this);
                 bar.setIndeterminate(true);
-                AlertDialog.Builder builder = new AlertDialog.Builder(ShowImage.this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(ShowImageActivity.this);
                 builder.setView(bar);
                 dialog = builder.create();
                 dialog.show();

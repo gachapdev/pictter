@@ -1,4 +1,4 @@
-package com.elzup.pictter.pictter.util;
+package com.elzup.pictter.pictter.controller.util;
 
 import com.google.common.base.Joiner;
 

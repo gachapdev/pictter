@@ -1,4 +1,4 @@
-package com.elzup.pictter.pictter;
+package com.elzup.pictter.pictter.model.system;
 
 import android.app.Application;
 

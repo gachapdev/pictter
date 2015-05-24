@@ -1,16 +1,17 @@
-package com.elzup.pictter.pictter;
+package com.elzup.pictter.pictter.view.activity;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Handler;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
 
+import com.elzup.pictter.pictter.R;
 
-public class TopView extends Activity {
+
+public class TopActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +53,7 @@ public class TopView extends Activity {
             Intent intent = new Intent(getApplication(), MainActivity.class);
             startActivity(intent);
             // SplashActivityを終了させます。
-            TopView.this.finish();
+            TopActivity.this.finish();
         }
     }
 }

@@ -1,9 +1,11 @@
-package com.elzup.pictter.pictter;
+package com.elzup.pictter.pictter.model.pojo;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 
+import com.elzup.pictter.pictter.view.adapter.PictureStatusGridAdapter;
+import com.elzup.pictter.pictter.view.adapter.PictureStatusListAdapter;
 import com.twitter.sdk.android.core.models.Tweet;
 
 import java.io.IOException;

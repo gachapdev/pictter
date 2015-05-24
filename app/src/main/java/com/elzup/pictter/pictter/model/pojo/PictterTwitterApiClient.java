@@ -1,13 +1,11 @@
-package com.elzup.pictter.pictter.twitter;
+package com.elzup.pictter.pictter.model.pojo;
 
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Session;
 import com.twitter.sdk.android.core.TwitterApiClient;
-import com.twitter.sdk.android.core.internal.TwitterApi;
 
 import retrofit.client.Response;
 import retrofit.http.GET;
-import retrofit.http.Query;
 
 /**
  * Created by hiro on 5/25/15.

@@ -1,10 +1,8 @@
-package com.elzup.pictter.pictter;
+package com.elzup.pictter.pictter.view.fragment;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.ScaleDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -25,7 +23,10 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
+
+import com.elzup.pictter.pictter.view.widget.NavDrawerItem;
+import com.elzup.pictter.pictter.view.adapter.NavDrawerListAdapter;
+import com.elzup.pictter.pictter.R;
 
 import java.util.ArrayList;
 import java.util.Arrays;

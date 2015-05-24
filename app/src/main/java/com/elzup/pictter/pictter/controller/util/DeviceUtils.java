@@ -1,4 +1,4 @@
-package com.elzup.pictter.pictter.util;
+package com.elzup.pictter.pictter.controller.util;
 
 import android.content.Context;
 import android.graphics.Bitmap;

@@ -1,4 +1,4 @@
-package com.elzup.pictter.pictter;
+package com.elzup.pictter.pictter.view.activity;
 
 import android.app.Activity;
 import android.content.Context;
@@ -37,9 +37,14 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.elzup.pictter.pictter.twitter.TwitterManager;
-import com.elzup.pictter.pictter.util.DeviceUtils;
-import com.elzup.pictter.pictter.util.StringUtils;
+import com.elzup.pictter.pictter.R;
+import com.elzup.pictter.pictter.model.pojo.PictureStatus;
+import com.elzup.pictter.pictter.model.pojo.TwitterManager;
+import com.elzup.pictter.pictter.controller.util.DeviceUtils;
+import com.elzup.pictter.pictter.controller.util.StringUtils;
+import com.elzup.pictter.pictter.view.adapter.PictureStatusGridAdapter;
+import com.elzup.pictter.pictter.view.adapter.PictureStatusListAdapter;
+import com.elzup.pictter.pictter.view.fragment.NavigationDrawerFragment;
 import com.wdullaer.swipeactionadapter.SwipeActionAdapter;
 import com.wdullaer.swipeactionadapter.SwipeDirections;
 

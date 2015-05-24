@@ -1,4 +1,4 @@
-package com.elzup.pictter.pictter;
+package com.elzup.pictter.pictter.view.adapter;
 
 import android.app.Activity;
 import android.content.Context;
@@ -11,7 +11,9 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.ToggleButton;
+
+import com.elzup.pictter.pictter.view.widget.NavDrawerItem;
+import com.elzup.pictter.pictter.R;
 
 import java.util.ArrayList;
 import java.util.List;

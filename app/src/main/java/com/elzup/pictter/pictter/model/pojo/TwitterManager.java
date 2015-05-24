@@ -1,13 +1,13 @@
-package com.elzup.pictter.pictter.twitter;
+package com.elzup.pictter.pictter.model.pojo;
 
 import android.content.Context;
 import android.widget.ArrayAdapter;
 
 import com.elzup.pictter.pictter.BuildConfig;
-import com.elzup.pictter.pictter.PictureStatus;
-import com.elzup.pictter.pictter.PictureStatusGridAdapter;
-import com.elzup.pictter.pictter.PictureStatusListAdapter;
-import com.elzup.pictter.pictter.util.StringUtils;
+import com.elzup.pictter.pictter.model.pojo.PictureStatus;
+import com.elzup.pictter.pictter.view.adapter.PictureStatusGridAdapter;
+import com.elzup.pictter.pictter.view.adapter.PictureStatusListAdapter;
+import com.elzup.pictter.pictter.controller.util.StringUtils;
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
 import com.twitter.sdk.android.core.TwitterAuthConfig;
@@ -17,10 +17,7 @@ import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.core.models.Search;
 import com.twitter.sdk.android.core.models.Tweet;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
