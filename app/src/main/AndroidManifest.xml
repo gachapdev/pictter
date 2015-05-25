@@ -43,7 +43,7 @@
             android:value="7244bfde4c0b11528ae855b3d9c8e334dc03435e" />
 
         <activity
-            android:name=".ShowImage"
+            android:name=".view.activity.ShowImageActivity"
             android:label="@string/title_activity_showImage"
             android:screenOrientation="portrait">
             <intent-filter>

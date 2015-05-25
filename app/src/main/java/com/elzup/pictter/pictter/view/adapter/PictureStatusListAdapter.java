@@ -64,8 +64,6 @@ public class PictureStatusListAdapter extends ArrayAdapter<PictureStatus> {
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 activity.startActivity(intent);
             }
-
-
         });
 
         TextView textView;
