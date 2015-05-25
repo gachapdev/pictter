@@ -3,7 +3,7 @@ package com.elzup.pictter.pictter.model.pojo;
 import android.content.Context;
 import android.widget.ArrayAdapter;
 
-import com.elzup.pictter.pictter.BuildConfig;
+import com.elzup.pictter.pictter.config.BuildConfig;
 import com.elzup.pictter.pictter.controller.util.StringUtils;
 import com.elzup.pictter.pictter.view.adapter.PictureStatusGridAdapter;
 import com.elzup.pictter.pictter.view.adapter.PictureStatusListAdapter;
@@ -164,7 +164,7 @@ public class TwitterManager {
                 resList.add(tweet);
             }
         }
-        return tweets;
+        return resList;
     }
 
     public static long getOldId(List<Tweet> tweets) {
