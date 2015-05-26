@@ -1,11 +1,27 @@
+# gradle
 .gradle
-/local.properties
+
+# android studio
 /.idea/workspace.xml
 /.idea/libraries
-.DS_Store
+
+# compiled
 /build
+
+# keys
 /app/fabric.properties
+/app/tumblr.properties
+/local.properties
+
+# log
 *.log
-/lib
-*.apk
 /app/manifest-merger-release-report.txt
+
+# lib
+/lib
+
+# released
+*.apk
+
+# mac
+.DS_Store
