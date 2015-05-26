@@ -62,7 +62,6 @@ public class MainActivity extends ActionBarActivity
     private ListView listView;
     private RecyclerView gridView;
     private LinearLayout gridController;
-    private ArrayAdapter<String> trendListAdapter;
     private SwipeActionAdapter swipeAdapter;
 
     private ArrayList<PictureStatus> statusList;
@@ -95,7 +94,6 @@ public class MainActivity extends ActionBarActivity
         twitterManager.setup(statusList,
                 pictureStatusListAdapter,
                 pictureStatusGridAdapter,
-                trendListAdapter,
                 getResources().getInteger(R.integer.search_tweet_limit));
         twitterManager.setTrends();
         if (initKeywords.size() > 0) {
@@ -166,14 +164,6 @@ public class MainActivity extends ActionBarActivity
                 searchKeyword(textView.getText().toString());
             }
         });
-        mNavigationDrawerFragment.setupTrendListView(new ArrayList<String>(), new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String text = ((AdapterView<ArrayAdapter<String>>) parent).getAdapter().getItem(position);
-                searchKeyword(text);
-            }
-        });
-        trendListAdapter = mNavigationDrawerFragment.getTrendListAdapter();
         mNavigationDrawerFragment.setToggleListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

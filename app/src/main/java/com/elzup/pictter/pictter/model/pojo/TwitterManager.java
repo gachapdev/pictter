@@ -38,7 +38,6 @@ public class TwitterManager {
     private ArrayList<PictureStatus> statusList;
     private PictureStatusListAdapter pictureStatusListAdapter;
     private PictureStatusGridAdapter pictureStatusGridAdapter;
-    private ArrayAdapter<String> trendAdapter;
     private int searchLimit;
 
     private static final String SEARCH_IGNORE_OPERATOR = "-";
@@ -86,12 +85,10 @@ public class TwitterManager {
     public void setup(ArrayList<PictureStatus> statusList,
                       PictureStatusListAdapter pictureStatusListAdapter,
                       PictureStatusGridAdapter pictureStatusGridAdapter,
-                      final ArrayAdapter<String> trendAdapter,
                       int searchLimit) {
         this.statusList = statusList;
         this.pictureStatusListAdapter = pictureStatusListAdapter;
         this.pictureStatusGridAdapter = pictureStatusGridAdapter;
-        this.trendAdapter = trendAdapter;
         this.searchLimit = searchLimit;
     }
 
