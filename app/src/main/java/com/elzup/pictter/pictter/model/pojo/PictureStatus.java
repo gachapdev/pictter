@@ -13,10 +13,6 @@ import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
 
-/**
- * Created by hiro on 4/29/15.
- */
-
 public class PictureStatus implements Serializable {
     private int type;
     private String url;

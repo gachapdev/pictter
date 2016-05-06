@@ -1,7 +1,6 @@
 package com.elzup.pictter.pictter.model.pojo;
 
 import android.content.Context;
-import android.widget.ArrayAdapter;
 
 import com.elzup.pictter.pictter.config.BuildConfig;
 import com.elzup.pictter.pictter.controller.util.StringUtils;

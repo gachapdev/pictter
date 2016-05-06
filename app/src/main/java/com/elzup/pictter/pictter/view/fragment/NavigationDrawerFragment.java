@@ -18,15 +18,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
-import com.elzup.pictter.pictter.view.widget.NavDrawerItem;
-import com.elzup.pictter.pictter.view.adapter.NavDrawerListAdapter;
 import com.elzup.pictter.pictter.R;
+import com.elzup.pictter.pictter.view.adapter.NavDrawerListAdapter;
+import com.elzup.pictter.pictter.view.widget.NavDrawerItem;
 
 import java.util.ArrayList;
 import java.util.Arrays;

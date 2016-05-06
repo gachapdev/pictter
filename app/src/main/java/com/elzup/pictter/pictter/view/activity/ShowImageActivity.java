@@ -18,6 +18,7 @@ import jp.ogwork.gesturetransformableview.view.GestureTransformableImageView;
 public class ShowImageActivity extends Activity {
 
     public final static String EXTRA_STRING_URL = "url";
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 

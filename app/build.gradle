@@ -12,7 +12,7 @@ buildscript {
         maven { url 'https://maven.fabric.io/public' }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.0.+'
+        classpath 'com.android.tools.build:gradle:2.1.0'
         // The Fabric Gradle plugin uses an open ended version to
         // react quickly to Android tooling updates
         classpath 'io.fabric.tools:gradle:1.+'
@@ -28,8 +28,8 @@ repositories {
 }
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion "21.1.2"
+    compileSdkVersion 23
+    buildToolsVersion "23.0.2"
     packagingOptions {
         exclude 'META-INF/DEPENDENCIES.txt'
         exclude 'META-INF/LICENSE.txt'
@@ -43,11 +43,11 @@ android {
         exclude 'META-INF/LGPL2.1'
     }
     defaultConfig {
-        applicationId "com.elzup.pictter.pictter"
-        minSdkVersion 16
-        targetSdkVersion 21
+        applicationId "com.elzup.pictter"
+        minSdkVersion 19
+        targetSdkVersion 23
         versionCode 1
-        versionName "1.0"
+        versionName "1.1"
     }
     buildTypes {
         debug {
@@ -72,7 +72,7 @@ dependencies {
     compile('com.twitter.sdk.android:twitter:1.4.0@aar') {
         transitive = true;
     }
-    compile 'com.android.support:appcompat-v7:22.1.0'
+    compile 'com.android.support:appcompat-v7:23.3.0'
     compile 'com.google.android.gms:play-services:7.0.0'
 //    compile 'org.twitter4j:twitter4j-core:4.0.+'
 //    compile 'org.twitter4j:twitter4j-async:4.0.+'
@@ -80,4 +80,7 @@ dependencies {
     compile 'com.wdullaer:swipeactionadapter:1.4.1'
     compile 'com.android.support:recyclerview-v7:+'
     compile 'com.tumblr:jumblr:0.0.11'
+    compile 'com.github.bumptech.glide:glide:3.6.1'
+    compile 'io.reactivex:rxandroid:1.1.0'
+    compile 'io.reactivex:rxjava:1.1.3'
 }

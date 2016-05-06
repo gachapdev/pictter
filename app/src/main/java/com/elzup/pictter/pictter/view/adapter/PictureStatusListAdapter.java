@@ -18,9 +18,6 @@ import com.elzup.pictter.pictter.view.activity.ShowImageActivity;
 
 import java.util.List;
 
-/**
- * Created by mike on 15/04/25.
- */
 public class PictureStatusListAdapter extends ArrayAdapter<PictureStatus> {
     private Activity activity;
     List<PictureStatus> pictureStatusList;
