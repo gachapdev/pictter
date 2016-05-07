@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="512px" height="512px" viewBox="0 0 512 512" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 3.7.2 (28276) - http://www.bohemiancoding.com/sketch -->
+    <title>icon</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <path d="M21,114.994416 C21,98.4289573 34.1916318,82.5154554 50.4732421,79.4489365 L136.981483,63.1557599 L136.981483,448.005064 L50.5295574,432.348011 C34.2208332,429.394386 21,413.566895 21,397.005584 L21,114.994416 Z" id="path-1"></path>
+        <filter x="-50%" y="-50%" width="200%" height="200%" filterUnits="objectBoundingBox" id="filter-2">
+            <feOffset dx="0" dy="1" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.2 0" type="matrix" in="shadowOffsetOuter1"></feColorMatrix>
+        </filter>
+        <filter x="-50%" y="-50%" width="200%" height="200%" filterUnits="objectBoundingBox" id="filter-3">
+            <feOffset dx="0" dy="1" in="SourceAlpha" result="shadowOffsetInner1"></feOffset>
+            <feComposite in="shadowOffsetInner1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner1"></feComposite>
+            <feColorMatrix values="0 0 0 0 1   0 0 0 0 1   0 0 0 0 1  0 0 0 0.5 0" type="matrix" in="shadowInnerInner1"></feColorMatrix>
+        </filter>
+        <rect id="path-4" x="0" y="0" width="379" height="385" rx="30"></rect>
+        <filter x="-50%" y="-50%" width="200%" height="200%" filterUnits="objectBoundingBox" id="filter-5">
+            <feOffset dx="0" dy="1" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.2 0" type="matrix" in="shadowOffsetOuter1"></feColorMatrix>
+        </filter>
+        <filter x="-50%" y="-50%" width="200%" height="200%" filterUnits="objectBoundingBox" id="filter-6">
+            <feOffset dx="0" dy="1" in="SourceAlpha" result="shadowOffsetInner1"></feOffset>
+            <feComposite in="shadowOffsetInner1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner1"></feComposite>
+            <feColorMatrix values="0 0 0 0 1   0 0 0 0 1   0 0 0 0 1  0 0 0 0.5 0" type="matrix" in="shadowInnerInner1"></feColorMatrix>
+        </filter>
+        <path d="M63.5519528,94.7579819 L63.5519528,52.6155065 L220.143956,52.6155066 L220.143956,174.353341 L63.5519528,174.353345 L63.5519528,132.329132 L108.846605,132.329132 L108.846605,149.406928 L163.052628,113.543557 L108.846605,77.6801862 L108.846605,94.7579819 L63.5519528,94.7579819 Z M0,10.0095612 C0,4.48143321 4.48478239,0 9.99277425,0 L273.703132,0 C279.221989,0 283.695906,4.48319609 283.695906,10.0095612 L283.695906,216.98092 C283.695906,222.509048 279.211124,226.990482 273.703132,226.990482 L0,226.990482 L0,10.0095612 Z M0,226.990482 L63.3495713,226.990482 L63.3495713,263.421053 L0,263.421053 L0,226.990482 Z" id="path-7"></path>
+        <filter x="-50%" y="-50%" width="200%" height="200%" filterUnits="objectBoundingBox" id="filter-8">
+            <feOffset dx="0" dy="4" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="2" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feComposite in="shadowBlurOuter1" in2="SourceAlpha" operator="out" result="shadowBlurOuter1"></feComposite>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.2 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="icon-android" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="icon">
+            <g id="Rectangle-1">
+                <use fill="black" fill-opacity="1" filter="url(#filter-2)" xlink:href="#path-1"></use>
+                <use fill="#6CEFFF" fill-rule="evenodd" xlink:href="#path-1"></use>
+                <use fill="black" fill-opacity="1" filter="url(#filter-3)" xlink:href="#path-1"></use>
+            </g>
+            <g id="main" transform="translate(101.000000, 63.000000)">
+                <g id="Rectangle-1">
+                    <use fill="black" fill-opacity="1" filter="url(#filter-5)" xlink:href="#path-4"></use>
+                    <use fill="#00BCD4" fill-rule="evenodd" xlink:href="#path-4"></use>
+                    <use fill="black" fill-opacity="1" filter="url(#filter-6)" xlink:href="#path-4"></use>
+                </g>
+                <g id="Group-2" transform="translate(47.652047, 60.789474)">
+                    <g id="char-p-shadow">
+                        <g id="Combined-Shape">
+                            <use fill="black" fill-opacity="1" filter="url(#filter-8)" xlink:href="#path-7"></use>
+                            <use fill-opacity="0" fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-7"></use>
+                        </g>
+                    </g>
+                    <g id="char-p" fill="#FFFFFF">
+                        <rect id="Rectangle-5" x="0" y="219" width="63.3495713" height="44.4210526"></rect>
+                        <polygon id="Rectangle" points="37.181767 94.4242614 108.991838 94.4242614 108.991838 77.0430833 164.160816 113.543557 108.991838 150.044031 108.991838 132.662853 37.181767 132.662853"></polygon>
+                        <path d="M0,10.0095612 C0,4.48143321 4.48478239,0 9.99277425,0 L273.703132,0 C279.221989,0 283.695906,4.48319609 283.695906,10.0095612 L283.695906,216.98092 C283.695906,222.509048 279.211124,226.990482 273.703132,226.990482 L0,226.990482 L0,10.0095612 Z M63.5519528,174.353345 L220.143956,174.353341 L220.143956,52.6155066 L63.5519528,52.6155065 L63.5519528,174.353345 Z" id="Combined-Shape"></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
