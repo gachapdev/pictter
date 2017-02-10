@@ -1,9 +1,11 @@
-package com.elzup.pictter.pictter;
+package com.elzup.pictter.pictter.controller.util;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.media.MediaScannerConnection;
 import android.os.Environment;
+
+import com.elzup.pictter.pictter.R;
 
 import java.io.File;
 import java.io.FileOutputStream;

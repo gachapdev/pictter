@@ -1,8 +1,7 @@
-package com.elzup.pictter.pictter;
+package com.elzup.pictter.pictter.view.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.gesture.Gesture;
 import android.support.v7.widget.RecyclerView;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -11,7 +10,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.twitter.sdk.android.core.internal.oauth.GuestAuthToken;
+import com.elzup.pictter.pictter.R;
+import com.elzup.pictter.pictter.model.pojo.PictureStatus;
+import com.elzup.pictter.pictter.view.activity.ShowImageActivity;
 
 import java.util.ArrayList;
 
@@ -120,8 +121,8 @@ public class PictureStatusGridAdapter extends RecyclerView.Adapter<RecyclerView.
 
         @Override
         public void onLongPress(MotionEvent e) {
-            Intent intent = new Intent(rootView.getContext(), ShowImage.class);
-            intent.putExtra(ShowImage.EXTRA_STRING_URL, pictureStatus.getImageUrl());
+            Intent intent = new Intent(rootView.getContext(), ShowImageActivity.class);
+            intent.putExtra(ShowImageActivity.EXTRA_STRING_URL, pictureStatus.getImageUrl());
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             rootView.getContext().startActivity(intent);
         }

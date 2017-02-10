@@ -1,4 +1,4 @@
-package com.elzup.pictter.pictter;
+package com.elzup.pictter.pictter.view.adapter;
 
 import android.app.Activity;
 import android.content.Context;
@@ -11,6 +11,10 @@ import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.elzup.pictter.pictter.R;
+import com.elzup.pictter.pictter.model.pojo.PictureStatus;
+import com.elzup.pictter.pictter.view.activity.ShowImageActivity;
 
 import java.util.List;
 
@@ -55,13 +59,11 @@ public class PictureStatusListAdapter extends ArrayAdapter<PictureStatus> {
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), ShowImage.class);
-                intent.putExtra(ShowImage.EXTRA_STRING_URL, pictureStatus.getImageUrl());
+                Intent intent = new Intent(v.getContext(), ShowImageActivity.class);
+                intent.putExtra(ShowImageActivity.EXTRA_STRING_URL, pictureStatus.getImageUrl());
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 activity.startActivity(intent);
             }
-
-
         });
 
         TextView textView;

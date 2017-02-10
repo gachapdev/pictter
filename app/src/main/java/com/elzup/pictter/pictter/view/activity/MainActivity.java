@@ -1,4 +1,4 @@
-package com.elzup.pictter.pictter;
+package com.elzup.pictter.pictter.view.activity;
 
 import android.app.Activity;
 import android.content.Context;
@@ -37,6 +37,14 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.elzup.pictter.pictter.R;
+import com.elzup.pictter.pictter.model.pojo.PictureStatus;
+import com.elzup.pictter.pictter.model.pojo.TwitterManager;
+import com.elzup.pictter.pictter.controller.util.DeviceUtils;
+import com.elzup.pictter.pictter.controller.util.StringUtils;
+import com.elzup.pictter.pictter.view.adapter.PictureStatusGridAdapter;
+import com.elzup.pictter.pictter.view.adapter.PictureStatusListAdapter;
+import com.elzup.pictter.pictter.view.fragment.NavigationDrawerFragment;
 import com.wdullaer.swipeactionadapter.SwipeActionAdapter;
 import com.wdullaer.swipeactionadapter.SwipeDirections;
 
@@ -54,7 +62,6 @@ public class MainActivity extends ActionBarActivity
     private ListView listView;
     private RecyclerView gridView;
     private LinearLayout gridController;
-    private ArrayAdapter<String> trendListAdapter;
     private SwipeActionAdapter swipeAdapter;
 
     private ArrayList<PictureStatus> statusList;
@@ -84,7 +91,10 @@ public class MainActivity extends ActionBarActivity
         setupSearchForm();
         setupAdapter();
         setupSwipeRefreshLayout();
-        twitterManager.setListAdapters(statusList, pictureStatusListAdapter, pictureStatusGridAdapter, trendListAdapter);
+        twitterManager.setup(statusList,
+                pictureStatusListAdapter,
+                pictureStatusGridAdapter,
+                getResources().getInteger(R.integer.search_tweet_limit));
         twitterManager.setTrends();
         if (initKeywords.size() > 0) {
             searchKeyword(initKeywords.get(0));
@@ -154,14 +164,6 @@ public class MainActivity extends ActionBarActivity
                 searchKeyword(textView.getText().toString());
             }
         });
-        mNavigationDrawerFragment.setupTrendListView(new ArrayList<String>(), new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String text = ((AdapterView<ArrayAdapter<String>>) parent).getAdapter().getItem(position);
-                searchKeyword(text);
-            }
-        });
-        trendListAdapter = mNavigationDrawerFragment.getTrendListAdapter();
         mNavigationDrawerFragment.setToggleListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -365,7 +367,7 @@ public class MainActivity extends ActionBarActivity
         pictureStatusListAdapter.clear();
         mTitle = "Pictter - " + keyword;
         getSupportActionBar().setTitle(mTitle);
-        twitterManager.searchTweets(keyword, null, getResources().getInteger(R.integer.search_tweet_limit));
+        twitterManager.searchTweets(keyword, null);
         mNavigationDrawerFragment.addSearchKeyword(keyword);
         this.savePreferenceKeywords();
     }

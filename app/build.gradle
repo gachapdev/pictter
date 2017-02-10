@@ -51,6 +51,8 @@ android {
     }
     buildTypes {
         debug {
+            applicationIdSuffix ".debug"
+            versionNameSuffix "d"
             buildConfigField "String", "CONSUMER_KEY", "\"${props.getProperty("twitterConsumerKey")}\""
             buildConfigField "String", "CONSUMER_SECRET", "\"${props.getProperty("twitterConsumerSecret")}\""
         }
@@ -72,9 +74,10 @@ dependencies {
     }
     compile 'com.android.support:appcompat-v7:22.1.0'
     compile 'com.google.android.gms:play-services:7.0.0'
-    compile 'org.twitter4j:twitter4j-core:4.0.+'
-    compile 'org.twitter4j:twitter4j-async:4.0.+'
+//    compile 'org.twitter4j:twitter4j-core:4.0.+'
+//    compile 'org.twitter4j:twitter4j-async:4.0.+'
     compile group: 'com.google.guava', name: 'guava', version: '12.0'
     compile 'com.wdullaer:swipeactionadapter:1.4.1'
     compile 'com.android.support:recyclerview-v7:+'
+    compile 'com.tumblr:jumblr:0.0.11'
 }

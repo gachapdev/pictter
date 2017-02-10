@@ -1,10 +1,8 @@
-package com.elzup.pictter.pictter;
+package com.elzup.pictter.pictter.view.fragment;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.ScaleDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -25,7 +23,10 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
+
+import com.elzup.pictter.pictter.view.widget.NavDrawerItem;
+import com.elzup.pictter.pictter.view.adapter.NavDrawerListAdapter;
+import com.elzup.pictter.pictter.R;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,7 +45,6 @@ public class NavigationDrawerFragment extends Fragment {
     private View mView;
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerListView;
-    private ListView mTrendListView;
     private View mFragmentContainerView;
 
     private Button logoutButton;
@@ -55,7 +55,6 @@ public class NavigationDrawerFragment extends Fragment {
     private boolean mUserLearnedDrawer;
 
     private NavDrawerListAdapter navDrawerListAdapter;
-    private ArrayAdapter<String> trendListAdapter;
 
     public NavigationDrawerFragment() {
     }
@@ -85,10 +84,6 @@ public class NavigationDrawerFragment extends Fragment {
         setHasOptionsMenu(true);
     }
 
-    public ArrayAdapter<String> getTrendListAdapter() {
-        return this.trendListAdapter;
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
@@ -113,18 +108,8 @@ public class NavigationDrawerFragment extends Fragment {
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
     }
 
-    public void setupTrendListView(List<String> wordList, AdapterView.OnItemClickListener onItemClickListener) {
-        mTrendListView = (ListView) mView.findViewById(R.id.trendWordList);
-        trendListAdapter = new ArrayAdapter<>(getActionBar().getThemedContext(), android.R.layout.simple_list_item_1);
-        trendListAdapter.addAll(wordList);
-        mTrendListView.setAdapter(trendListAdapter);
-        mTrendListView.setOnItemClickListener(onItemClickListener);
-        syncListHeight();
-    }
-
     public void syncListHeight() {
         syncListHeight(mDrawerListView);
-        syncListHeight(mTrendListView);
     }
 
     private static void syncListHeight(ListView listView) {

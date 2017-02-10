@@ -1,11 +1,11 @@
-package com.elzup.pictter.pictter;
+package com.elzup.pictter.pictter.view.widget;
 
 public class NavDrawerItem {
     private boolean isFavorite;
     private String name;
     // TODO: add icon
 
-    NavDrawerItem(boolean isFavorite, String name) {
+    public NavDrawerItem(boolean isFavorite, String name) {
         this.isFavorite = isFavorite;
         this.name = name;
     }
